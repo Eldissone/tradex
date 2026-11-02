@@ -11,6 +11,7 @@ Base técnica para uma plataforma de comércio internacional entre China e Angol
 
 ```powershell
 Copy-Item .env.example .env
+Copy-Item backend/.env.example backend/.env
 npm install
 docker compose up -d postgres
 npm run db:generate
