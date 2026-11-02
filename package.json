@@ -1,0 +1,19 @@
+{
+  "name": "tradex-global-trading",
+  "private": true,
+  "version": "0.1.0",
+  "description": "TradeX Global Trading international commerce platform",
+  "workspaces": ["frontend", "backend"],
+  "scripts": {
+    "dev": "npm run dev --workspace=frontend & npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "build": "npm run build --workspace=frontend",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "db:generate": "npm run prisma:generate --workspace=backend",
+    "db:migrate": "npm run prisma:migrate --workspace=backend"
+  },
+  "engines": { "node": ">=22" }
+}
+
