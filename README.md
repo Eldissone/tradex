@@ -25,7 +25,7 @@ Noutro terminal:
 npm run dev:backend
 ```
 
-Abra `http://localhost:5173`. A verificação da API fica disponível em `http://localhost:3000/api/v1/health`.
+Abra `http://localhost:5174`. A verificação da API fica disponível em `http://localhost:3000/api/v1/health`.
 
 ## Estrutura
 

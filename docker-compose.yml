@@ -22,7 +22,7 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-tradex}:${POSTGRES_PASSWORD:-change-me-in-development}@postgres:5432/${POSTGRES_DB:-tradex}?schema=public
       PORT: 3000
-      CORS_ORIGIN: http://localhost:5173
+      CORS_ORIGIN: http://localhost:5174
     ports:
       - "3000:3000"
     depends_on:
