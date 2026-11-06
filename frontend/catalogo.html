@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="pt-AO">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="TradeX Global Trading - Catálogo completo de produtos para importação da China para Angola com preços em Kwanza." />
+    <title>Catálogo de Produtos | TradeX Global Trading</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <!-- Gaveta do Pedido (Cart Drawer) -->
+    <div id="cartOverlay" class="cart-drawer-overlay"></div>
+    <aside id="cartDrawer" class="cart-drawer" aria-label="Resumo do Pedido">
+      <div class="cart-drawer-head">
+        <h3>Pedido de Importação</h3>
+        <button id="closeCartBtn" class="btn-close-cart" aria-label="Fechar">✕</button>
+      </div>
+      <ul id="cartItemsList" class="cart-items-list">
+        <li style="color: #666; font-size: 0.85rem; padding: 2rem 0; text-align: center;">
+          O seu pedido está vazio. Selecione itens do catálogo.
+        </li>
+      </ul>
+      <div class="cart-footer">
+        <div class="cart-total-line">
+          <span>Total Estimado:</span>
+          <span id="cartTotalAoa">0 Kz</span>
+        </div>
+        <button id="btnSubmitCart" class="btn-dark" style="width: 100%; text-align: center;">
+          Finalizar Cotação em Kwanza
+        </button>
+      </div>
+    </aside>
+
+    <main>
+      <!-- Navegação Principal -->
+      <nav class="nav" aria-label="Navegação principal">
+        <a class="brand" href="index.html#inicio">TRADEX<span>GLOBAL</span></a>
+        <div class="nav-links">
+          <a href="index.html#inicio">Início</a>
+          <a href="index.html#servicos">Serviços</a>
+          <a href="catalogo.html" style="text-decoration: underline; font-weight: 600;">Catálogo</a>
+          <a href="index.html#simulador">Simulador</a>
+          <a href="index.html#como-funciona">Como funciona</a>
+          <a href="index.html#rastreio">Rastreio</a>
+          <a href="index.html#contacto">Contacto</a>
+          <button id="openCartBtn" class="nav-cart-btn" type="button">Pedido (<span id="cartCount">0</span>)</button>
+        </div>
+      </nav>
+
+      <!-- Cabeçalho do Catálogo -->
+      <header class="catalog-header">
+        <p class="eyebrow">CATÁLOGO & SOURCING DIRETO</p>
+        <h1>Produtos industriais e comerciais com preços em Kwanza.</h1>
+        <p class="lead">
+          Fornecedores validados nas principais províncias industriais da China (Guangdong, Zhejiang, Jiangsu, Shandong). Despacho aduaneiro e entrega integrada em Luanda.
+        </p>
+      </header>
+
+      <!-- Secção Principal do Catálogo -->
+      <section class="section-standard">
+        <!-- Barra de Ferramentas / Pesquisa & Ordenação -->
+        <div class="catalog-toolbar">
+          <form id="searchForm" class="catalog-search-box">
+            <input 
+              type="text" 
+              id="catalogSearch" 
+              class="catalog-search-input" 
+              placeholder="Pesquisar por produto, especificação ou fábrica (ex: solar, andaimes)..." 
+            />
+            <button type="submit" class="catalog-search-btn">Pesquisar</button>
+          </form>
+
+          <div class="catalog-sort-box">
+            <label for="catalogSort" class="catalog-sort-label">Ordenar por:</label>
+            <select id="catalogSort" class="catalog-sort-select">
+              <option value="featured">Destaques Comerciais</option>
+              <option value="price-asc">Menor Preço (AOA)</option>
+              <option value="price-desc">Maior Preço (AOA)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Filtros por Categoria -->
+        <div class="category-filters" id="categoryFilters">
+          <button class="filter-btn active" data-category="all">Todos os produtos</button>
+          <button class="filter-btn" data-category="solar">Energia Solar</button>
+          <button class="filter-btn" data-category="industrial">Construção & Equipamento</button>
+          <button class="filter-btn" data-category="electronics">Eletrónicos & Iluminação</button>
+          <button class="filter-btn" data-category="machinery">Maquinaria & Geradores</button>
+          <button class="filter-btn" data-category="construction">Materiais de Construção</button>
+        </div>
+
+        <!-- Contador de Resultados -->
+        <div class="catalog-results-info" id="resultsCount">
+          A carregar produtos...
+        </div>
+
+        <!-- Grelha de Produtos -->
+        <div class="product-grid" id="catalogGrid">
+          <!-- Injetado dinamicamente via catalogo.js -->
+        </div>
+      </section>
+
+      <!-- Sourcing Direto para Itens Não Listados -->
+      <section id="sourcing" class="section-standard" style="background: #fafafa;">
+        <div class="section-head">
+          <p class="eyebrow eyebrow-dark">NÃO ENCONTROU O QUE PROCURA?</p>
+          <h2>Sourcing personalizado de qualquer produto na China</h2>
+          <p>Se tem um produto específico em vista no 1688, Alibaba, Taobao ou catálogo de feiras (Canton Fair), tratamos da negociação direta de fábrica, controlo de qualidade e remessa para Angola.</p>
+        </div>
+
+        <div class="quote-box">
+          <form id="sourcingForm" class="quote-form">
+            <div class="quote-field">
+              <label for="clientName">Nome Completo / Empresa</label>
+              <input type="text" id="clientName" placeholder="Ex: Importações Silva Lda" required />
+            </div>
+            <div class="quote-field">
+              <label for="clientContact">Telefone ou WhatsApp (Angola)</label>
+              <input type="tel" id="clientContact" placeholder="+244 9..." required />
+            </div>
+            <div class="quote-field">
+              <label for="productDesc">Descrição Detalhada ou Link de Fábrica</label>
+              <textarea id="productDesc" rows="3" placeholder="Cole aqui o link do fornecedor chinês, quantidade desejada ou requisitos técnicos..."></textarea>
+            </div>
+            <button type="submit" class="btn-dark" style="align-self: flex-start;">
+              Solicitar Cotação em Kwanza
+            </button>
+            <div id="sourcingSuccessMsg" style="display: none; font-size: 0.85rem; color: #0b0b0b; padding: 0.8rem; background: #e0e0e0; margin-top: 0.5rem;">
+              Solicitação registada com sucesso! A nossa equipa entrará em contacto com a cotação detalhada.
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Rodapé Original -->
+      <footer id="contacto">
+        <div>
+          <strong style="letter-spacing: .12em;">TRADEX GLOBAL TRADING</strong>
+          <p style="color: #c6c6c6; margin: 0.5rem 0 0; font-size: 0.72rem;">
+            Luanda: Bairro Azul, Rua Comandante Gika | China Hub: Yuexiu District, Guangzhou
+          </p>
+        </div>
+        <div style="text-align: right;">
+          <span>Your Gateway to Global Commerce.</span>
+          <p style="color: #777; margin: 0.5rem 0 0; font-size: 0.7rem;">&copy; 2026 TradeX Global Trading. Todos os direitos reservados.</p>
+        </div>
+      </footer>
+    </main>
+
+    <script type="module" src="js/catalogo.js"></script>
+  </body>
+</html>
+

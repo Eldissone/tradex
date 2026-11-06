@@ -1,6 +1,7 @@
 import { api } from './api.js';
+import { cartStore } from './cart.js';
 
-// Catálogo inicial de produtos (Sourcing Direto China ➔ Angola)
+// Catálogo inicial em destaque (Sourcing Direto China ➔ Angola)
 const PRODUCTS = [
   {
     id: 'prod-01',
@@ -52,18 +53,7 @@ const PRODUCTS = [
   }
 ];
 
-// Estado do Carrinho / Pedido
-let cart = [];
-
-function formatAoa(value) {
-  return new Intl.NumberFormat('pt-AO', {
-    style: 'currency',
-    currency: 'AOA',
-    maximumFractionDigits: 0
-  }).format(value).replace('AOA', 'Kz');
-}
-
-// 1. Renderização do Catálogo
+// 1. Renderização do Catálogo em Destaque
 function renderProducts(filterCategory = 'all') {
   const container = document.getElementById('productGrid');
   if (!container) return;
@@ -81,7 +71,7 @@ function renderProducts(filterCategory = 'all') {
       </div>
       <div class="product-bottom">
         <div class="product-price">
-          ${formatAoa(p.priceAoa)}
+          ${cartStore.formatAoa(p.priceAoa)}
           <small>por ${p.unit}</small>
         </div>
         <button type="button" class="btn-add-item" data-add="${p.id}">
@@ -91,16 +81,19 @@ function renderProducts(filterCategory = 'all') {
     </article>
   `).join('');
 
-  // Event Listeners nos botões Adicionar
   container.querySelectorAll('[data-add]').forEach(btn => {
     btn.addEventListener('click', () => {
       const prodId = btn.getAttribute('data-add');
-      addToCart(prodId);
+      const prod = PRODUCTS.find(p => p.id === prodId);
+      if (prod) {
+        cartStore.addItem(prod);
+        updateCartUi();
+        openCart();
+      }
     });
   });
 }
 
-// 2. Filtros de Categoria
 function setupCategoryFilters() {
   const filterBtns = document.querySelectorAll('.filter-btn');
   filterBtns.forEach(btn => {
@@ -113,36 +106,22 @@ function setupCategoryFilters() {
   });
 }
 
-// 3. Gestão do Carrinho
-function addToCart(productId) {
-  const product = PRODUCTS.find(p => p.id === productId);
-  if (!product) return;
-
-  const existing = cart.find(item => item.id === productId);
-  if (existing) {
-    existing.quantity += 1;
-  } else {
-    cart.push({ ...product, quantity: 1 });
-  }
-
-  updateCartUi();
-  openCart();
-}
-
+// 2. Gestão do Carrinho Compartilhada
 function updateCartUi() {
+  const items = cartStore.getItems();
   const countEl = document.getElementById('cartCount');
   const listEl = document.getElementById('cartItemsList');
   const totalEl = document.getElementById('cartTotalAoa');
 
-  const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
-  const totalAmount = cart.reduce((acc, item) => acc + (item.priceAoa * item.quantity), 0);
+  const totalQuantity = items.reduce((acc, item) => acc + item.quantity, 0);
+  const totalAmount = items.reduce((acc, item) => acc + (item.priceAoa * item.quantity), 0);
 
   if (countEl) countEl.textContent = totalQuantity;
-  if (totalEl) totalEl.textContent = formatAoa(totalAmount);
+  if (totalEl) totalEl.textContent = cartStore.formatAoa(totalAmount);
 
   if (!listEl) return;
 
-  if (cart.length === 0) {
+  if (items.length === 0) {
     listEl.innerHTML = `
       <li style="color: #666; font-size: 0.85rem; padding: 2rem 0; text-align: center;">
         O seu pedido está vazio. Selecione itens do catálogo abaixo.
@@ -151,14 +130,14 @@ function updateCartUi() {
     return;
   }
 
-  listEl.innerHTML = cart.map((item, index) => `
+  listEl.innerHTML = items.map((item, index) => `
     <li class="cart-item">
       <div>
         <h5>${item.title}</h5>
-        <p>${item.quantity}x ${formatAoa(item.priceAoa)}</p>
+        <p>${item.quantity}x ${cartStore.formatAoa(item.priceAoa)}</p>
       </div>
       <div style="text-align: right;">
-        <strong>${formatAoa(item.priceAoa * item.quantity)}</strong><br>
+        <strong>${cartStore.formatAoa(item.priceAoa * item.quantity)}</strong><br>
         <button type="button" data-remove="${index}" style="background: none; border: 0; color: #888; font-size: 0.75rem; text-decoration: underline; cursor: pointer; margin-top: 4px;">
           Remover
         </button>
@@ -169,7 +148,7 @@ function updateCartUi() {
   listEl.querySelectorAll('[data-remove]').forEach(btn => {
     btn.addEventListener('click', () => {
       const idx = parseInt(btn.getAttribute('data-remove'), 10);
-      cart.splice(idx, 1);
+      cartStore.removeItem(idx);
       updateCartUi();
     });
   });
@@ -193,19 +172,20 @@ function setupCartDrawer() {
   document.getElementById('cartOverlay')?.addEventListener('click', closeCart);
 
   document.getElementById('btnSubmitCart')?.addEventListener('click', () => {
-    if (cart.length === 0) {
+    const items = cartStore.getItems();
+    if (items.length === 0) {
       alert('Adicione pelo menos um produto ao seu pedido para gerar cotação.');
       return;
     }
-    const totalAmount = cart.reduce((acc, item) => acc + (item.priceAoa * item.quantity), 0);
-    const summary = cart.map(i => `• ${i.quantity}x ${i.title} (${formatAoa(i.priceAoa * i.quantity)})`).join('\n');
+    const totalAmount = items.reduce((acc, item) => acc + (item.priceAoa * item.quantity), 0);
+    const summary = items.map(i => `• ${i.quantity}x ${i.title} (${cartStore.formatAoa(i.priceAoa * i.quantity)})`).join('\n');
     
-    alert(`Pedido TradeX preparado!\n\nItens:\n${summary}\n\nTotal Previsto: ${formatAoa(totalAmount)}\n\nEntraremos em contacto para emissão da Fatura Pró-forma em AOA.`);
+    alert(`Pedido TradeX preparado!\n\nItens:\n${summary}\n\nTotal Previsto: ${cartStore.formatAoa(totalAmount)}\n\nEntraremos em contacto para emissão da Fatura Pró-forma em AOA.`);
     closeCart();
   });
 }
 
-// 4. Simulador Logístico China ➔ Angola
+// 3. Simulador Logístico China ➔ Angola
 function setupCalculator() {
   const modeSelect = document.getElementById('transportMode');
   const volumeInput = document.getElementById('cargoVolume');
@@ -219,39 +199,37 @@ function setupCalculator() {
   const valDespachoAoa = document.getElementById('valDespachoAoa');
   const valTotalAoa = document.getElementById('valTotalAoa');
 
-  const USD_TO_AOA = 950; // Câmbio de referência
+  const USD_TO_AOA = 950;
 
   function calculate() {
+    if (!modeSelect) return;
     const mode = modeSelect.value;
-    const volume = parseFloat(volumeInput.value) || 0;
-    const weight = parseFloat(weightInput.value) || 0;
-    const cargoUsd = parseFloat(valueInput.value) || 0;
+    const volume = parseFloat(volumeInput?.value) || 0;
+    const weight = parseFloat(weightInput?.value) || 0;
+    const cargoUsd = parseFloat(valueInput?.value) || 0;
 
     const baseMercadoriaAoa = cargoUsd * USD_TO_AOA;
     let freightUsd = 0;
 
     if (mode === 'sea_lcl') {
-      // Carga consolidada marítima: ~$180 por m3 ou cada 500kg
       const chargeableVolume = Math.max(volume, weight / 500);
       freightUsd = chargeableVolume * 190;
     } else if (mode === 'sea_fcl') {
-      // Contentor 20ft completo fechado: ~$3200 base
       freightUsd = 3200;
     } else if (mode === 'air_exp') {
-      // Aéreo expresso: ~$14 por kg
       freightUsd = Math.max(weight, volume * 167) * 14.5;
     }
 
     const freteAoa = freightUsd * USD_TO_AOA;
-    const seguroAoa = (baseMercadoriaAoa + freteAoa) * 0.02; // 2% seguro marítimo
-    const taxasDespachoAoa = (baseMercadoriaAoa * 0.14) + 120000; // Estimativa direitos + despacho Luanda
+    const seguroAoa = (baseMercadoriaAoa + freteAoa) * 0.02;
+    const taxasDespachoAoa = (baseMercadoriaAoa * 0.14) + 120000;
     const totalGeral = baseMercadoriaAoa + freteAoa + seguroAoa + taxasDespachoAoa;
 
-    if (valMercadoriaAoa) valMercadoriaAoa.textContent = formatAoa(baseMercadoriaAoa);
-    if (valFreteAoa) valFreteAoa.textContent = formatAoa(freteAoa);
-    if (valSeguroAoa) valSeguroAoa.textContent = formatAoa(seguroAoa);
-    if (valDespachoAoa) valDespachoAoa.textContent = formatAoa(taxasDespachoAoa);
-    if (valTotalAoa) valTotalAoa.textContent = formatAoa(totalGeral);
+    if (valMercadoriaAoa) valMercadoriaAoa.textContent = cartStore.formatAoa(baseMercadoriaAoa);
+    if (valFreteAoa) valFreteAoa.textContent = cartStore.formatAoa(freteAoa);
+    if (valSeguroAoa) valSeguroAoa.textContent = cartStore.formatAoa(seguroAoa);
+    if (valDespachoAoa) valDespachoAoa.textContent = cartStore.formatAoa(taxasDespachoAoa);
+    if (valTotalAoa) valTotalAoa.textContent = cartStore.formatAoa(totalGeral);
   }
 
   btnCalculate?.addEventListener('click', calculate);
@@ -260,11 +238,10 @@ function setupCalculator() {
   weightInput?.addEventListener('input', calculate);
   valueInput?.addEventListener('input', calculate);
 
-  // Cálculo inicial
   calculate();
 }
 
-// 5. Rastreio de Carga com Timeline Real
+// 4. Rastreio de Carga
 function setupTracking() {
   const form = document.getElementById('trackingForm');
   const input = document.getElementById('trackingCodeInput');
@@ -307,7 +284,6 @@ function setupTracking() {
   });
 }
 
-// 6. Formulário de Sourcing Direto
 function setupSourcingForm() {
   const form = document.getElementById('sourcingForm');
   const successMsg = document.getElementById('sourcingSuccessMsg');
@@ -324,15 +300,14 @@ function setupSourcingForm() {
   });
 }
 
-// Inicialização Geral
 document.addEventListener('DOMContentLoaded', () => {
   renderProducts();
   setupCategoryFilters();
   setupCartDrawer();
+  updateCartUi();
   setupCalculator();
   setupTracking();
   setupSourcingForm();
 
-  // Verificação de saúde da API de backend
   void api.health();
 });
