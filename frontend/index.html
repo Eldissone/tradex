@@ -4,11 +4,269 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="TradeX Global Trading - comércio internacional entre a China e Angola." />
-    <title>TradeX Global Trading</title>
+    <title>TradeX Global Trading | China — Angola</title>
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <!-- Gaveta do Pedido (Cart Drawer) -->
+    <div id="cartOverlay" class="cart-drawer-overlay"></div>
+    <aside id="cartDrawer" class="cart-drawer" aria-label="Resumo do Pedido">
+      <div class="cart-drawer-head">
+        <h3>Pedido de Importação</h3>
+        <button id="closeCartBtn" class="btn-close-cart" aria-label="Fechar">✕</button>
+      </div>
+      <ul id="cartItemsList" class="cart-items-list">
+        <li style="color: #666; font-size: 0.85rem; padding: 2rem 0; text-align: center;">
+          O seu pedido está vazio. Selecione itens do catálogo abaixo.
+        </li>
+      </ul>
+      <div class="cart-footer">
+        <div class="cart-total-line">
+          <span>Total Estimado:</span>
+          <span id="cartTotalAoa">0 Kz</span>
+        </div>
+        <button id="btnSubmitCart" class="btn-dark" style="width: 100%; text-align: center;">
+          Finalizar Cotação em Kwanza
+        </button>
+      </div>
+    </aside>
+
+    <main>
+      <!-- Navegação Principal -->
+      <nav class="nav" aria-label="Navegação principal">
+        <a class="brand" href="#inicio">TRADEX<span>GLOBAL</span></a>
+        <div class="nav-links">
+          <a href="#servicos">Serviços</a>
+          <a href="#catalogo">Catálogo</a>
+          <a href="#simulador">Simulador</a>
+          <a href="#como-funciona">Como funciona</a>
+          <a href="#rastreio">Rastreio</a>
+          <a href="#contacto">Contacto</a>
+          <button id="openCartBtn" class="nav-cart-btn" type="button">Pedido (<span id="cartCount">0</span>)</button>
+        </div>
+      </nav>
+
+      <!-- Hero Section Original -->
+      <section id="inicio" class="hero">
+        <p class="eyebrow">CHINA — ANGOLA</p>
+        <h1>O seu acesso ao comércio global.</h1>
+        <p class="lead">Uma plataforma para descobrir produtos, gerir importações e acompanhar entregas com total transparência e preços em Kwanza.</p>
+        <div class="actions">
+          <a href="#catalogo" class="btn-primary">Explorar produtos</a>
+          <a href="#simulador" class="btn-primary" style="background: transparent; color: #fff; border: 1px solid #fff;">Simular frete</a>
+          <a href="#como-funciona">Como funciona</a>
+        </div>
+      </section>
+
+      <!-- Capacidades / Serviços Original -->
+      <section id="servicos" class="capabilities" aria-label="Serviços TradeX">
+        <article>
+          <p class="eyebrow eyebrow-dark">COTAÇÃO EM AOA</p>
+          <h2>Comércio global</h2>
+          <p>Acesso direto a fábricas e mercados de Yiwu e Guangzhou com preços convertidos e pagos em Kwanza angolano.</p>
+        </article>
+        <article>
+          <p class="eyebrow eyebrow-dark">TRANSPARÊNCIA TOTAL</p>
+          <h2>Logística visível</h2>
+          <p>Acompanhe cada etapa da sua remessa, do porto de embarque na China até ao desalfandegamento em Luanda.</p>
+        </article>
+        <article>
+          <p class="eyebrow eyebrow-dark">CENTRALIZAÇÃO</p>
+          <h2>Gestão integrada</h2>
+          <p>Compras com fornecedores validados, frete marítimo/aéreo e documentação alfandegária num só lugar.</p>
+        </article>
+      </section>
+
+      <!-- Catálogo de Produtos com Preços em AOA -->
+      <section id="catalogo" class="section-standard">
+        <div class="section-head">
+          <p class="eyebrow eyebrow-dark">CATÁLOGO EM DESTAQUE</p>
+          <h2>Produtos com fornecedor validado na China</h2>
+          <p>Equipamentos industriais, soluções de energia solar e bens de consumo com cotação imediata em Kwanza (AOA).</p>
+        </div>
+
+        <div class="category-filters" id="categoryFilters">
+          <button class="filter-btn active" data-category="all">Todos os produtos</button>
+          <button class="filter-btn" data-category="solar">Energia Solar & Geradores</button>
+          <button class="filter-btn" data-category="industrial">Equipamento & Construção</button>
+          <button class="filter-btn" data-category="electronics">Eletrónicos & Iluminação</button>
+        </div>
+
+        <div class="product-grid" id="productGrid">
+          <!-- Injetado dinamicamente via app.js -->
+        </div>
+      </section>
+
+      <!-- Simulador de Importação China ➔ Angola -->
+      <section id="simulador" class="section-standard">
+        <div class="section-head">
+          <p class="eyebrow eyebrow-dark">SIMULADOR LOGÍSTICO</p>
+          <h2>Calcule o custo estimado da sua remessa</h2>
+          <p>Obtenha uma previsão imediata de frete, seguro e encargos alfandegários da China até ao porto ou aeroporto de Luanda.</p>
+        </div>
+
+        <div class="calculator-box">
+          <form id="calcForm">
+            <div class="calc-form-group">
+              <label for="transportMode">Modalidade de Envio</label>
+              <select id="transportMode" class="calc-select">
+                <option value="sea_lcl">Marítimo LCL (Carga Consolidada por m³)</option>
+                <option value="sea_fcl">Marítimo FCL (Contentor Completo 20ft)</option>
+                <option value="air_exp">Aéreo Expresso (Por kg - 7 a 12 dias)</option>
+              </select>
+            </div>
+
+            <div class="calc-row">
+              <div class="calc-form-group">
+                <label for="cargoVolume" id="volumeLabel">Volume (m³)</label>
+                <input type="number" id="cargoVolume" class="calc-input" value="2.5" step="0.1" min="0.1" />
+              </div>
+              <div class="calc-form-group">
+                <label for="cargoWeight">Peso Estimado (kg)</label>
+                <input type="number" id="cargoWeight" class="calc-input" value="450" step="1" min="1" />
+              </div>
+            </div>
+
+            <div class="calc-form-group">
+              <label for="cargoValue">Valor da Mercadoria na China (USD ou AOA)</label>
+              <input type="number" id="cargoValue" class="calc-input" value="2500" placeholder="Valor FOB em USD" />
+            </div>
+
+            <button type="button" id="btnCalculate" class="btn-dark">Actualizar Simulação</button>
+          </form>
+
+          <div class="calc-result-panel">
+            <div>
+              <span class="calc-result-title">Estimativa da Operação</span>
+              <ul class="calc-breakdown">
+                <li><span>Valor da Carga (AOA)</span> <strong id="valMercadoriaAoa">2.375.000 Kz</strong></li>
+                <li><span>Frete Internacional</span> <strong id="valFreteAoa">480.000 Kz</strong></li>
+                <li><span>Seguro de Trânsito</span> <strong id="valSeguroAoa">47.500 Kz</strong></li>
+                <li><span>Taxas & Despacho Aduaneiro</span> <strong id="valDespachoAoa">380.000 Kz</strong></li>
+              </ul>
+            </div>
+            <div class="calc-total">
+              <span class="calc-total-label">Custo Total Previsto (Porta a Porta)</span>
+              <div class="calc-total-value" id="valTotalAoa">3.282.500 Kz</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Processo Original -->
+      <section id="como-funciona" class="process">
+        <p class="eyebrow eyebrow-dark">PROCESSO SIMPLES</p>
+        <h2>Da escolha à entrega, tudo acompanhado.</h2>
+        <ol>
+          <li>
+            <strong>1. Escolha ou solicite os produtos</strong>
+            <p style="margin-top: 0.4rem; color: #464646;">Selecione os artigos do catálogo ou envie ligações de fábricas chinesas para cotação.</p>
+          </li>
+          <li>
+            <strong>2. Pague em AOA com fatura pró-forma</strong>
+            <p style="margin-top: 0.4rem; color: #464646;">Liquidação por transferência bancária em Kwanzas através de parceiros autorizados.</p>
+          </li>
+          <li>
+            <strong>3. Acompanhe a sua encomenda</strong>
+            <p style="margin-top: 0.4rem; color: #464646;">Notificações a cada marco: saída do porto na China, desembaraço e levantamento em Luanda.</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- Rastreio de Cargas em Tempo Real -->
+      <section id="rastreio" class="section-standard">
+        <div class="section-head">
+          <p class="eyebrow eyebrow-dark">LOGÍSTICA & RASTREIO</p>
+          <h2>Acompanhe a sua remessa em tempo real</h2>
+          <p>Insira o número da encomenda ou código de conhecimento de embarque para verificar a posição atual.</p>
+        </div>
+
+        <div class="tracking-wrapper">
+          <form id="trackingForm" class="tracking-bar">
+            <input 
+              type="text" 
+              id="trackingCodeInput" 
+              placeholder="Ex: TDX-AO-2026-001 ou insira o seu código" 
+              value="TDX-AO-2026-001"
+              required 
+            />
+            <button type="submit">Consultar Carga</button>
+          </form>
+
+          <div id="trackingDetails" class="tracking-details">
+            <div class="tracking-meta">
+              <div>
+                <span>Código de Rastreio</span>
+                <strong id="trackMetaCode">TDX-AO-2026-001</strong>
+              </div>
+              <div>
+                <span>Rota Comercial</span>
+                <strong>Guangzhou (CN) ➔ Luanda (AO)</strong>
+              </div>
+              <div>
+                <span>Modalidade</span>
+                <strong id="trackMetaMode">Marítimo (LCL)</strong>
+              </div>
+              <div>
+                <span>Previsão de Chegada</span>
+                <strong id="trackMetaEta">18 de Novembro de 2026</strong>
+              </div>
+            </div>
+
+            <ul class="tracking-timeline" id="trackingTimeline">
+              <!-- Gerado via app.js -->
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sourcing Personalizado / Pedido de Cotação Direta -->
+      <section id="sourcing" class="section-standard">
+        <div class="section-head">
+          <p class="eyebrow eyebrow-dark">SOURCING DIRETO</p>
+          <h2>Tem um produto específico em vista?</h2>
+          <p>Indique-nos o que pretende importar. Localizamos o fabricante na China, negociamos o preço de fábrica e tratamos da logística até Angola.</p>
+        </div>
+
+        <div class="quote-box">
+          <form id="sourcingForm" class="quote-form">
+            <div class="quote-field">
+              <label for="clientName">Nome / Empresa</label>
+              <input type="text" id="clientName" placeholder="Ex: Importações Silva Lda" required />
+            </div>
+            <div class="quote-field">
+              <label for="clientContact">Telefone ou WhatsApp (Angola)</label>
+              <input type="tel" id="clientContact" placeholder="+244 9..." required />
+            </div>
+            <div class="quote-field">
+              <label for="productDesc">Descrição do Produto ou Link (1688 / Alibaba / Taobao)</label>
+              <textarea id="productDesc" rows="3" placeholder="Indique especificações, quantidades estimadas ou cole aqui o link do produto..."></textarea>
+            </div>
+            <button type="submit" class="btn-dark" style="align-self: flex-start;">
+              Enviar Solicitação de Cotação
+            </button>
+            <div id="sourcingSuccessMsg" style="display: none; font-size: 0.85rem; color: #0b0b0b; padding: 0.8rem; background: #f0f0f0; margin-top: 0.5rem;">
+              Solicitação registada com sucesso! A equipa comercial da TradeX entrará em contacto com a cotação detalhada em Kwanzas.
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Rodapé Original -->
+      <footer id="contacto">
+        <div>
+          <strong style="letter-spacing: .12em;">TRADEX GLOBAL TRADING</strong>
+          <p style="color: #c6c6c6; margin: 0.5rem 0 0; font-size: 0.72rem;">
+            Luanda: Bairro Azul, Rua Comandante Gika | China Hub: Yuexiu District, Guangzhou
+          </p>
+        </div>
+        <div style="text-align: right;">
+          <span>Your Gateway to Global Commerce.</span>
+          <p style="color: #777; margin: 0.5rem 0 0; font-size: 0.7rem;">&copy; 2026 TradeX Global Trading. Todos os direitos reservados.</p>
+        </div>
+      </footer>
+    </main>
+
+    <script type="module" src="js/app.js"></script>
   </body>
 </html>
-

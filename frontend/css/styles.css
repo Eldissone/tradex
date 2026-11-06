@@ -1,0 +1,722 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+:root {
+  font-family: Montserrat, system-ui, sans-serif;
+  color: #0b0b0b;
+  background: #fff;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #fff;
+  color: #0b0b0b;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Nav */
+.nav {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: auto;
+  max-width: 1200px;
+  padding: 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.brand {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.brand span {
+  color: #464646;
+  font-weight: 400;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: .8rem;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+.nav-cart-btn {
+  background: #0b0b0b;
+  color: #fff;
+  border: 0;
+  padding: 0.5rem 0.9rem;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+/* Hero */
+.hero {
+  background: #0b0b0b;
+  color: #fff;
+  min-height: 66vh;
+  padding: clamp(4rem, 10vw, 8rem) max(1.5rem, calc((100vw - 1200px) / 2));
+}
+
+.eyebrow {
+  color: #c6c6c6;
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.eyebrow-dark {
+  color: #464646;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  letter-spacing: -.06em;
+  line-height: .97;
+  margin: .75rem 0 1.5rem;
+  max-width: 850px;
+}
+
+.lead {
+  color: #c6c6c6;
+  line-height: 1.7;
+  max-width: 600px;
+  font-size: 1.05rem;
+}
+
+.actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+.actions button,
+.btn-primary {
+  background: #fff;
+  border: 0;
+  color: #0b0b0b;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: 1rem 1.4rem;
+  display: inline-block;
+  letter-spacing: 0.02em;
+}
+
+.btn-dark {
+  background: #0b0b0b;
+  border: 1px solid #0b0b0b;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.9rem 1.4rem;
+  display: inline-block;
+  letter-spacing: 0.02em;
+}
+
+.btn-dark:hover {
+  background: #262626;
+}
+
+.actions a {
+  font-size: .86rem;
+  text-decoration: underline;
+}
+
+/* Capabilities (Serviços) */
+.capabilities {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(3, 1fr);
+  background: #c6c6c6;
+  border-bottom: 1px solid #c6c6c6;
+}
+
+.capabilities article {
+  background: #fff;
+  min-height: 230px;
+  padding: 2.5rem;
+}
+
+.capabilities h2,
+.process h2,
+.section-title {
+  font-size: 1.4rem;
+  letter-spacing: -.04em;
+  margin: 0.5rem 0 0.8rem;
+}
+
+.capabilities p {
+  color: #464646;
+  font-size: .9rem;
+  line-height: 1.6;
+}
+
+/* Sections Generics */
+.section-standard {
+  padding: 5rem max(1.5rem, calc((100vw - 1200px) / 2));
+  border-bottom: 1px solid #c6c6c6;
+}
+
+.section-head {
+  margin-bottom: 2.5rem;
+  max-width: 750px;
+}
+
+.section-head h2 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  letter-spacing: -.05em;
+  line-height: 1.05;
+  margin: 0.5rem 0 0.8rem;
+}
+
+.section-head p {
+  color: #464646;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Filtros de Categoria */
+.category-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.filter-btn {
+  background: #f4f4f4;
+  border: 1px solid #e0e0e0;
+  color: #0b0b0b;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+  background: #0b0b0b;
+  color: #fff;
+  border-color: #0b0b0b;
+}
+
+/* Catálogo em Grelha Minimalista */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 1px;
+  background: #c6c6c6;
+  border: 1px solid #c6c6c6;
+}
+
+.product-card {
+  background: #fff;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 280px;
+}
+
+.product-category {
+  font-size: 0.68rem;
+  color: #464646;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.product-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin: 0.5rem 0;
+  line-height: 1.3;
+}
+
+.product-specs {
+  font-size: 0.82rem;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+.product-bottom {
+  margin-top: auto;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.product-price {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.product-price small {
+  display: block;
+  font-size: 0.68rem;
+  color: #777;
+  font-weight: 400;
+}
+
+.btn-add-item {
+  background: #0b0b0b;
+  color: #fff;
+  border: 0;
+  padding: 0.55rem 0.9rem;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-add-item:hover {
+  background: #333;
+}
+
+/* Simulador de Custo (Calculadora) */
+.calculator-box {
+  background: #fcfcfc;
+  border: 1px solid #0b0b0b;
+  padding: 2.5rem;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 3rem;
+}
+
+.calc-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.calc-form-group label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.calc-input,
+.calc-select {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid #c6c6c6;
+  font-family: inherit;
+  font-size: 0.9rem;
+  background: #fff;
+  outline: none;
+}
+
+.calc-input:focus,
+.calc-select:focus {
+  border-color: #0b0b0b;
+}
+
+.calc-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.calc-result-panel {
+  background: #0b0b0b;
+  color: #fff;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.calc-result-title {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  color: #c6c6c6;
+  text-transform: uppercase;
+}
+
+.calc-breakdown {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.calc-breakdown li {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #222;
+  padding-bottom: 0.5rem;
+}
+
+.calc-breakdown li span:first-child {
+  color: #a0a0a0;
+}
+
+.calc-total {
+  border-top: 1px solid #444;
+  padding-top: 1rem;
+}
+
+.calc-total-label {
+  font-size: 0.75rem;
+  color: #c6c6c6;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.calc-total-value {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  margin-top: 0.25rem;
+}
+
+/* Process */
+.process {
+  padding: 6rem max(1.5rem, calc((100vw - 1200px) / 2));
+  border-bottom: 1px solid #c6c6c6;
+}
+
+.process h2 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  max-width: 620px;
+}
+
+.process ol {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+}
+
+.process li {
+  border-top: 1px solid #0b0b0b;
+  flex: 1;
+  font-size: .8rem;
+  padding-top: .8rem;
+}
+
+/* Rastreio */
+.tracking-wrapper {
+  max-width: 850px;
+}
+
+.tracking-bar {
+  display: flex;
+  gap: 0;
+  margin: 2rem 0;
+}
+
+.tracking-bar input {
+  flex: 1;
+  padding: 1rem 1.25rem;
+  border: 1px solid #0b0b0b;
+  border-right: none;
+  font: inherit;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.tracking-bar button {
+  background: #0b0b0b;
+  color: #fff;
+  border: 1px solid #0b0b0b;
+  padding: 1rem 1.75rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+.tracking-bar button:hover {
+  background: #333;
+}
+
+.tracking-details {
+  display: none;
+  border: 1px solid #0b0b0b;
+  padding: 2rem;
+  margin-top: 1.5rem;
+  background: #fff;
+}
+
+.tracking-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.82rem;
+}
+
+.tracking-meta div span {
+  display: block;
+  color: #666;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.tracking-timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+}
+
+.timeline-step {
+  display: flex;
+  gap: 1.5rem;
+  position: relative;
+}
+
+.timeline-bullet {
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border: 2px solid #c6c6c6;
+  border-radius: 50%;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.timeline-step.done .timeline-bullet {
+  background: #0b0b0b;
+  border-color: #0b0b0b;
+}
+
+.timeline-step.active .timeline-bullet {
+  background: #0b0b0b;
+  border-color: #0b0b0b;
+  box-shadow: 0 0 0 4px #e0e0e0;
+}
+
+.timeline-info h4 {
+  font-size: 0.95rem;
+  margin: 0 0 0.2rem;
+  font-weight: 600;
+}
+
+.timeline-info p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #464646;
+}
+
+/* Sourcing Direto Form */
+.quote-box {
+  border: 1px solid #0b0b0b;
+  padding: 2.5rem;
+  max-width: 800px;
+  background: #fff;
+}
+
+.quote-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.quote-field label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.quote-field input,
+.quote-field textarea,
+.quote-field select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #c6c6c6;
+  font-family: inherit;
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.quote-field input:focus,
+.quote-field textarea:focus {
+  border-color: #0b0b0b;
+}
+
+/* Gaveta do Pedido (Cart Drawer Minimalista) */
+.cart-drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.cart-drawer {
+  position: fixed;
+  top: 0;
+  right: -420px;
+  width: 100%;
+  max-width: 420px;
+  height: 100vh;
+  background: #fff;
+  border-left: 1px solid #0b0b0b;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.3s ease;
+  padding: 2rem;
+}
+
+.cart-drawer.open {
+  right: 0;
+}
+
+.cart-drawer-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #0b0b0b;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.cart-drawer-head h3 {
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.btn-close-cart {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+}
+
+.cart-items-list {
+  flex: 1;
+  overflow-y: auto;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cart-item {
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.cart-item h5 {
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+}
+
+.cart-item p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.cart-footer {
+  border-top: 1px solid #0b0b0b;
+  padding-top: 1.5rem;
+  margin-top: 1rem;
+}
+
+.cart-total-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+/* Footer */
+footer {
+  background: #0b0b0b;
+  color: #fff;
+  display: flex;
+  font-size: .75rem;
+  justify-content: space-between;
+  padding: 3rem max(1.5rem, calc((100vw - 1200px) / 2));
+}
+
+@media (max-width: 860px) {
+  .calculator-box {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-links {
+    display: none;
+  }
+  .capabilities {
+    grid-template-columns: 1fr;
+  }
+  .process ol {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  footer {
+    flex-direction: column;
+    gap: .8rem;
+  }
+  .calc-row {
+    grid-template-columns: 1fr;
+  }
+  .tracking-bar {
+    flex-direction: column;
+  }
+  .tracking-bar input {
+    border-right: 1px solid #0b0b0b;
+    border-bottom: none;
+  }
+}
