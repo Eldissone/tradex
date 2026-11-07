@@ -455,7 +455,26 @@ function setupSourcingForm() {
   });
 }
 
+function setupHeaderScroll() {
+  const header = document.getElementById('mainHeader');
+  const hero = document.getElementById('inicio');
+  if (!header || !hero) return;
+
+  function onScroll() {
+    const threshold = hero.offsetHeight - header.offsetHeight;
+    if (window.scrollY > threshold) {
+      header.classList.add('past-hero');
+    } else {
+      header.classList.remove('past-hero');
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  setupHeaderScroll();
   renderCarousel();
   setupCarouselControls();
   setupCategoryFilters();

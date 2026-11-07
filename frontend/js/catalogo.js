@@ -354,7 +354,26 @@ function setupSourcingForm() {
   });
 }
 
+function setupHeaderScroll() {
+  const header = document.getElementById('mainHeader');
+  const catalogHeader = document.querySelector('.catalog-header');
+  if (!header || !catalogHeader) return;
+
+  function onScroll() {
+    const threshold = catalogHeader.offsetHeight - header.offsetHeight;
+    if (window.scrollY > threshold) {
+      header.classList.add('past-hero');
+    } else {
+      header.classList.remove('past-hero');
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  setupHeaderScroll();
   renderCatalog();
   setupFiltersAndSearch();
   setupCartDrawer();
