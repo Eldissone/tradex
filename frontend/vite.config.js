@@ -12,6 +12,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         catalogo: resolve(__dirname, 'catalogo.html'),
         produto: resolve(__dirname, 'produto.html'),
+        rastreio: resolve(__dirname, 'rastreio.html'),
       },
     },
   },

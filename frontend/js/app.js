@@ -313,42 +313,14 @@ function setupCalculator() {
 function setupTracking() {
   const form = document.getElementById('trackingForm');
   const input = document.getElementById('trackingCodeInput');
-  const details = document.getElementById('trackingDetails');
-  const metaCode = document.getElementById('trackMetaCode');
-  const timeline = document.getElementById('trackingTimeline');
 
-  if (!form || !input || !details) return;
-
-  const DEMO_EVENTS = [
-    { title: 'Recepção no Armazém TradeX', loc: 'Guangzhou Hub, China', date: '02 Nov 2026', done: true },
-    { title: 'Inspeção de Qualidade e Paletização', loc: 'Guangzhou Hub, China', date: '03 Nov 2026', done: true },
-    { title: 'Embarque e Despacho Aduaneiro de Origem', loc: 'Porto de Nansha, Guangzhou', date: '05 Nov 2026', done: true },
-    { title: 'Em Trânsito Marítimo Internacional', loc: 'Oceano Índico (Navio MSC Luanda)', date: 'Em curso (Prev. 18 Nov)', active: true },
-    { title: 'Atracação e Desalfandegamento em Luanda', loc: 'Porto de Luanda, Angola', date: 'Pendente' },
-    { title: 'Disponível para Levantamento no Terminal TradeX', loc: 'Bairro Azul, Luanda', date: 'Pendente' }
-  ];
+  if (!form || !input) return;
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const code = input.value.trim().toUpperCase();
     if (!code) return;
-
-    if (metaCode) metaCode.textContent = code;
-    details.classList.add('visible');
-
-    if (timeline) {
-      timeline.innerHTML = DEMO_EVENTS.map(ev => `
-        <li class="timeline-step ${ev.done ? 'done' : ''} ${ev.active ? 'active' : ''}">
-          <div class="timeline-bullet"></div>
-          <div class="timeline-info">
-            <h4>${ev.title}</h4>
-            <p>${ev.loc} — <strong>${ev.date}</strong></p>
-          </div>
-        </li>
-      `).join('');
-    }
-
-    details.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    window.location.href = `rastreio.html?codigo=${encodeURIComponent(code)}`;
   });
 }
 
