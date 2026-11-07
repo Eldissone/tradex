@@ -69,7 +69,7 @@ function renderCatalog() {
           <small>por ${p.unit}</small>
         </div>
         <button type="button" class="btn-add-item" data-add="${p.id}">
-          + Adicionar ao Pedido
+          + Carrinho
         </button>
       </div>
     </article>
@@ -175,6 +175,21 @@ function setupCartDrawer() {
 
 function setupFiltersAndSearch() {
   const filterBtns = document.querySelectorAll('.filter-btn');
+
+  // Suporte a parâmetro de categoria na URL (ex: catalogo.html?cat=solar)
+  const urlParams = new URLSearchParams(window.location.search);
+  const catParam = urlParams.get('cat') || urlParams.get('categoria');
+  if (catParam) {
+    currentCategory = catParam;
+    filterBtns.forEach(b => {
+      if (b.getAttribute('data-category') === catParam) {
+        b.classList.add('active');
+      } else {
+        b.classList.remove('active');
+      }
+    });
+  }
+
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       filterBtns.forEach(b => b.classList.remove('active'));

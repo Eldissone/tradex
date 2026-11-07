@@ -34,15 +34,21 @@
     <!-- Header Fixo / Barra de Navegação -->
     <header id="mainHeader" class="main-header">
       <nav class="nav" aria-label="Navegação principal">
-        <a class="brand" href="index.html#inicio">TRADEX<span>GLOBAL</span></a>
+        <div class="brand-wrap">
+          <a class="brand" href="index.html#inicio">TRADEX<span>GLOBAL</span></a>
+        </div>
         <div class="nav-links">
-          <a href="index.html#inicio">Início</a>
-          <a href="index.html#servicos">Serviços</a>
-          <a href="catalogo.html" class="nav-link-active">Catálogo</a>
-          <a href="index.html#simulador">Simulador</a>
-          <a href="index.html#como-funciona">Como funciona</a>
+          <a href="catalogo.html" class="nav-link-active">Produtos</a>
+          <a href="catalogo.html?cat=electronics">Eletrónicos</a>
+          <a href="catalogo.html?cat=industrial">Construção</a>
           <a href="rastreio.html">Rastreio</a>
-          <a href="index.html#contacto">Contacto</a>
+             <a href="index.html" class="nav-btn-store mode-tab" title="Website Institucional e Operações Globais">
+              <svg class="mode-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Institucional & Trading</span>
+            </a>
         </div>
         <div class="nav-actions">
           <a href="catalogo.html" class="nav-icon-btn" id="headerSearchBtn" aria-label="Pesquisar Produtos" title="Pesquisar">
@@ -91,7 +97,6 @@
           <div class="catalog-slide-bg slide-bg-2"></div>
           <div class="catalog-slide-overlay"></div>
           <div class="catalog-slide-content">
-            <p class="eyebrow">ENERGIA RENOVÁVEL & EFICIÊNCIA</p>
             <h1>Soluções solares completas com garantia de fábrica.</h1>
             <p class="lead">
               Painéis monocristalinos Tier 1, inversores híbridos inteligentes e baterias de lítio LiFePO4 para projetos residenciais, comerciais e industriais em Angola.
