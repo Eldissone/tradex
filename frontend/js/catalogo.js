@@ -9,6 +9,7 @@ export const ALL_PRODUCTS = [
     title: 'Kit Painéis Solares Monocristalinos 550W (Palete com 30 un.)',
     origin: 'Foshan, Guangdong',
     moq: '1 Palete (30 painéis)',
+    image: 'https://images.unsplash.com/photo-1509391365360-2e959784a276?w=600&auto=format&fit=crop&q=80',
     specs: 'Tier 1 Fabrico Foshan | Eficiência 21.3% | Vidro temperado antirreflexo | Garantia 12 anos',
     priceAoa: 3450000,
     unit: 'palete'
@@ -20,6 +21,7 @@ export const ALL_PRODUCTS = [
     title: 'Inversor Solar Híbrido 5.5kW 48V Pure Sine Wave',
     origin: 'Shenzhen, Guangdong',
     moq: '1 Unidade',
+    image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&auto=format&fit=crop&q=80',
     specs: 'Compatível com Baterias Lítio & Gel | Controlador MPPT 100A integrado | Monitorização Wi-Fi',
     priceAoa: 820000,
     unit: 'unidade'
@@ -31,6 +33,7 @@ export const ALL_PRODUCTS = [
     title: 'Bateria de Lítio LiFePO4 48V 100Ah (5.12kWh Rack Mount)',
     origin: 'Dongguan, Guangdong',
     moq: '1 Unidade',
+    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&auto=format&fit=crop&q=80',
     specs: 'Mais de 6000 ciclos a 80% DOD | BMS inteligente integrado | Comunicação CAN/RS485',
     priceAoa: 1250000,
     unit: 'unidade'
@@ -42,6 +45,7 @@ export const ALL_PRODUCTS = [
     title: 'Mini Betoneira Elétrica 350L Motor Cobre 220V',
     origin: 'Guangzhou, Guangdong',
     moq: '2 Unidades',
+    image: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?w=600&auto=format&fit=crop&q=80',
     specs: 'Tambor reforçado 3mm | Rodas de ferro fundido com revestimento | Capacidade mistura 260L',
     priceAoa: 680000,
     unit: 'unidade'
@@ -53,6 +57,7 @@ export const ALL_PRODUCTS = [
     title: 'Conjunto de Andaimes Modulares Galvanizados (100 m²)',
     origin: 'Tianjin',
     moq: '1 Lote de 100 m²',
+    image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&auto=format&fit=crop&q=80',
     specs: 'Aço carbono Q235 galvanizado a quente | Travessas diagonais, guarda-corpos e pranchas antiderrapantes',
     priceAoa: 1950000,
     unit: 'conjunto'
@@ -64,6 +69,7 @@ export const ALL_PRODUCTS = [
     title: 'Compactador de Solo Tipo Sapo (Motor Gasolina 5.5HP)',
     origin: 'Yiwu, Zhejiang',
     moq: '1 Unidade',
+    image: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?w=600&auto=format&fit=crop&q=80',
     specs: 'Força de impacto 13.7 kN | Tanque anticorrosivo | Ideal para valas e alicerces',
     priceAoa: 540000,
     unit: 'unidade'
@@ -75,6 +81,7 @@ export const ALL_PRODUCTS = [
     title: 'Máquina Bloqueira Hidráulica para Blocos de Cimento',
     origin: 'Linyi, Shandong',
     moq: '1 Linha Completa',
+    image: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=600&auto=format&fit=crop&q=80',
     specs: 'Produção 2500 blocos/dia | Moldes intercambiáveis para blocos de 10, 15 e 20cm',
     priceAoa: 3900000,
     unit: 'linha'
@@ -86,6 +93,7 @@ export const ALL_PRODUCTS = [
     title: 'Campânula LED Industrial High Bay 200W IP65 (Caixa 10 un.)',
     origin: 'Zhongshan, Guangdong',
     moq: '1 Caixa (10 un.)',
+    image: 'https://images.unsplash.com/photo-1565814636199-ae8133055c1c?w=600&auto=format&fit=crop&q=80',
     specs: 'Luminosidade 26.000 lm | Temperatura 6500K Luz Fria | Driver isolado Meanwell',
     priceAoa: 490000,
     unit: 'caixa'
@@ -97,6 +105,7 @@ export const ALL_PRODUCTS = [
     title: 'Refletores Solares LED 300W com Painel & Comando (Lote 20 un.)',
     origin: 'Zhongshan, Guangdong',
     moq: '1 Lote (20 un.)',
+    image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&auto=format&fit=crop&q=80',
     specs: 'Bateria LiFePO4 de alta capacidade | Sensor de movimento crepuscular | Autonomia 12-14 horas',
     priceAoa: 560000,
     unit: 'lote'
@@ -108,6 +117,7 @@ export const ALL_PRODUCTS = [
     title: 'Conjunto Gerador Diesel Silencioso 15kVA Trifásico',
     origin: 'Wuxi, Jiangsu',
     moq: '1 Unidade',
+    image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&auto=format&fit=crop&q=80',
     specs: 'Motor diesel 4 cilindros refrigerado a água | Cabine insonorizada 68dB | Painel ATS automático',
     priceAoa: 3200000,
     unit: 'unidade'
@@ -119,6 +129,7 @@ export const ALL_PRODUCTS = [
     title: 'Mini Trator Agrícola 25HP 4x4 com Freza e Arado',
     origin: 'Weifang, Shandong',
     moq: '1 Unidade',
+    image: 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=600&auto=format&fit=crop&q=80',
     specs: 'Motor diesel monocilíndrico de alta compressão | Tração integral 4x4 | Tomada de força PTO standard',
     priceAoa: 4800000,
     unit: 'unidade'
@@ -130,6 +141,7 @@ export const ALL_PRODUCTS = [
     title: 'Telhas Trapezoidais Aluzinco Calibre 28 (Lote 100 folhas de 6m)',
     origin: 'Foshan, Guangdong',
     moq: '1 Lote (100 folhas)',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
     specs: 'Revestimento AZ150 anticorrosão tropical | Largura útil 1000mm | Resistência elevada aos UV',
     priceAoa: 1650000,
     unit: 'lote'
@@ -182,6 +194,13 @@ function renderCatalog() {
           <span class="product-category">${p.categoryLabel}</span>
           <span class="product-origin">${p.origin}</span>
         </div>
+
+        <div class="product-mirror-box">
+          <div class="product-mirror-sheen"></div>
+          <img src="${p.image}" alt="${p.title}" class="product-mirror-img" loading="lazy" />
+          <div class="product-mirror-base"></div>
+        </div>
+
         <h3 class="product-title">${p.title}</h3>
         <p class="product-specs">${p.specs}</p>
         <p class="badge-moq"><strong>Qtd. Mínima (MOQ):</strong> ${p.moq}</p>
@@ -192,7 +211,7 @@ function renderCatalog() {
           <small>por ${p.unit}</small>
         </div>
         <button type="button" class="btn-add-item" data-add="${p.id}">
-          + Pedido
+          + Adicionar ao Pedido
         </button>
       </div>
     </article>

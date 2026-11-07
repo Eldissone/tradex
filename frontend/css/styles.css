@@ -1277,3 +1277,81 @@ footer {
     flex: 0 0 88%;
   }
 }
+
+/* View Espelhada e Moderna para Imagens de Produtos */
+.product-mirror-box {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(180deg, #ffffff 0%, #f6f8fb 65%, #eaedf2 100%);
+  border: 1px solid #eef1f5;
+  border-radius: 12px;
+  margin: 0.75rem 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 4px 14px rgba(0, 0, 0, 0.03);
+  perspective: 600px;
+}
+
+/* Brilho e Reflexo Especular de Vidro/Espelho */
+.product-mirror-sheen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.75) 0%,
+    rgba(255, 255, 255, 0.2) 42%,
+    rgba(255, 255, 255, 0) 48%,
+    rgba(255, 255, 255, 0.25) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.3s ease;
+}
+
+/* Imagem com Reflexo Inferior Espelhado */
+.product-mirror-img {
+  width: 88%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+  z-index: 1;
+  -webkit-box-reflect: below 3px linear-gradient(transparent 60%, rgba(0, 0, 0, 0.25));
+}
+
+/* Linha de Base Espelhada / Pedestal Polido */
+.product-mirror-base {
+  position: absolute;
+  bottom: 0;
+  left: 8%;
+  right: 8%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.18), transparent);
+  box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Efeito Hover na View Espelhada */
+.carousel-card:hover .product-mirror-box,
+.product-card:hover .product-mirror-box {
+  border-color: #d8dde6;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.carousel-card:hover .product-mirror-img,
+.product-card:hover .product-mirror-img {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+.carousel-card:hover .product-mirror-sheen,
+.product-card:hover .product-mirror-sheen {
+  opacity: 0.9;
+}
