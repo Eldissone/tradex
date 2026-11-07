@@ -72,8 +72,87 @@ a {
 .hero {
   background: #0b0b0b;
   color: #fff;
-  min-height: 90vh;
-  padding: clamp(4rem, 10vw, 8rem) max(1.5rem, calc((100vw - 1200px) / 2));
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  padding: clamp(3rem, 6vw, 6rem) max(1.5rem, calc((100vw - 1200px) / 2));
+  overflow: hidden;
+}
+
+.hero-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3.5rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-content {
+  flex: 1.15;
+}
+
+.hero-content h1 {
+  margin-top: 0;
+}
+
+.hero-media {
+  flex: 0.85;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+}
+
+.hero-media::before {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  right: 15%;
+  bottom: 15%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(11, 11, 11, 0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-person-img {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 20px 45px rgba(0, 0, 0, 0.85));
+  animation: heroFadeIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes heroFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 960px) {
+  .hero-container {
+    flex-direction: column;
+    text-align: left;
+    gap: 2.5rem;
+  }
+  .hero-media {
+    width: 100%;
+    justify-content: center;
+  }
+  .hero-person-img {
+    max-width: 360px;
+  }
 }
 
 .eyebrow {
