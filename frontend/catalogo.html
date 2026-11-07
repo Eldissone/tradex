@@ -16,7 +16,7 @@
         <button id="closeCartBtn" class="btn-close-cart" aria-label="Fechar">✕</button>
       </div>
       <ul id="cartItemsList" class="cart-items-list">
-        <li style="color: #666; font-size: 0.85rem; padding: 2rem 0; text-align: center;">
+        <li class="cart-empty-msg">
           O seu pedido está vazio. Selecione itens do catálogo.
         </li>
       </ul>
@@ -25,7 +25,7 @@
           <span>Total Estimado:</span>
           <span id="cartTotalAoa">0 Kz</span>
         </div>
-        <button id="btnSubmitCart" class="btn-dark" style="width: 100%; text-align: center;">
+        <button id="btnSubmitCart" class="btn-dark btn-full">
           Finalizar Cotação em Kwanza
         </button>
       </div>
@@ -38,7 +38,7 @@
         <div class="nav-links">
           <a href="index.html#inicio">Início</a>
           <a href="index.html#servicos">Serviços</a>
-          <a href="catalogo.html" style="text-decoration: underline; font-weight: 600;">Catálogo</a>
+          <a href="catalogo.html" class="nav-link-active">Catálogo</a>
           <a href="index.html#simulador">Simulador</a>
           <a href="index.html#como-funciona">Como funciona</a>
           <a href="index.html#rastreio">Rastreio</a>
@@ -49,7 +49,6 @@
 
       <!-- Cabeçalho do Catálogo -->
       <header class="catalog-header">
-        <p class="eyebrow">CATÁLOGO & SOURCING DIRETO</p>
         <h1>Produtos industriais e comerciais com preços em Kwanza.</h1>
         <p class="lead">
           Fornecedores validados nas principais províncias industriais da China (Guangdong, Zhejiang, Jiangsu, Shandong). Despacho aduaneiro e entrega integrada em Luanda.
@@ -102,7 +101,7 @@
       </section>
 
       <!-- Sourcing Direto para Itens Não Listados -->
-      <section id="sourcing" class="section-standard" style="background: #fafafa;">
+      <section id="sourcing" class="section-standard section-alt-bg">
         <div class="section-head">
           <p class="eyebrow eyebrow-dark">NÃO ENCONTROU O QUE PROCURA?</p>
           <h2>Sourcing personalizado de qualquer produto na China</h2>
@@ -123,10 +122,10 @@
               <label for="productDesc">Descrição Detalhada ou Link de Fábrica</label>
               <textarea id="productDesc" rows="3" placeholder="Cole aqui o link do fornecedor chinês, quantidade desejada ou requisitos técnicos..."></textarea>
             </div>
-            <button type="submit" class="btn-dark" style="align-self: flex-start;">
+            <button type="submit" class="btn-dark btn-self-start">
               Solicitar Cotação em Kwanza
             </button>
-            <div id="sourcingSuccessMsg" style="display: none; font-size: 0.85rem; color: #0b0b0b; padding: 0.8rem; background: #e0e0e0; margin-top: 0.5rem;">
+            <div id="sourcingSuccessMsg" class="sourcing-feedback-msg">
               Solicitação registada com sucesso! A nossa equipa entrará em contacto com a cotação detalhada.
             </div>
           </form>
@@ -136,14 +135,14 @@
       <!-- Rodapé Original -->
       <footer id="contacto">
         <div>
-          <strong style="letter-spacing: .12em;">TRADEX GLOBAL TRADING</strong>
-          <p style="color: #c6c6c6; margin: 0.5rem 0 0; font-size: 0.72rem;">
+          <strong class="footer-brand-title">TRADEX GLOBAL TRADING</strong>
+          <p class="footer-address">
             Luanda: Bairro Azul, Rua Comandante Gika | China Hub: Yuexiu District, Guangzhou
           </p>
         </div>
-        <div style="text-align: right;">
+        <div class="footer-meta-right">
           <span>Your Gateway to Global Commerce.</span>
-          <p style="color: #777; margin: 0.5rem 0 0; font-size: 0.7rem;">&copy; 2026 TradeX Global Trading. Todos os direitos reservados.</p>
+          <p class="footer-copyright">&copy; 2026 TradeX Global Trading. Todos os direitos reservados.</p>
         </div>
       </footer>
     </main>
@@ -151,4 +150,3 @@
     <script type="module" src="js/catalogo.js"></script>
   </body>
 </html>
-

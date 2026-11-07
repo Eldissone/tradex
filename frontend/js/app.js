@@ -123,7 +123,7 @@ function updateCartUi() {
 
   if (items.length === 0) {
     listEl.innerHTML = `
-      <li style="color: #666; font-size: 0.85rem; padding: 2rem 0; text-align: center;">
+      <li class="cart-empty-msg">
         O seu pedido está vazio. Selecione itens do catálogo abaixo.
       </li>
     `;
@@ -136,9 +136,9 @@ function updateCartUi() {
         <h5>${item.title}</h5>
         <p>${item.quantity}x ${cartStore.formatAoa(item.priceAoa)}</p>
       </div>
-      <div style="text-align: right;">
+      <div class="cart-item-right">
         <strong>${cartStore.formatAoa(item.priceAoa * item.quantity)}</strong><br>
-        <button type="button" data-remove="${index}" style="background: none; border: 0; color: #888; font-size: 0.75rem; text-decoration: underline; cursor: pointer; margin-top: 4px;">
+        <button type="button" class="btn-cart-remove" data-remove="${index}">
           Remover
         </button>
       </div>
@@ -156,14 +156,12 @@ function updateCartUi() {
 
 function openCart() {
   document.getElementById('cartDrawer')?.classList.add('open');
-  const overlay = document.getElementById('cartOverlay');
-  if (overlay) overlay.style.display = 'block';
+  document.getElementById('cartOverlay')?.classList.add('visible');
 }
 
 function closeCart() {
   document.getElementById('cartDrawer')?.classList.remove('open');
-  const overlay = document.getElementById('cartOverlay');
-  if (overlay) overlay.style.display = 'none';
+  document.getElementById('cartOverlay')?.classList.remove('visible');
 }
 
 function setupCartDrawer() {
@@ -266,7 +264,7 @@ function setupTracking() {
     if (!code) return;
 
     if (metaCode) metaCode.textContent = code;
-    details.style.display = 'block';
+    details.classList.add('visible');
 
     if (timeline) {
       timeline.innerHTML = DEMO_EVENTS.map(ev => `
@@ -291,10 +289,10 @@ function setupSourcingForm() {
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
     if (successMsg) {
-      successMsg.style.display = 'block';
+      successMsg.classList.add('visible');
       form.reset();
       setTimeout(() => {
-        successMsg.style.display = 'none';
+        successMsg.classList.remove('visible');
       }, 7000);
     }
   });

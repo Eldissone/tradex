@@ -16,7 +16,7 @@
         <button id="closeCartBtn" class="btn-close-cart" aria-label="Fechar">✕</button>
       </div>
       <ul id="cartItemsList" class="cart-items-list">
-        <li style="color: #666; font-size: 0.85rem; padding: 2rem 0; text-align: center;">
+        <li class="cart-empty-msg">
           O seu pedido está vazio. Selecione itens do catálogo abaixo.
         </li>
       </ul>
@@ -25,7 +25,7 @@
           <span>Total Estimado:</span>
           <span id="cartTotalAoa">0 Kz</span>
         </div>
-        <button id="btnSubmitCart" class="btn-dark" style="width: 100%; text-align: center;">
+        <button id="btnSubmitCart" class="btn-dark btn-full">
           Finalizar Cotação em Kwanza
         </button>
       </div>
@@ -48,30 +48,26 @@
 
       <!-- Hero Section Original -->
       <section id="inicio" class="hero">
-        <p class="eyebrow">CHINA — ANGOLA</p>
         <h1>O seu acesso ao comércio global.</h1>
         <p class="lead">Uma plataforma para descobrir produtos, gerir importações e acompanhar entregas com total transparência e preços em Kwanza.</p>
         <div class="actions">
-          <a href="catalogo.html" class="btn-primary">Explorar catálogo completo</a>
-          <a href="index.html#simulador" class="btn-primary" style="background: transparent; color: #fff; border: 1px solid #fff;">Simular frete</a>
-          <a href="index.html#como-funciona">Como funciona</a>
+          <a href="catalogo.html" class="btn-primary">Explorar catálogo</a>
+          <a href="index.html#simulador" class="btn-primary btn-outline-white">Simular</a>
+          <a href="index.html#como-funciona"  class="btn-primary btn-outline-white">Como funciona</a>
         </div>
       </section>
 
       <!-- Capacidades / Serviços Original -->
       <section id="servicos" class="capabilities" aria-label="Serviços TradeX">
         <article>
-          <p class="eyebrow eyebrow-dark">COTAÇÃO EM AOA</p>
           <h2>Comércio global</h2>
           <p>Acesso direto a fábricas e mercados de Yiwu e Guangzhou com preços convertidos e pagos em Kwanza angolano.</p>
         </article>
         <article>
-          <p class="eyebrow eyebrow-dark">TRANSPARÊNCIA TOTAL</p>
           <h2>Logística visível</h2>
           <p>Acompanhe cada etapa da sua remessa, do porto de embarque na China até ao desalfandegamento em Luanda.</p>
         </article>
         <article>
-          <p class="eyebrow eyebrow-dark">CENTRALIZAÇÃO</p>
           <h2>Gestão integrada</h2>
           <p>Compras com fornecedores validados, frete marítimo/aéreo e documentação alfandegária num só lugar.</p>
         </article>
@@ -155,20 +151,19 @@
 
       <!-- Processo Original -->
       <section id="como-funciona" class="process">
-        <p class="eyebrow eyebrow-dark">PROCESSO SIMPLES</p>
         <h2>Da escolha à entrega, tudo acompanhado.</h2>
         <ol>
           <li>
             <strong>1. Escolha ou solicite os produtos</strong>
-            <p style="margin-top: 0.4rem; color: #464646;">Selecione os artigos do catálogo ou envie ligações de fábricas chinesas para cotação.</p>
+            <p class="process-step-desc">Selecione os artigos do catálogo ou envie ligações de fábricas chinesas para cotação.</p>
           </li>
           <li>
             <strong>2. Pague em AOA com fatura pró-forma</strong>
-            <p style="margin-top: 0.4rem; color: #464646;">Liquidação por transferência bancária em Kwanzas através de parceiros autorizados.</p>
+            <p class="process-step-desc">Liquidação por transferência bancária em Kwanzas através de parceiros autorizados.</p>
           </li>
           <li>
             <strong>3. Acompanhe a sua encomenda</strong>
-            <p style="margin-top: 0.4rem; color: #464646;">Notificações a cada marco: saída do porto na China, desembaraço e levantamento em Luanda.</p>
+            <p class="process-step-desc">Notificações a cada marco: saída do porto na China, desembaraço e levantamento em Luanda.</p>
           </li>
         </ol>
       </section>
@@ -221,7 +216,7 @@
       </section>
 
       <!-- Sourcing Personalizado / Pedido de Cotação Direta -->
-      <section id="sourcing" class="section-standard">
+      <section id="sourcing" class="section-standard cta-section">
         <div class="section-head">
           <p class="eyebrow eyebrow-dark">SOURCING DIRETO</p>
           <h2>Tem um produto específico em vista?</h2>
@@ -242,10 +237,10 @@
               <label for="productDesc">Descrição do Produto ou Link (1688 / Alibaba / Taobao)</label>
               <textarea id="productDesc" rows="3" placeholder="Indique especificações, quantidades estimadas ou cole aqui o link do produto..."></textarea>
             </div>
-            <button type="submit" class="btn-dark" style="align-self: flex-start;">
+            <button type="submit" class="btn-dark btn-self-start">
               Enviar Solicitação de Cotação
             </button>
-            <div id="sourcingSuccessMsg" style="display: none; font-size: 0.85rem; color: #0b0b0b; padding: 0.8rem; background: #f0f0f0; margin-top: 0.5rem;">
+            <div id="sourcingSuccessMsg" class="sourcing-feedback-msg">
               Solicitação registada com sucesso! A equipa comercial da TradeX entrará em contacto com a cotação detalhada em Kwanzas.
             </div>
           </form>
@@ -255,14 +250,14 @@
       <!-- Rodapé Original -->
       <footer id="contacto">
         <div>
-          <strong style="letter-spacing: .12em;">TRADEX GLOBAL TRADING</strong>
-          <p style="color: #c6c6c6; margin: 0.5rem 0 0; font-size: 0.72rem;">
-            Luanda - Angola | China Hub
+          <strong class="footer-brand-title">TRADEX GLOBAL TRADING</strong>
+          <p class="footer-address">
+            Luanda: Bairro Azul, Rua Comandante Gika | China Hub: Yuexiu District, Guangzhou
           </p>
         </div>
-        <div style="text-align: right;">
+        <div class="footer-meta-right">
           <span>Your Gateway to Global Commerce.</span>
-          <p style="color: #777; margin: 0.5rem 0 0; font-size: 0.7rem;">&copy; 2026 TradeX Global Trading. Todos os direitos reservados.</p>
+          <p class="footer-copyright">&copy; 2026 TradeX Global Trading. Todos os direitos reservados.</p>
         </div>
       </footer>
     </main>

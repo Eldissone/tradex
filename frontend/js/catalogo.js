@@ -154,7 +154,6 @@ function renderCatalog() {
     return matchCategory && matchSearch;
   });
 
-  // Ordenação
   if (currentSort === 'price-asc') {
     filtered.sort((a, b) => a.priceAoa - b.priceAoa);
   } else if (currentSort === 'price-desc') {
@@ -167,10 +166,10 @@ function renderCatalog() {
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div style="grid-column: 1 / -1; background: #fff; padding: 4rem 2rem; text-align: center;">
-        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Nenhum produto encontrado</h3>
-        <p style="color: #666; font-size: 0.9rem;">Tente pesquisar por outros termos ou solicite uma cotação de sourcing personalizado.</p>
-        <a href="#sourcing" class="btn-dark" style="margin-top: 1.5rem; display: inline-block;">Solicitar Cotação Direta da China</a>
+      <div class="catalog-empty-state">
+        <h3 class="catalog-empty-title">Nenhum produto encontrado</h3>
+        <p class="catalog-empty-desc">Tente pesquisar por outros termos ou solicite uma cotação de sourcing personalizado.</p>
+        <a href="#sourcing" class="btn-dark catalog-empty-action">Solicitar Cotação Direta da China</a>
       </div>
     `;
     return;
@@ -179,7 +178,7 @@ function renderCatalog() {
   container.innerHTML = filtered.map(p => `
     <article class="product-card" data-id="${p.id}">
       <div>
-        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div class="product-card-top">
           <span class="product-category">${p.categoryLabel}</span>
           <span class="product-origin">${p.origin}</span>
         </div>
@@ -193,7 +192,7 @@ function renderCatalog() {
           <small>por ${p.unit}</small>
         </div>
         <button type="button" class="btn-add-item" data-add="${p.id}">
-          + Adicionar ao Pedido
+          + Pedido
         </button>
       </div>
     </article>
@@ -228,7 +227,7 @@ function updateCartUi() {
 
   if (items.length === 0) {
     listEl.innerHTML = `
-      <li style="color: #666; font-size: 0.85rem; padding: 2rem 0; text-align: center;">
+      <li class="cart-empty-msg">
         O seu pedido está vazio. Selecione itens do catálogo.
       </li>
     `;
@@ -241,9 +240,9 @@ function updateCartUi() {
         <h5>${item.title}</h5>
         <p>${item.quantity}x ${cartStore.formatAoa(item.priceAoa)}</p>
       </div>
-      <div style="text-align: right;">
+      <div class="cart-item-right">
         <strong>${cartStore.formatAoa(item.priceAoa * item.quantity)}</strong><br>
-        <button type="button" data-remove="${index}" style="background: none; border: 0; color: #888; font-size: 0.75rem; text-decoration: underline; cursor: pointer; margin-top: 4px;">
+        <button type="button" class="btn-cart-remove" data-remove="${index}">
           Remover
         </button>
       </div>
@@ -261,14 +260,12 @@ function updateCartUi() {
 
 function openCart() {
   document.getElementById('cartDrawer')?.classList.add('open');
-  const overlay = document.getElementById('cartOverlay');
-  if (overlay) overlay.style.display = 'block';
+  document.getElementById('cartOverlay')?.classList.add('visible');
 }
 
 function closeCart() {
   document.getElementById('cartDrawer')?.classList.remove('open');
-  const overlay = document.getElementById('cartOverlay');
-  if (overlay) overlay.style.display = 'none';
+  document.getElementById('cartOverlay')?.classList.remove('visible');
 }
 
 function setupCartDrawer() {
@@ -291,7 +288,6 @@ function setupCartDrawer() {
 }
 
 function setupFiltersAndSearch() {
-  // Filtros de Categoria
   const filterBtns = document.querySelectorAll('.filter-btn');
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -302,7 +298,6 @@ function setupFiltersAndSearch() {
     });
   });
 
-  // Pesquisa
   const searchInput = document.getElementById('catalogSearch');
   const searchForm = document.getElementById('searchForm');
 
@@ -317,7 +312,6 @@ function setupFiltersAndSearch() {
     renderCatalog();
   });
 
-  // Ordenação
   const sortSelect = document.getElementById('catalogSort');
   sortSelect?.addEventListener('change', () => {
     currentSort = sortSelect.value;
@@ -332,10 +326,10 @@ function setupSourcingForm() {
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
     if (successMsg) {
-      successMsg.style.display = 'block';
+      successMsg.classList.add('visible');
       form.reset();
       setTimeout(() => {
-        successMsg.style.display = 'none';
+        successMsg.classList.remove('visible');
       }, 7000);
     }
   });
@@ -350,4 +344,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
   void api.health();
 });
-
