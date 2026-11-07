@@ -354,13 +354,84 @@ function setupSourcingForm() {
   });
 }
 
+function setupCatalogHeroSlider() {
+  const slider = document.getElementById('catalogHeroSlider');
+  if (!slider) return;
+
+  const slides = slider.querySelectorAll('.catalog-slide');
+  const dots = slider.querySelectorAll('.catalog-slider-dot');
+  const prevBtn = document.getElementById('sliderPrevBtn');
+  const nextBtn = document.getElementById('sliderNextBtn');
+
+  if (slides.length === 0) return;
+
+  let currentIdx = 0;
+  let timer = null;
+  const intervalMs = 5000; // Troca automática a cada 5 segundos
+
+  function goToSlide(index) {
+    slides[currentIdx]?.classList.remove('active');
+    dots[currentIdx]?.classList.remove('active');
+
+    currentIdx = (index + slides.length) % slides.length;
+
+    slides[currentIdx]?.classList.add('active');
+    dots[currentIdx]?.classList.add('active');
+  }
+
+  function nextSlide() {
+    goToSlide(currentIdx + 1);
+  }
+
+  function prevSlide() {
+    goToSlide(currentIdx - 1);
+  }
+
+  function startAutoPlay() {
+    stopAutoPlay();
+    timer = setInterval(nextSlide, intervalMs);
+  }
+
+  function stopAutoPlay() {
+    if (timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+  }
+
+  prevBtn?.addEventListener('click', () => {
+    prevSlide();
+    startAutoPlay();
+  });
+
+  nextBtn?.addEventListener('click', () => {
+    nextSlide();
+    startAutoPlay();
+  });
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const idx = parseInt(dot.getAttribute('data-go'), 10);
+      if (!isNaN(idx)) {
+        goToSlide(idx);
+        startAutoPlay();
+      }
+    });
+  });
+
+  slider.addEventListener('mouseenter', stopAutoPlay);
+  slider.addEventListener('mouseleave', startAutoPlay);
+
+  startAutoPlay();
+}
+
 function setupHeaderScroll() {
   const header = document.getElementById('mainHeader');
-  const catalogHeader = document.querySelector('.catalog-header');
-  if (!header || !catalogHeader) return;
+  const heroSlider = document.getElementById('catalogHeroSlider') || document.querySelector('.catalog-header');
+  if (!header || !heroSlider) return;
 
   function onScroll() {
-    const threshold = catalogHeader.offsetHeight - header.offsetHeight;
+    const threshold = heroSlider.offsetHeight - header.offsetHeight;
     if (window.scrollY > threshold) {
       header.classList.add('past-hero');
     } else {
@@ -374,6 +445,7 @@ function setupHeaderScroll() {
 
 document.addEventListener('DOMContentLoaded', () => {
   setupHeaderScroll();
+  setupCatalogHeroSlider();
   renderCatalog();
   setupFiltersAndSearch();
   setupCartDrawer();

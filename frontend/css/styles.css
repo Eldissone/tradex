@@ -900,6 +900,157 @@ footer {
   }
 }
 /* Estilos Adicionais para a Página de Catálogo */
+/* Banners do Hero do Catálogo com Slider Automático */
+.catalog-hero-slider {
+  position: relative;
+  width: 100%;
+  min-height: 85vh;
+  background-color: #0b0b0b;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #1f242d;
+}
+
+.catalog-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: calc(3rem + 4.5rem) max(1.5rem, calc((100vw - 1200px) / 2)) 4.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
+
+.catalog-slide.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+}
+
+.catalog-slide-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.06);
+  transition: transform 6s ease-out;
+  z-index: -2;
+}
+
+.catalog-slide.active .catalog-slide-bg {
+  transform: scale(1);
+}
+
+.slide-bg-1 {
+  background-image: url('https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1600&auto=format&fit=crop&q=80');
+}
+
+.slide-bg-2 {
+  background-image: url('https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=1600&auto=format&fit=crop&q=80');
+}
+
+.slide-bg-3 {
+  background-image: url('https://images.unsplash.com/photo-1541888946425-d0fbb186f5f8?w=1600&auto=format&fit=crop&q=80');
+}
+
+.catalog-slide-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(11, 11, 11, 0.92) 0%,
+    rgba(11, 11, 11, 0.82) 50%,
+    rgba(11, 11, 11, 0.65) 100%
+  );
+  z-index: -1;
+}
+
+.catalog-slide-content {
+  max-width: 820px;
+  color: #fff;
+  transform: translateY(16px);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.catalog-slide.active .catalog-slide-content {
+  transform: translateY(0);
+}
+
+.catalog-slide-content h1 {
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  letter-spacing: -.05em;
+  line-height: 1.05;
+  margin: 0.5rem 0 1rem;
+}
+
+.catalog-slide-content .lead {
+  color: #d1d5db;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 680px;
+}
+
+.catalog-slider-controls {
+  position: absolute;
+  bottom: 2rem;
+  left: max(1.5rem, calc((100vw - 1200px) / 2));
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  z-index: 10;
+}
+
+.catalog-slider-arrow {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 50%;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+
+.catalog-slider-arrow:hover {
+  background: #fff;
+  color: #0b0b0b;
+  border-color: #fff;
+}
+
+.catalog-slider-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.catalog-slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.catalog-slider-dot.active {
+  width: 24px;
+  border-radius: 4px;
+  background: #fff;
+}
+
+/* Fallback para catalog-header caso seja referenciado */
 .catalog-header {
   background: #0b0b0b;
   color: #fff;

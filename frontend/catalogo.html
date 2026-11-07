@@ -50,13 +50,58 @@
 
     <main>
 
-      <!-- Cabeçalho do Catálogo -->
-      <header class="catalog-header">
-        <h1>Produtos industriais e comerciais com preços em Kwanza.</h1>
-        <p class="lead">
-          Fornecedores validados nas principais províncias industriais da China (Guangdong, Zhejiang, Jiangsu, Shandong). Despacho aduaneiro e entrega integrada em Luanda.
-        </p>
-      </header>
+      <!-- Cabeçalho do Catálogo com Slider de 3 Banners -->
+      <section class="catalog-hero-slider" id="catalogHeroSlider" aria-label="Banners em Destaque do Catálogo">
+        <!-- Slide 1: Logística Internacional & Sourcing Geral -->
+        <div class="catalog-slide active" data-slide="0">
+          <div class="catalog-slide-bg slide-bg-1"></div>
+          <div class="catalog-slide-overlay"></div>
+          <div class="catalog-slide-content">
+            <p class="eyebrow">CHINA ➔ ANGOLA</p>
+            <h1>Produtos industriais e comerciais com preços em Kwanza.</h1>
+            <p class="lead">
+              Fornecedores validados nas principais províncias industriais da China (Guangdong, Zhejiang, Jiangsu, Shandong). Despacho aduaneiro e entrega integrada em Luanda.
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 2: Energia Solar & Sistemas Híbridos -->
+        <div class="catalog-slide" data-slide="1">
+          <div class="catalog-slide-bg slide-bg-2"></div>
+          <div class="catalog-slide-overlay"></div>
+          <div class="catalog-slide-content">
+            <p class="eyebrow">ENERGIA RENOVÁVEL & EFICIÊNCIA</p>
+            <h1>Soluções solares completas com garantia de fábrica.</h1>
+            <p class="lead">
+              Painéis monocristalinos Tier 1, inversores híbridos inteligentes e baterias de lítio LiFePO4 para projetos residenciais, comerciais e industriais em Angola.
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 3: Maquinaria Pesada & Construção -->
+        <div class="catalog-slide" data-slide="2">
+          <div class="catalog-slide-bg slide-bg-3"></div>
+          <div class="catalog-slide-overlay"></div>
+          <div class="catalog-slide-content">
+            <p class="eyebrow">MAQUINARIA INDUSTRIAL & OBRAS</p>
+            <h1>Equipamento pesado e materiais para grandes projetos.</h1>
+            <p class="lead">
+              Máquinas bloqueiras hidráulicas, andaimes modulares galvanizados e geradores diesel com frete marítimo consolidado FCL e LCL até ao Porto de Luanda.
+            </p>
+          </div>
+        </div>
+
+        <!-- Controlos do Slider (Setas + Indicadores Dots) -->
+        <div class="catalog-slider-controls">
+          <button id="sliderPrevBtn" class="catalog-slider-arrow" aria-label="Banner anterior">←</button>
+          <div class="catalog-slider-dots" id="sliderDots">
+            <button class="catalog-slider-dot active" data-go="0" aria-label="Ir para banner 1"></button>
+            <button class="catalog-slider-dot" data-go="1" aria-label="Ir para banner 2"></button>
+            <button class="catalog-slider-dot" data-go="2" aria-label="Ir para banner 3"></button>
+          </div>
+          <button id="sliderNextBtn" class="catalog-slider-arrow" aria-label="Próximo banner">→</button>
+        </div>
+      </section>
 
       <!-- Secção Principal do Catálogo -->
       <section class="section-standard">
@@ -140,7 +185,7 @@
         <div>
           <strong class="footer-brand-title">TRADEX GLOBAL TRADING</strong>
           <p class="footer-address">
-            Luanda: Bairro Azul, Rua Comandante Gika | China Hub: Yuexiu District, Guangzhou
+            Luanda - Angola | China Hub: Yuexiu District, Guangzhou
           </p>
         </div>
         <div class="footer-meta-right">
