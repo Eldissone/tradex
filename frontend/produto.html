@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="pt-AO">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Detalhes do produto, ficha técnica completa e cotação de importação direta da China para Angola." />
+    <title>Detalhes do Produto | TradeX Global Trading</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <!-- Gaveta do Pedido (Cart Drawer) -->
+    <div id="cartOverlay" class="cart-drawer-overlay"></div>
+    <aside id="cartDrawer" class="cart-drawer" aria-label="Resumo do Pedido">
+      <div class="cart-drawer-head">
+        <h3>Pedido de Importação</h3>
+        <button id="closeCartBtn" class="btn-close-cart" aria-label="Fechar">✕</button>
+      </div>
+      <ul id="cartItemsList" class="cart-items-list">
+        <li class="cart-empty-msg">
+          O seu pedido está vazio. Selecione itens do catálogo.
+        </li>
+      </ul>
+      <div class="cart-footer">
+        <div class="cart-total-line">
+          <span>Total Estimado:</span>
+          <span id="cartTotalAoa">0 Kz</span>
+        </div>
+        <button id="btnSubmitCart" class="btn-dark btn-full">
+          Finalizar Cotação em Kwanza
+        </button>
+      </div>
+    </aside>
+
+    <!-- Header Fixo / Barra de Navegação -->
+    <header id="mainHeader" class="main-header past-hero">
+      <nav class="nav" aria-label="Navegação principal">
+        <a class="brand" href="index.html#inicio">TRADEX<span>GLOBAL</span></a>
+        <div class="nav-links">
+          <a href="index.html#inicio">Início</a>
+          <a href="index.html#servicos">Serviços</a>
+          <a href="catalogo.html">Catálogo</a>
+          <a href="index.html#simulador">Simulador</a>
+          <a href="index.html#como-funciona">Como funciona</a>
+          <a href="index.html#rastreio">Rastreio</a>
+          <a href="index.html#contacto">Contacto</a>
+          <button id="openCartBtn" class="nav-cart-btn" type="button">Pedido (<span id="cartCount">0</span>)</button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="product-detail-section">
+        <!-- Navegação Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Trilha de navegação">
+          <a href="index.html">Início</a>
+          <span>/</span>
+          <a href="catalogo.html">Catálogo</a>
+          <span>/</span>
+          <span id="breadcrumbTitle" class="breadcrumb-current">A carregar produto...</span>
+        </nav>
+
+        <!-- Grade Principal de Detalhes -->
+        <div class="product-detail-grid">
+          <!-- Coluna da Esquerda: Galeria com 3 Ângulos Diferentes -->
+          <div class="product-gallery">
+            <div class="product-detail-mirror-stage">
+              <span id="activeAngleBadge" class="angle-badge">Ângulo 1: Vista Frontal</span>
+              <div class="product-mirror-sheen"></div>
+              <img id="mainProductImg" src="" alt="Produto TradeX" class="product-detail-main-img" />
+              <div class="product-mirror-base"></div>
+            </div>
+
+            <!-- Miniaturas dos 3 Ângulos -->
+            <div class="product-thumbnails" id="productThumbnails">
+              <!-- Injetado dinamicamente via produto.js -->
+            </div>
+          </div>
+
+          <!-- Coluna da Direita: Informações e Compra -->
+          <div class="product-info-panel">
+            <div class="product-meta-tags">
+              <span id="productCategoryBadge" class="badge-tag">CATEGORIA</span>
+              <span id="productOriginBadge" class="origin-tag">Foshan, Guangdong</span>
+            </div>
+
+            <h1 id="productTitle">Carregando informações do produto...</h1>
+
+            <div class="product-detail-price" id="productPriceAoa">0 Kz</div>
+            <div class="product-unit-info" id="productUnitInfo">preço FOB/CIF convertido em Kwanza (AOA)</div>
+
+            <div class="product-highlights-box">
+              <div class="highlight-item">
+                <span>✓</span> Fornecedor validado e inspecionado na China
+              </div>
+              <div class="highlight-item">
+                <span>✓</span> Fatura pró-forma oficial e pagamento facilitado em AOA
+              </div>
+              <div class="highlight-item">
+                <span>✓</span> Desalfandegamento e logística integrada até Luanda
+              </div>
+            </div>
+
+            <div class="product-purchase-box">
+              <div class="qty-selector">
+                <button type="button" id="qtyMinusBtn" class="qty-btn" aria-label="Diminuir quantidade">−</button>
+                <input type="number" id="productQtyInput" class="qty-input" value="1" min="1" max="99" />
+                <button type="button" id="qtyPlusBtn" class="qty-btn" aria-label="Aumentar quantidade">+</button>
+              </div>
+
+              <button type="button" id="btnAddToCartDetail" class="btn-add-detail">
+                + Adicionar ao Pedido
+              </button>
+            </div>
+
+            <a href="index.html#sourcing" class="btn-dark btn-quote-detail">
+              Solicitar Cotação Pró-forma Oficial
+            </a>
+
+            <p id="productDescription" class="product-summary-text"></p>
+          </div>
+        </div>
+
+        <!-- Secção de Ficha Técnica Detalhada -->
+        <section class="specs-section">
+          <h2>Especificações Técnicas de Fábrica</h2>
+          <table class="specs-table">
+            <tbody id="techSpecsTableBody">
+              <!-- Injetado dinamicamente via produto.js -->
+            </tbody>
+          </table>
+
+          <h2>Logística & Prazos de Entrega (China ➔ Angola)</h2>
+          <div class="logistics-cards-grid" id="logisticsInfoGrid">
+            <!-- Injetado dinamicamente via produto.js -->
+          </div>
+        </section>
+
+        <!-- Produtos Relacionados -->
+        <section class="specs-section">
+          <h2>Outros Produtos em Destaque</h2>
+          <div class="product-grid" id="relatedProductsGrid">
+            <!-- Injetado dinamicamente via produto.js -->
+          </div>
+        </section>
+      </section>
+
+      <!-- Rodapé Original -->
+      <footer id="contacto">
+        <div>
+          <strong class="footer-brand-title">TRADEX GLOBAL TRADING</strong>
+          <p class="footer-address">
+            Luanda: Bairro Azul, Rua Comandante Gika | China Hub: Yuexiu District, Guangzhou
+          </p>
+        </div>
+        <div class="footer-meta-right">
+          <span>Your Gateway to Global Commerce.</span>
+          <p class="footer-copyright">&copy; 2026 TradeX Global Trading. Todos os direitos reservados.</p>
+        </div>
+      </footer>
+    </main>
+
+    <script type="module" src="js/produto.js"></script>
+  </body>
+</html>
+

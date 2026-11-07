@@ -1,97 +1,8 @@
 import { api } from './api.js';
 import { cartStore } from './cart.js';
+import { PRODUCTS_DATA } from './products-data.js';
 
-// Catálogo em destaque para o Carrossel com imagens de alta definição e view espelhada
-const PRODUCTS = [
-  {
-    id: 'prod-01',
-    category: 'solar',
-    title: 'Kit Painéis Solares Monocristalinos 550W (Palete 30 un.)',
-    origin: 'Foshan, Guangdong',
-    badge: 'Tier 1 Fabrico',
-    image: 'https://images.unsplash.com/photo-1509391365360-2e959784a276?w=600&auto=format&fit=crop&q=80',
-    specs: 'Eficiência 21.3% | Células PERC | Vidro temperado antirreflexo | Garantia 12 anos',
-    priceAoa: 3450000,
-    unit: 'palete'
-  },
-  {
-    id: 'prod-02',
-    category: 'solar',
-    title: 'Inversor Solar Híbrido 5.5kW 48V Pure Sine Wave',
-    origin: 'Shenzhen, Guangdong',
-    badge: 'Mais Vendido',
-    image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&auto=format&fit=crop&q=80',
-    specs: 'Compatível com Baterias Lítio & Gel | MPPT 100A integrado | Monitorização Wi-Fi',
-    priceAoa: 820000,
-    unit: 'unidade'
-  },
-  {
-    id: 'prod-03',
-    category: 'industrial',
-    title: 'Mini Betoneira Elétrica 350L Motor Cobre 220V',
-    origin: 'Guangzhou, Guangdong',
-    badge: 'Alta Resistência',
-    image: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?w=600&auto=format&fit=crop&q=80',
-    specs: 'Tambor reforçado 3mm | Rodas de ferro fundido | Capacidade mistura 260L',
-    priceAoa: 680000,
-    unit: 'unidade'
-  },
-  {
-    id: 'prod-04',
-    category: 'industrial',
-    title: 'Conjunto de Andaimes Modulares Galvanizados (100 m²)',
-    origin: 'Tianjin',
-    badge: 'Segurança Q235',
-    image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&auto=format&fit=crop&q=80',
-    specs: 'Aço carbono galvanizado a quente | Travessas diagonais e pranchas antiderrapantes',
-    priceAoa: 1950000,
-    unit: 'conjunto'
-  },
-  {
-    id: 'prod-05',
-    category: 'electronics',
-    title: 'Campânula LED Industrial High Bay 200W (Caixa 10 un.)',
-    origin: 'Zhongshan, Guangdong',
-    badge: 'IP65 Industrial',
-    image: 'https://images.unsplash.com/photo-1565814636199-ae8133055c1c?w=600&auto=format&fit=crop&q=80',
-    specs: 'Luminosidade 26.000 lm | Luz Fria 6500K | Driver Meanwell de alta eficiência',
-    priceAoa: 490000,
-    unit: 'caixa'
-  },
-  {
-    id: 'prod-06',
-    category: 'electronics',
-    title: 'Refletores Solares LED 300W com Painel (Lote 20 un.)',
-    origin: 'Zhongshan, Guangdong',
-    badge: 'Autonomia 14h',
-    image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&auto=format&fit=crop&q=80',
-    specs: 'Bateria LiFePO4 de longa duração | Sensor crepuscular com controlo remoto',
-    priceAoa: 560000,
-    unit: 'lote'
-  },
-  {
-    id: 'prod-10',
-    category: 'industrial',
-    title: 'Conjunto Gerador Diesel Silencioso 15kVA Trifásico',
-    origin: 'Wuxi, Jiangsu',
-    badge: 'Insonorizado 68dB',
-    image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&auto=format&fit=crop&q=80',
-    specs: 'Motor diesel 4 cilindros com arranque automático ATS | Cabine insonorizada',
-    priceAoa: 3200000,
-    unit: 'unidade'
-  },
-  {
-    id: 'prod-11',
-    category: 'industrial',
-    title: 'Mini Trator Agrícola 25HP 4x4 com Freza e Arado',
-    origin: 'Weifang, Shandong',
-    badge: 'Maquinaria Direta',
-    image: 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=600&auto=format&fit=crop&q=80',
-    specs: 'Motor diesel monocilíndrico de alta compressão | Tração 4x4 e tomada de força PTO',
-    priceAoa: 4800000,
-    unit: 'unidade'
-  }
-];
+const PRODUCTS = PRODUCTS_DATA;
 
 let activeCategory = 'all';
 
@@ -124,15 +35,17 @@ function renderCarousel(filterCategory = 'all') {
           <span class="carousel-origin">${p.origin}</span>
         </div>
 
-        <div class="product-mirror-box">
-          <div class="product-mirror-sheen"></div>
-          <img src="${p.image}" alt="${p.title}" class="product-mirror-img" loading="lazy" />
-          <div class="product-mirror-base"></div>
-        </div>
+        <a href="produto.html?id=${p.id}" class="nav-link">
+          <div class="product-mirror-box">
+            <div class="product-mirror-sheen"></div>
+            <img src="${p.image}" alt="${p.title}" class="product-mirror-img" loading="lazy" />
+            <div class="product-mirror-base"></div>
+          </div>
 
-        <span class="product-category">${p.category}</span>
-        <h3 class="product-title">${p.title}</h3>
-        <p class="product-specs">${p.specs}</p>
+          <span class="product-category">${p.category}</span>
+          <h3 class="product-title">${p.title}</h3>
+          <p class="product-specs">${p.specs}</p>
+        </a>
       </div>
       <div class="product-bottom">
         <div class="product-price">
