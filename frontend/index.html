@@ -73,12 +73,18 @@
         </article>
       </section>
 
-      <!-- Catálogo de Produtos com Preços em AOA -->
+      <!-- Carrossel de Produtos em Destaque -->
       <section id="catalogo" class="section-standard">
-        <div class="section-head">
-          <p class="eyebrow eyebrow-dark">CATÁLOGO EM DESTAQUE</p>
-          <h2>Produtos com fornecedor validado na China</h2>
-          <p>Equipamentos industriais, soluções de energia solar e bens de consumo com cotação imediata em Kwanza (AOA).</p>
+        <div class="carousel-section-head">
+          <div class="section-head">
+            <p class="eyebrow eyebrow-dark">CATÁLOGO EM DESTAQUE</p>
+            <h2>Produtos com fornecedor validado na China</h2>
+            <p>Equipamentos industriais, soluções de energia solar e bens de consumo com cotação imediata em Kwanza (AOA).</p>
+          </div>
+          <div class="carousel-controls">
+            <button id="carouselPrevBtn" class="carousel-btn" aria-label="Produto anterior">←</button>
+            <button id="carouselNextBtn" class="carousel-btn" aria-label="Próximo produto">→</button>
+          </div>
         </div>
 
         <div class="category-filters" id="categoryFilters">
@@ -88,8 +94,18 @@
           <button class="filter-btn" data-category="electronics">Eletrónicos & Iluminação</button>
         </div>
 
-        <div class="product-grid" id="productGrid">
-          <!-- Injetado dinamicamente via app.js -->
+        <div class="carousel-wrapper">
+          <div class="carousel-track" id="productCarouselTrack">
+            <!-- Injetado dinamicamente via app.js -->
+          </div>
+        </div>
+
+        <div class="carousel-dots" id="carouselDots">
+          <!-- Indicadores dinâmicos via app.js -->
+        </div>
+
+        <div class="carousel-footer-action">
+          <a href="catalogo.html" class="btn-dark">Ver Todo o Catálogo Completo &rarr;</a>
         </div>
       </section>
 
