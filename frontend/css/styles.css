@@ -2419,8 +2419,10 @@ footer {
 }
 
 .card-status-pill {
+  text-align: center;
   font-size: 0.7rem;
   font-weight: 700;
+  min-width: 100px;
   padding: 0.3rem 0.65rem;
   border-radius: 20px;
   letter-spacing: 0.02em;
