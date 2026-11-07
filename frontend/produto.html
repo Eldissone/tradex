@@ -39,11 +39,32 @@
           <a href="index.html#inicio">Início</a>
           <a href="index.html#servicos">Serviços</a>
           <a href="catalogo.html">Catálogo</a>
-          <a href="index.html#simulador">Simulador</a>
-          <a href="index.html#como-funciona">Como funciona</a>
           <a href="index.html#rastreio">Rastreio</a>
+          <a href="index.html#como-funciona">Como funciona</a>
+          <a href="index.html#simulador">Simulador</a>
           <a href="index.html#contacto">Contacto</a>
-          <button id="openCartBtn" class="nav-cart-btn" type="button">Pedido (<span id="cartCount">0</span>)</button>
+        </div>
+        <div class="nav-actions">
+          <a href="catalogo.html" class="nav-icon-btn" id="headerSearchBtn" aria-label="Pesquisar Produtos" title="Pesquisar">
+            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </a>
+          <button id="openCartBtn" class="nav-icon-btn nav-cart-icon-btn" type="button" aria-label="Abrir Pedido" title="Carrinho de Compras">
+            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span id="cartCount" class="nav-cart-badge">0</span>
+          </button>
+          <a href="index.html#rastreio" class="nav-icon-btn" id="headerUserBtn" aria-label="Área do Cliente e Rastreio" title="Acompanhar Encomenda / Perfil">
+            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </a>
         </div>
       </nav>
     </header>

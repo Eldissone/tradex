@@ -150,6 +150,15 @@ function setupCartDrawer() {
   document.getElementById('closeCartBtn')?.addEventListener('click', closeCart);
   document.getElementById('cartOverlay')?.addEventListener('click', closeCart);
 
+  document.getElementById('headerSearchBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const searchInput = document.getElementById('catalogSearch');
+    if (searchInput) {
+      searchInput.focus();
+      searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+
   document.getElementById('btnSubmitCart')?.addEventListener('click', () => {
     const items = cartStore.getItems();
     if (items.length === 0) {
