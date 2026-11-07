@@ -3556,8 +3556,99 @@ footer {
 }
 
 .faq-card-icon {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #0b0b0b;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.faq-card:hover .faq-card-icon {
+  transform: translateY(-2px);
+  background: #262626;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.faq-svg-icon {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  display: block;
+}
+
+.chip-svg-icon {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.track-mode-svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.event-pin-svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2;
+  display: inline-block;
+  vertical-align: middle;
+  color: #64748b;
+  margin-right: 3px;
+}
+
+.doc-file-svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  display: block;
+  color: #0b0b0b;
+}
+
+.badge-svg-check {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.badge-svg-icon {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.check-svg-icon {
+  width: 16px;
+  height: 16px;
+  stroke: #10b981;
+  stroke-width: 2.5;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .faq-card h4 {

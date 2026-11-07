@@ -284,7 +284,9 @@ function renderShipmentDetails(shipment) {
   const container = document.getElementById('trackingDashboard');
   if (!container) return;
 
-  const modeIcon = shipment.modeType === 'air' ? '✈' : '🚢';
+  const modeSvg = shipment.modeType === 'air'
+    ? `<svg class="track-mode-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"></path></svg>`
+    : `<svg class="track-mode-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"></path><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"></path><path d="M12 10v4"></path><path d="M12 2v3"></path></svg>`;
 
   container.innerHTML = `
     <!-- Cartão Principal de Status -->
@@ -315,10 +317,10 @@ function renderShipmentDetails(shipment) {
           <span class="route-subdetail">${shipment.origin}</span>
         </div>
         <div class="route-transit-graphic">
-          <div class="route-mode-badge">${modeIcon} ${shipment.mode.split(' ')[0]}</div>
+          <div class="route-mode-badge">${modeSvg} <span>${shipment.mode.split(' ')[0]}</span></div>
           <div class="route-track-line">
             <div class="route-track-fill"></div>
-            <div class="route-track-vehicle">${modeIcon}</div>
+            <div class="route-track-vehicle">${modeSvg}</div>
           </div>
           <span class="route-progress-num">${shipment.progress}% Percorrido</span>
         </div>
@@ -337,7 +339,9 @@ function renderShipmentDetails(shipment) {
         ${shipment.milestones.map((m, idx) => `
           <div class="milestone-item ${m.done ? 'milestone-done' : ''} ${m.active ? 'milestone-active' : ''}">
             <div class="milestone-indicator">
-              ${m.done ? '✓' : idx + 1}
+              ${m.done 
+                ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' 
+                : idx + 1}
             </div>
             <span class="milestone-label">${m.label}</span>
           </div>
@@ -349,7 +353,7 @@ function renderShipmentDetails(shipment) {
     <div class="track-meta-grid">
       <div class="track-meta-card">
         <span class="meta-card-label">Modalidade de Envio</span>
-        <strong class="meta-card-value">${modeIcon} ${shipment.mode}</strong>
+        <strong class="meta-card-value">${modeSvg} <span>${shipment.mode}</span></strong>
       </div>
       <div class="track-meta-card">
         <span class="meta-card-label">Transportador & Embarcação/Voo</span>
@@ -402,7 +406,10 @@ function renderShipmentDetails(shipment) {
                   <span class="event-badge ${ev.badgeClass}">${ev.badge}</span>
                 </div>
                 <h4 class="event-title">${ev.title}</h4>
-                <p class="event-location-text">📍 ${ev.location}</p>
+                <p class="event-location-text">
+                  <svg class="event-pin-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                  <span>${ev.location}</span>
+                </p>
                 <p class="event-detail-text">${ev.detail}</p>
               </div>
             </li>
@@ -419,7 +426,9 @@ function renderShipmentDetails(shipment) {
           <div class="doc-list-group">
             ${shipment.documents.map(doc => `
               <div class="doc-item-row">
-                <div class="doc-icon-wrap">📄</div>
+                <div class="doc-icon-wrap">
+                  <svg class="doc-file-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                </div>
                 <div class="doc-info-block">
                   <span class="doc-name">${doc.name}</span>
                   <span class="doc-code">${doc.code}</span>
@@ -444,7 +453,8 @@ function renderShipmentDetails(shipment) {
               <span>Imprimir Ficha de Rastreio</span>
             </button>
             <a href="https://wa.me/244900000000?text=Ol%C3%A1%20TradeX,%20gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20o%20rastreio%20${shipment.code}" target="_blank" rel="noopener noreferrer" class="btn-sidebar-action btn-whatsapp-action">
-              <span>💬 Acompanhar no WhatsApp</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              <span>Acompanhar no WhatsApp</span>
             </a>
           </div>
         </div>
