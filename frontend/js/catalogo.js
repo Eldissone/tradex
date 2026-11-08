@@ -162,14 +162,10 @@ function setupCartDrawer() {
   document.getElementById('btnSubmitCart')?.addEventListener('click', () => {
     const items = cartStore.getItems();
     if (items.length === 0) {
-      alert('Adicione pelo menos um produto ao seu pedido para gerar cotação.');
+      alert('Adicione pelo menos um produto ao seu pedido para avançar para o checkout.');
       return;
     }
-    const totalAmount = items.reduce((acc, item) => acc + (item.priceAoa * item.quantity), 0);
-    const summary = items.map(i => `• ${i.quantity}x ${i.title} (${cartStore.formatAoa(i.priceAoa * i.quantity)})`).join('\n');
-    
-    alert(`Pedido TradeX preparado!\n\nItens:\n${summary}\n\nTotal Previsto: ${cartStore.formatAoa(totalAmount)}\n\nEntraremos em contacto para emissão da Fatura Pró-forma em AOA.`);
-    closeCart();
+    window.location.href = 'checkout.html';
   });
 }
 

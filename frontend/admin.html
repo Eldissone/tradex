@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Administrativo Backoffice | TradeX Global Angola</title>
+    <meta name="description" content="Sistema interno de gestão de encomendas, compras internacionais na China, desembaraço aduaneiro, catálogo de produtos e conciliação financeira." />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body class="admin-page-body">
+    <div class="admin-wrapper">
+      <!-- Barra Lateral de Navegação (Sidebar) -->
+      <aside class="admin-sidebar" id="adminSidebar">
+        <div class="admin-sidebar-header">
+          <div class="admin-brand-wrap">
+            <span class="admin-logo-text">TRADEX<span>BACKOFFICE</span></span>
+            <span class="admin-hub-badge">Hub China–Angola</span>
+          </div>
+        </div>
+
+        <nav class="admin-nav" aria-label="Navegação Administrativa">
+          <div class="admin-nav-group-title">OPERAÇÕES PRINCIPAIS</div>
+          
+          <button type="button" class="admin-nav-item active" data-tab="analytics">
+            <svg class="admin-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+            <span>Visão Geral & Métricas</span>
+          </button>
+
+          <button type="button" class="admin-nav-item" data-tab="orders">
+            <svg class="admin-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span>Gestão de Encomendas</span>
+            <span class="admin-badge-count" id="adminOrdersCountBadge">0</span>
+          </button>
+
+          <button type="button" class="admin-nav-item" data-tab="products">
+            <svg class="admin-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+              <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            <span>Catálogo & Preços AOA</span>
+          </button>
+
+          <button type="button" class="admin-nav-item" data-tab="suppliers">
+            <svg class="admin-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+            <span>Fornecedores na China</span>
+          </button>
+
+          <button type="button" class="admin-nav-item" data-tab="logistics">
+            <svg class="admin-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="15" height="13"></rect>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+              <circle cx="5.5" cy="18.5" r="2.5"></circle>
+              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+            <span>Logística & Remessas</span>
+          </button>
+
+          <div class="admin-nav-group-title">GESTÃO FINANCEIRA & CANAIS</div>
+
+          <button type="button" class="admin-nav-item" data-tab="finance">
+            <svg class="admin-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            <span>Financeiro & Multicaixa</span>
+          </button>
+
+          <button type="button" class="admin-nav-item" data-tab="notifications">
+            <svg class="admin-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span>Canais & WhatsApp API</span>
+          </button>
+        </nav>
+
+        <div class="admin-sidebar-footer">
+          <a href="index.html" class="admin-footer-link" target="_blank">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            <span>Ver Loja Online &rarr;</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Conteúdo Principal do Painel -->
+      <main class="admin-main">
+        <!-- Topo Administrativo -->
+        <header class="admin-topbar">
+          <div class="admin-topbar-left">
+            <button type="button" class="admin-mobile-toggle" id="btnToggleAdminSidebar" aria-label="Abrir Menu">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+            </button>
+            <div class="admin-system-status">
+              <span class="status-live-indicator"></span>
+              <span>Hub Operacional Central TradeX: Luanda & Guangzhou Online</span>
+            </div>
+          </div>
+
+          <div class="admin-topbar-right">
+            <div class="admin-operator-profile">
+              <div class="operator-avatar" id="adminAvatarHeader">CV</div>
+              <div class="operator-info">
+                <strong class="operator-name" id="adminNameHeader">Carlos Viana</strong>
+                <span class="operator-role">Diretor de Operações</span>
+              </div>
+            </div>
+            <button type="button" class="btn-outline-dark btn-xs" id="btnAdminLogout" title="Sair do Backoffice">
+              Terminar Sessão
+            </button>
+          </div>
+        </header>
+
+        <!-- Módulo 1: Visão Geral / Analytics -->
+        <section class="admin-tab-panel active" id="adminPanelAnalytics">
+          <div class="admin-panel-head">
+            <div>
+              <h1 class="admin-panel-title">Painel Geral de Operações</h1>
+              <p class="admin-panel-subtitle">Monitorização em tempo real de fluxos comerciais, liquidações e logística internacional.</p>
+            </div>
+            <div class="admin-head-actions">
+              <button type="button" class="btn-dark" id="btnRefreshAnalytics">Atualizar Dados</button>
+            </div>
+          </div>
+
+          <!-- Métricas Principais -->
+          <div class="admin-kpi-grid">
+            <div class="admin-kpi-card">
+              <span class="admin-kpi-title">Faturação Total (AOA)</span>
+              <strong class="admin-kpi-value" id="kpiAdminRevenue">0 Kz</strong>
+              <span class="admin-kpi-hint positive">+18.4% este mês</span>
+            </div>
+            <div class="admin-kpi-card">
+              <span class="admin-kpi-title">Encomendas Totais</span>
+              <strong class="admin-kpi-value" id="kpiAdminOrders">0</strong>
+              <span class="admin-kpi-hint">China ➔ Angola</span>
+            </div>
+            <div class="admin-kpi-card">
+              <span class="admin-kpi-title">Cargas em Trânsito</span>
+              <strong class="admin-kpi-value" id="kpiAdminTransit">0</strong>
+              <span class="admin-kpi-hint info">Contentores & Volumes</span>
+            </div>
+            <div class="admin-kpi-card">
+              <span class="admin-kpi-title">Taxa Desalfandegamento</span>
+              <strong class="admin-kpi-value">98.4%</strong>
+              <span class="admin-kpi-hint positive">Conforme AGT Angola</span>
+            </div>
+          </div>
+
+          <!-- Grade de Informações: Gráfico de Fluxo e Atividade Recente -->
+          <div class="admin-split-grid">
+            <div class="admin-card-box">
+              <h3 class="admin-box-title">Fluxo de Importações por Categoria (Milhões Kz)</h3>
+              <div class="admin-bar-chart">
+                <div class="chart-bar-item">
+                  <div class="chart-bar-fill fill-solar"></div>
+                  <span class="chart-label">Energia Solar</span>
+                  <span class="chart-val">42.5M Kz</span>
+                </div>
+                <div class="chart-bar-item">
+                  <div class="chart-bar-fill fill-construction"></div>
+                  <span class="chart-label">Construção</span>
+                  <span class="chart-val">28.2M Kz</span>
+                </div>
+                <div class="chart-bar-item">
+                  <div class="chart-bar-fill fill-machinery"></div>
+                  <span class="chart-label">Máquinas</span>
+                  <span class="chart-val">35.0M Kz</span>
+                </div>
+                <div class="chart-bar-item">
+                  <div class="chart-bar-fill fill-electronics"></div>
+                  <span class="chart-label">Eletrónica</span>
+                  <span class="chart-val">19.8M Kz</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-card-box">
+              <h3 class="admin-box-title">Últimas Atividades Registadas</h3>
+              <ul class="admin-activity-list" id="adminRecentActivityList">
+                <!-- Injetado dinamicamente via admin.js -->
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Módulo 2: Gestão de Encomendas & Estados -->
+        <section class="admin-tab-panel" id="adminPanelOrders">
+          <div class="admin-panel-head">
+            <div>
+              <h1 class="admin-panel-title">Gestão de Encomendas & Máquina de Estados</h1>
+              <p class="admin-panel-subtitle">Atualize o ciclo de vida completo: desde a aquisição na China até à entrega em Luanda.</p>
+            </div>
+            <div class="admin-head-actions">
+              <div class="admin-search-wrapper">
+                <input type="text" id="adminOrderSearchInput" class="checkout-input" placeholder="Pesquisar código (#TDX-AO...)" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Filtros Rápidos por Estado -->
+          <div class="admin-filters-bar" id="adminOrderStateFilters">
+            <button type="button" class="admin-filter-pill active" data-filter="all">Todos</button>
+            <button type="button" class="admin-filter-pill" data-filter="AWAITING_PAYMENT">Aguardando Pagamento</button>
+            <button type="button" class="admin-filter-pill" data-filter="PROCESSING_SUPPLIER">Compra no Fornecedor</button>
+            <button type="button" class="admin-filter-pill" data-filter="IN_TRANSIT">Trânsito Internacional</button>
+            <button type="button" class="admin-filter-pill" data-filter="DELIVERED">Entregues</button>
+          </div>
+
+          <div class="admin-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Encomenda</th>
+                  <th>Cliente & Destino</th>
+                  <th>Modalidade</th>
+                  <th>Data</th>
+                  <th>Valor Total</th>
+                  <th>Estado Atual</th>
+                  <th>Ações Operacionais</th>
+                </tr>
+              </thead>
+              <tbody id="adminOrdersTableBody">
+                <!-- Injetado dinamicamente via admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Módulo 3: Catálogo & Preços AOA -->
+        <section class="admin-tab-panel" id="adminPanelProducts">
+          <div class="admin-panel-head">
+            <div>
+              <h1 class="admin-panel-title">Catálogo de Produtos & Preços em Kwanzas</h1>
+              <p class="admin-panel-subtitle">Configure produtos industriais, solares e comerciais importados da China.</p>
+            </div>
+            <div class="admin-head-actions">
+              <button type="button" class="btn-dark" id="btnOpenNewProductModal">+ Novo Produto</button>
+            </div>
+          </div>
+
+          <div class="admin-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Categoria</th>
+                  <th>Origem China</th>
+                  <th>MOQ</th>
+                  <th>Preço em Kwanzas</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="adminProductsTableBody">
+                <!-- Injetado dinamicamente via admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Módulo 4: Fornecedores na China -->
+        <section class="admin-tab-panel" id="adminPanelSuppliers">
+          <div class="admin-panel-head">
+            <div>
+              <h1 class="admin-panel-title">Fornecedores Homologados na China</h1>
+              <p class="admin-panel-subtitle">Parceiros industriais nas províncias de Guangdong, Zhejiang, Jiangsu e Shandong.</p>
+            </div>
+            <div class="admin-head-actions">
+              <button type="button" class="btn-dark" id="btnOpenSupplierModal">+ Cadastrar Fornecedor</button>
+            </div>
+          </div>
+
+          <div class="admin-suppliers-grid" id="adminSuppliersGrid">
+            <!-- Injetado dinamicamente via admin.js -->
+          </div>
+        </section>
+
+        <!-- Módulo 5: Logística & Remessas -->
+        <section class="admin-tab-panel" id="adminPanelLogistics">
+          <div class="admin-panel-head">
+            <div>
+              <h1 class="admin-panel-title">Gestão de Remessas & Expedições Internacionais</h1>
+              <p class="admin-panel-subtitle">Acompanhamento de contentores marítimos consolidados e frete aéreo prioritário.</p>
+            </div>
+          </div>
+
+          <div class="admin-shipments-grid" id="adminShipmentsGrid">
+            <!-- Injetado dinamicamente via admin.js -->
+          </div>
+        </section>
+
+        <!-- Módulo 6: Financeiro & Conciliação -->
+        <section class="admin-tab-panel" id="adminPanelFinance">
+          <div class="admin-panel-head">
+            <div>
+              <h1 class="admin-panel-title">Conciliação Financeira & Pagamentos</h1>
+              <p class="admin-panel-subtitle">Auditoria de pagamentos Multicaixa Express, Referência ATM e Transferências bancárias.</p>
+            </div>
+          </div>
+
+          <div class="admin-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Transação / Ref</th>
+                  <th>Encomenda</th>
+                  <th>Método</th>
+                  <th>Data</th>
+                  <th>Valor Total AOA</th>
+                  <th>Estado</th>
+                  <th>Ações de Conciliação</th>
+                </tr>
+              </thead>
+              <tbody id="adminFinanceTableBody">
+                <!-- Injetado dinamicamente via admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Módulo 7: Canais & Notificações WhatsApp/SMS/Email -->
+        <section class="admin-tab-panel" id="adminPanelNotifications">
+          <div class="admin-panel-head">
+            <div>
+              <h1 class="admin-panel-title">Centro de Notificações & Mensageria Multicanal</h1>
+              <p class="admin-panel-subtitle">Envio automatizado de alertas via WhatsApp Business API, SMS e E-mail para os clientes.</p>
+            </div>
+          </div>
+
+          <div class="admin-split-grid">
+            <!-- Status dos Canais -->
+            <div class="admin-card-box">
+              <h3 class="admin-box-title">Estado de Conectividade das APIs</h3>
+              <div class="admin-channels-list">
+                <div class="admin-channel-row">
+                  <div class="channel-info">
+                    <strong>WhatsApp Business Cloud API</strong>
+                    <span>Número Oficial TradeX Angola (+244 923 456 789)</span>
+                  </div>
+                  <span class="client-status-pill">CONECTADO</span>
+                </div>
+                <div class="admin-channel-row">
+                  <div class="channel-info">
+                    <strong>Gateway SMS Corporativo Angola (Unitel/Africell)</strong>
+                    <span>Remetente: TRADEX</span>
+                  </div>
+                  <span class="client-status-pill">ATIVO</span>
+                </div>
+                <div class="admin-channel-row">
+                  <div class="channel-info">
+                    <strong>Servidor SMTP Transacional</strong>
+                    <span>notificacoes@tradex.ao (Criptografia TLS)</span>
+                  </div>
+                  <span class="client-status-pill">OPERACIONAL</span>
+                </div>
+              </div>
+
+              <!-- Simulador de Disparo Manual -->
+              <div class="admin-notify-simulator">
+                <h4 class="admin-subhead">Simulador de Disparo de Alerta</h4>
+                <div class="checkout-form-group">
+                  <label for="notifTargetOrder">Selecione a Encomenda</label>
+                  <select id="notifTargetOrder" class="checkout-select">
+                    <!-- Preenchido via admin.js -->
+                  </select>
+                </div>
+                <div class="checkout-form-group">
+                  <label for="notifChannelSelect">Canal de Envio</label>
+                  <select id="notifChannelSelect" class="checkout-select">
+                    <option value="whatsapp">WhatsApp Business API (+244)</option>
+                    <option value="sms">SMS Tradex Express</option>
+                    <option value="email">E-mail Transacional</option>
+                  </select>
+                </div>
+                <div class="checkout-form-group">
+                  <label for="notifTemplateSelect">Modelo de Notificação</label>
+                  <select id="notifTemplateSelect" class="checkout-select">
+                    <option value="payment_confirmed">Confirmação de Pagamento Recebido</option>
+                    <option value="supplier_purchased">Compra Efetuada no Fabricante na China</option>
+                    <option value="shipment_departed">Embarque Internacional & Saída da China</option>
+                    <option value="customs_cleared">Desembaraço Concluído na Alfândega de Luanda</option>
+                    <option value="ready_delivery">Pronto para Levantamento / Em Distribuição</option>
+                  </select>
+                </div>
+                <button type="button" class="btn-dark btn-full" id="btnSendTestNotification">Disparar Notificação ao Cliente</button>
+                <div class="admin-notify-feedback" id="notifFeedback"></div>
+              </div>
+            </div>
+
+            <!-- Registo das Notificações Enviadas -->
+            <div class="admin-card-box">
+              <h3 class="admin-box-title">Histórico Recente de Notificações Enviadas</h3>
+              <ul class="admin-notif-log-list" id="adminNotifLogList">
+                <!-- Injetado dinamicamente via admin.js -->
+              </ul>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Modal de Alteração de Estado da Encomenda (Máquina de Estados) -->
+    <div class="auth-modal-overlay" id="orderStatusModalOverlay">
+      <div class="auth-modal-card">
+        <div class="auth-modal-header">
+          <div class="auth-modal-title-wrap">
+            <h3 class="auth-modal-title" id="statusModalOrderNum">Atualizar Estado da Encomenda</h3>
+            <p class="auth-modal-subtitle">Transição formal de estado no fluxo logístico China–Angola.</p>
+          </div>
+          <button type="button" class="auth-modal-close" id="btnCloseStatusModal">&times;</button>
+        </div>
+        <form id="formUpdateOrderStatus" class="auth-tab-content active">
+          <input type="hidden" id="statusModalOrderId" />
+          
+          <div class="checkout-form-group">
+            <label for="selectNewOrderStatus">Novo Estado da Encomenda *</label>
+            <select id="selectNewOrderStatus" class="checkout-select" required>
+              <option value="AWAITING_PAYMENT">1. Aguardando Pagamento em Kwanzas</option>
+              <option value="PAYMENT_CONFIRMED">2. Pagamento Confirmado</option>
+              <option value="PROCESSING_SUPPLIER">3. Compra Junto do Fornecedor na China</option>
+              <option value="AWAITING_WAREHOUSE">4. Aguardando Recepção no Armazém China</option>
+              <option value="WAREHOUSE_RECEIVED">5. Recebida no Armazém de Origem (Guangzhou/Ningbo)</option>
+              <option value="READY_TO_SHIP">6. Preparada para Expedição & Lacre</option>
+              <option value="IN_INTERNATIONAL_TRANSIT">7. Em Trânsito Marítimo/Aéreo Internacional</option>
+              <option value="ARRIVED_IN_ANGOLA">8. Chegada a Angola (Porto/Aeroporto de Luanda)</option>
+              <option value="CUSTOMS_CLEARANCE">9. Em Desembaraço Aduaneiro AGT</option>
+              <option value="OUT_FOR_DELIVERY">10. Em Distribuição / Pronto p/ Levantamento</option>
+              <option value="DELIVERED">11. Entregue com Sucesso ao Cliente</option>
+              <option value="CANCELLED">12. Cancelada ou Devolvida</option>
+            </select>
+          </div>
+
+          <div class="checkout-form-group">
+            <label for="statusModalResponsible">Responsável pela Alteração *</label>
+            <input type="text" id="statusModalResponsible" class="checkout-input" value="Carlos Viana (Operações Luanda)" required />
+          </div>
+
+          <div class="checkout-form-group">
+            <label for="statusModalNotes">Observações / Nota Pública para o Rastreio *</label>
+            <textarea id="statusModalNotes" class="checkout-input" rows="3" placeholder="Ex: Carga desembarcada no Terminal Multiusos de Luanda. Início da conferência física com a AGT." required></textarea>
+          </div>
+
+          <div class="auth-checkbox-label">
+            <input type="checkbox" id="checkNotifyClient" checked />
+            <span>Notificar cliente imediatamente via WhatsApp e E-mail</span>
+          </div>
+
+          <button type="submit" class="btn-dark btn-full">Salvar e Propagar Estado</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de Cadastro de Novo Produto -->
+    <div class="auth-modal-overlay" id="newProductModalOverlay">
+      <div class="auth-modal-card">
+        <div class="auth-modal-header">
+          <div class="auth-modal-title-wrap">
+            <h3 class="auth-modal-title">Novo Equipamento / Produto</h3>
+            <p class="auth-modal-subtitle">Adicione mercadorias para importação da China.</p>
+          </div>
+          <button type="button" class="auth-modal-close" id="btnCloseProductModal">&times;</button>
+        </div>
+        <form id="formNewProduct" class="auth-tab-content active">
+          <div class="checkout-form-group">
+            <label for="newProdTitle">Título do Produto *</label>
+            <input type="text" id="newProdTitle" class="checkout-input" placeholder="Ex: Gerador Industrial a Diesel 50kVA Cummins" required />
+          </div>
+          <div class="checkout-form-row">
+            <div class="checkout-form-group">
+              <label for="newProdCategory">Categoria</label>
+              <select id="newProdCategory" class="checkout-select">
+                <option value="solar">Energia Solar</option>
+                <option value="construction">Construção & Equipamento</option>
+                <option value="machinery">Maquinaria & Geradores</option>
+                <option value="electronics">Eletrónicos & Iluminação</option>
+              </select>
+            </div>
+            <div class="checkout-form-group">
+              <label for="newProdPrice">Preço em Kwanzas (AOA) *</label>
+              <input type="number" id="newProdPrice" class="checkout-input" placeholder="Ex: 5800000" required />
+            </div>
+          </div>
+          <div class="checkout-form-row">
+            <div class="checkout-form-group">
+              <label for="newProdOrigin">Origem na China</label>
+              <input type="text" id="newProdOrigin" class="checkout-input" placeholder="Foshan, Guangdong" required />
+            </div>
+            <div class="checkout-form-group">
+              <label for="newProdMoq">Quantidade Mínima (MOQ)</label>
+              <input type="text" id="newProdMoq" class="checkout-input" placeholder="1 Unidade ou 1 Palete" required />
+            </div>
+          </div>
+          <div class="checkout-form-group">
+            <label for="newProdImage">URL da Imagem</label>
+            <input type="url" id="newProdImage" class="checkout-input" placeholder="https://images.unsplash.com/..." />
+          </div>
+          <button type="submit" class="btn-dark btn-full">Publicar no Catálogo</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal/Overlay de Acesso Restrito ao Backoffice -->
+    <div class="auth-modal-overlay visible" id="adminAuthGuardOverlay">
+      <div class="auth-modal-card admin-login-card">
+        <div class="auth-modal-header">
+          <div class="auth-modal-title-wrap">
+            <h3 class="auth-modal-title">Acesso Restrito ao Backoffice</h3>
+            <p class="auth-modal-subtitle">Centro de Operações Logísticas & Aduaneiras TradeX Global</p>
+          </div>
+        </div>
+        <form id="formAdminLogin" class="auth-tab-content active">
+          <div class="checkout-form-group">
+            <label for="adminLoginEmail">E-mail de Administrador</label>
+            <input type="email" id="adminLoginEmail" class="checkout-input" value="admin@tradex.ao" required />
+          </div>
+          <div class="checkout-form-group">
+            <label for="adminLoginPassword">Palavra-passe de Acesso</label>
+            <input type="password" id="adminLoginPassword" class="checkout-input" value="tradexadmin2026" required />
+          </div>
+          <button type="submit" class="btn-dark btn-full">Entrar no Painel de Controlo &rarr;</button>
+          <div class="auth-demo-hint">
+            Credenciais do ficheiro <code>.env</code>: <strong>admin@tradex.ao</strong> / <strong>tradexadmin2026</strong>
+          </div>
+          <div class="auth-feedback" id="adminLoginFeedback"></div>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/admin.js"></script>
+  </body>
+</html>

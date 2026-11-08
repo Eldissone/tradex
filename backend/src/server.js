@@ -1,5 +1,9 @@
 import { app } from './app.js';
 import { env } from './config/env.js';
+import { bootstrapAdminUser } from './infrastructure/database/bootstrap.js';
 
-app.listen(env.PORT, () => console.info(`TradeX API listening on port ${env.PORT}`));
-
+app.listen(env.PORT, async () => {
+  console.info(`TradeX API listening on port ${env.PORT}`);
+  // Lê as configurações do .env e cria a conta de administrador se não existir
+  await bootstrapAdminUser();
+});

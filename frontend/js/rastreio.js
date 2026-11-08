@@ -1,4 +1,5 @@
 import { cartStore } from './cart.js';
+import { authStore } from './auth.js';
 
 // Base de dados rica de encomendas para demonstração
 const TRACKING_DATABASE = {
@@ -482,6 +483,62 @@ function renderShipmentDetails(shipment) {
   });
 }
 
+// Conversor de encomendas geradas pelo checkout para a visualização de rastreio
+function convertOrderToShipment(order) {
+  const isAir = order.logistics && order.logistics.shippingMode && order.logistics.shippingMode.includes('Aéreo');
+  const isPending = order.payment && order.payment.status === 'PENDING';
+  
+  return {
+    code: order.number,
+    mode: order.logistics?.shippingMode || 'Marítimo LCL Consolidado',
+    modeType: isAir ? 'air' : 'sea',
+    status: isPending ? 'Aguardando Liquidação de Pagamento' : 'Em Processamento Logístico',
+    statusClass: isPending ? 'status-pending' : 'status-transit',
+    progress: isPending ? 18 : 45,
+    carrier: isAir ? 'TAAG Linhas Aéreas / Ethiopian Cargo' : 'MSC Mediterranean Shipping Co. (Navio MSC Luanda)',
+    voyage: isAir ? 'ET-AO-AIR-2026' : 'MSC-LUANDA-2026',
+    container: 'TDX-CON-99214',
+    blNumber: order.payment?.reference ? `REF-${order.payment.reference}` : `BL-${order.id}`,
+    origin: order.logistics?.origin || 'Hub Consolidado Yiwu / Guangzhou (China)',
+    destination: order.logistics?.destination || 'Luanda, Angola',
+    finalDelivery: order.logistics?.address ? `${order.logistics.address.street}, ${order.logistics.address.municipality}` : 'Terminal TradeX, Luanda',
+    departureDate: 'A ser agendado após confirmação de pagamento',
+    estimatedArrival: order.logistics?.estimatedDeliveryDays || '35 a 45 dias',
+    volumeWeight: `${order.items ? order.items.length : 1} produto(s) • Carga Segurada`,
+    declaredValue: cartStore.formatAoa(order.financial?.totalAoa || 0),
+    lastUpdate: 'Atualizado em tempo real pelo sistema TradeX',
+    currentLocation: isPending ? 'Terminal de Origem • Aguardando Validação Financeira' : 'Hub Central TradeX, Guangzhou, China',
+    milestones: [
+      { step: 1, label: 'Ordem Registada', done: true },
+      { step: 2, label: 'Confirmação Pagamento', active: isPending, done: !isPending },
+      { step: 3, label: 'Compra & Recepção China', pending: isPending },
+      { step: 4, label: 'Trânsito Internacional', pending: true },
+      { step: 5, label: 'Entrega em Luanda', pending: true }
+    ],
+    timeline: (order.history && order.history.length > 0) ? order.history.map(h => ({
+      date: new Date(h.date).toLocaleDateString('pt-AO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
+      title: h.label || 'Registo de Encomenda',
+      location: order.logistics?.origin || 'Guangzhou Hub, China',
+      detail: h.note || `Encomenda submetida com sucesso por ${order.customer?.name || 'Cliente'}.`,
+      badge: h.status === 'AWAITING_PAYMENT' ? 'Aguardando' : 'Concluído',
+      badgeClass: h.status === 'AWAITING_PAYMENT' ? 'badge-transit' : 'badge-done'
+    })) : [
+      {
+        date: new Date(order.createdAt).toLocaleDateString('pt-AO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
+        title: 'Encomenda Registada no Sistema',
+        location: 'Luanda, Angola',
+        detail: `Registo oficial efetuado. Aguardando confirmação do pagamento via ${order.payment?.methodName || 'Kwanza'}.`,
+        badge: 'Registado',
+        badgeClass: 'badge-transit'
+      }
+    ],
+    documents: [
+      { name: 'Fatura Pró-forma da Encomenda', code: order.number, status: 'Emitida em Kwanzas' },
+      { name: 'Apólice de Seguro de Carga (110% CIF)', code: `POL-${order.number}`, status: 'Cobertura Integral Ativa' }
+    ]
+  };
+}
+
 // Inicialização da Página
 function initTrackingPage() {
   const form = document.getElementById('trackingPageForm');
@@ -499,8 +556,17 @@ function initTrackingPage() {
     newUrl.searchParams.set('codigo', code);
     window.history.replaceState({}, '', newUrl.toString());
 
-    // Procura na base de dados ou gera simulação plausível
-    const shipment = TRACKING_DATABASE[code] || generateDynamicShipment(code);
+    // Procura na base pré-definida, depois nas encomendas locais salvas pelo checkout, ou gera dinâmico
+    let shipment = TRACKING_DATABASE[code];
+    if (!shipment) {
+      const savedOrder = authStore.getOrderById(code);
+      if (savedOrder) {
+        shipment = convertOrderToShipment(savedOrder);
+      } else {
+        shipment = generateDynamicShipment(code);
+      }
+    }
+
     renderShipmentDetails(shipment);
 
     // Scroll suave até ao dashboard
@@ -610,14 +676,10 @@ function setupCartDrawer() {
   document.getElementById('btnSubmitCart')?.addEventListener('click', () => {
     const items = cartStore.getItems();
     if (items.length === 0) {
-      alert('Adicione pelo menos um produto ao seu pedido para gerar cotação.');
+      alert('Adicione pelo menos um produto ao seu pedido para avançar para o checkout.');
       return;
     }
-    const totalAmount = items.reduce((acc, item) => acc + (item.priceAoa * item.quantity), 0);
-    const summary = items.map(i => `• ${i.quantity}x ${i.title} (${cartStore.formatAoa(i.priceAoa * i.quantity)})`).join('\n');
-    
-    alert(`Pedido TradeX preparado!\n\nItens:\n${summary}\n\nTotal Previsto: ${cartStore.formatAoa(totalAmount)}\n\nEntraremos em contacto para emissão da Fatura Pró-forma em AOA.`);
-    closeCart();
+    window.location.href = 'checkout.html';
   });
 }
 

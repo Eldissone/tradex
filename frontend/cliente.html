@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel do Cliente | TradeX Global Angola</title>
+    <meta name="description" content="Acompanhe as suas encomendas de importação China–Angola, histórico financeiro de pagamentos em Kwanzas, endereços de entrega e cotações." />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body class="client-page-body">
+    <!-- Header Fixo / Barra de Navegação -->
+    <header id="mainHeader" class="main-header past-hero">
+      <!-- Top Bar com Seletor de Modo -->
+      <div class="header-topbar">
+        <div class="topbar-container">
+          <div class="mode-switcher" aria-label="Seletor de área da plataforma TradeX">
+            <a href="index.html" class="mode-tab" title="Website Institucional e Operações Globais">
+              <svg class="mode-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span>Institucional & Trading</span>
+            </a>
+            <a href="catalogo.html" class="mode-tab active" title="Loja Online e Catálogo de Produtos com Cotação em Kwanzas">
+              <svg class="mode-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              <span>Loja Online (E-commerce)</span>
+            </a>
+          </div>
+
+          <div class="topbar-info">
+            <span class="topbar-pill">
+              <span class="topbar-dot"></span>
+              Portal do Cliente TradeX
+            </span>
+            <span class="topbar-divider">|</span>
+            <span class="topbar-currency">Pagamentos & Desalfandegamento em Kwanzas</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Navegação principal">
+        <div class="brand-wrap">
+          <a class="brand" href="index.html#inicio">TRADEX<span>GLOBAL</span></a>
+          <span class="brand-badge store-badge">Área do Cliente</span>
+        </div>
+        <div class="nav-links">
+          <a href="catalogo.html">Catálogo de Produtos</a>
+          <a href="rastreio.html">Consultar Rastreio</a>
+          <a href="index.html#simulador">Simulador Aduaneiro</a>
+          <a href="index.html#contacto">Apoio ao Cliente</a>
+        </div>
+        <div class="nav-actions">
+          <a href="catalogo.html" class="nav-icon-btn" id="headerSearchBtn" aria-label="Pesquisar Produtos" title="Pesquisar">
+            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </a>
+          <button class="nav-icon-btn cart-icon-wrap" id="headerCartBtn" aria-label="Ver Carrinho de Cotação" title="Pedido de Importação">
+            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span class="cart-badge-count" id="headerCartCount">0</span>
+          </button>
+          <a href="cliente.html" class="nav-icon-btn user-active-logged" id="headerUserBtn" aria-label="Área do Cliente" title="Painel do Cliente">
+            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="client-main-content">
+      <!-- Banner de Perfil e Apresentação do Cliente -->
+      <section class="client-hero-card">
+        <div class="client-profile-header">
+          <div class="client-avatar-large" id="clientAvatarLarge">MS</div>
+          <div class="client-details-block">
+            <div class="client-name-row">
+              <h1 class="client-display-name" id="clientDisplayName">Manuel Dos Santos</h1>
+              <span class="client-status-pill">CLIENTE VERIFICADO</span>
+            </div>
+            <p class="client-meta-line">
+              <span id="clientDisplayEmail">cliente@tradex.ao</span> &bull; 
+              <span id="clientDisplayPhone">+244 923 456 789</span> &bull; 
+              <span>NIF: <strong id="clientDisplayNif">004928172LA041</strong></span>
+            </p>
+          </div>
+          <div class="client-hero-actions">
+            <a href="catalogo.html" class="btn-dark">Nova Importação &rarr;</a>
+          </div>
+        </div>
+
+        <!-- Grade de Indicadores / KPIs -->
+        <div class="client-kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-label">Total de Encomendas</span>
+            <strong class="kpi-number" id="kpiTotalOrders">0</strong>
+            <span class="kpi-sub">Desde o registo da conta</span>
+          </div>
+          <div class="kpi-card alert">
+            <span class="kpi-label">Aguardando Pagamento</span>
+            <strong class="kpi-number" id="kpiPendingPayment">0</strong>
+            <span class="kpi-sub">Liquidação em Kwanzas</span>
+          </div>
+          <div class="kpi-card transit">
+            <span class="kpi-label">Em Trânsito Internacional</span>
+            <strong class="kpi-number" id="kpiInTransit">0</strong>
+            <span class="kpi-sub">China ➔ Luanda</span>
+          </div>
+          <div class="kpi-card delivered">
+            <span class="kpi-label">Entregues com Sucesso</span>
+            <strong class="kpi-number" id="kpiDelivered">0</strong>
+            <span class="kpi-sub">Desembaraçadas & Recebidas</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Abas de Navegação do Painel -->
+      <div class="client-tabs-nav" role="tablist">
+        <button class="client-tab-btn active" data-tab="orders" role="tab" aria-selected="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+          <span>Minhas Encomendas</span>
+        </button>
+        <button class="client-tab-btn" data-tab="payments" role="tab" aria-selected="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          <span>Histórico de Pagamentos</span>
+        </button>
+        <button class="client-tab-btn" data-tab="addresses" role="tab" aria-selected="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span>Endereços de Entrega</span>
+        </button>
+        <button class="client-tab-btn" data-tab="favorites" role="tab" aria-selected="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          <span>Produtos Favoritos</span>
+        </button>
+        <button class="client-tab-btn" data-tab="settings" role="tab" aria-selected="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Perfil & Segurança</span>
+        </button>
+      </div>
+
+      <!-- Conteúdos das Abas -->
+      <div class="client-tabs-content">
+        <!-- Aba 1: Minhas Encomendas -->
+        <section class="client-tab-panel active" id="tabContentOrders">
+          <div class="panel-section-head">
+            <div>
+              <h2 class="panel-title">Histórico de Encomendas de Importação</h2>
+              <p class="panel-desc">Acompanhe todas as suas cargas desde a aquisição na China até ao despacho aduaneiro e entrega final.</p>
+            </div>
+            <div class="panel-actions">
+              <a href="catalogo.html" class="btn-outline-dark">+ Nova Cotação</a>
+            </div>
+          </div>
+
+          <div class="client-orders-list" id="clientOrdersListContainer">
+            <!-- Injetado dinamicamente via cliente.js -->
+          </div>
+        </section>
+
+        <!-- Aba 2: Histórico de Pagamentos -->
+        <section class="client-tab-panel" id="tabContentPayments">
+          <div class="panel-section-head">
+            <div>
+              <h2 class="panel-title">Transações Financeiras & Pagamentos em Kwanzas</h2>
+              <p class="panel-desc">Registo de todas as liquidações realizadas por Multicaixa Express, Referência Multicaixa e Transferência.</p>
+            </div>
+          </div>
+
+          <div class="client-payments-table-wrap">
+            <table class="client-table">
+              <thead>
+                <tr>
+                  <th>Transação / Ref</th>
+                  <th>Encomenda</th>
+                  <th>Método</th>
+                  <th>Data</th>
+                  <th>Valor em Kwanzas</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="clientPaymentsTableBody">
+                <!-- Injetado dinamicamente via cliente.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Aba 3: Endereços de Entrega -->
+        <section class="client-tab-panel" id="tabContentAddresses">
+          <div class="panel-section-head">
+            <div>
+              <h2 class="panel-title">Endereços Registados em Angola</h2>
+              <p class="panel-desc">Gerencie os seus locais de receção de mercadorias em Luanda e restantes províncias.</p>
+            </div>
+            <button type="button" class="btn-dark" id="btnOpenNewAddressModal">+ Adicionar Novo Endereço</button>
+          </div>
+
+          <div class="client-addresses-grid" id="clientAddressesGrid">
+            <!-- Injetado dinamicamente via cliente.js -->
+          </div>
+        </section>
+
+        <!-- Aba 4: Produtos Favoritos -->
+        <section class="client-tab-panel" id="tabContentFavorites">
+          <div class="panel-section-head">
+            <div>
+              <h2 class="panel-title">Produtos Guardados</h2>
+              <p class="panel-desc">Lista de equipamentos industriais, solares e comerciais de seu interesse para cotações futuras.</p>
+            </div>
+          </div>
+
+          <div class="client-favorites-grid" id="clientFavoritesGrid">
+            <!-- Injetado dinamicamente via cliente.js -->
+          </div>
+        </section>
+
+        <!-- Aba 5: Perfil & Segurança -->
+        <section class="client-tab-panel" id="tabContentSettings">
+          <div class="panel-section-head">
+            <div>
+              <h2 class="panel-title">Dados Pessoais e Fiscais</h2>
+              <p class="panel-desc">Mantenha os seus dados cadastrais atualizados para emissão correta do Documento Único (DU) da AGT.</p>
+            </div>
+          </div>
+
+          <form id="clientProfileForm" class="client-profile-form">
+            <div class="form-grid-two">
+              <div class="checkout-form-group">
+                <label for="profFirstName">Nome Próprio</label>
+                <input type="text" id="profFirstName" class="checkout-input" required />
+              </div>
+              <div class="checkout-form-group">
+                <label for="profLastName">Apelido / Sobrenome</label>
+                <input type="text" id="profLastName" class="checkout-input" required />
+              </div>
+            </div>
+
+            <div class="form-grid-two">
+              <div class="checkout-form-group">
+                <label for="profEmail">E-mail de Contacto (Inalterável)</label>
+                <input type="email" id="profEmail" class="checkout-input" readonly />
+              </div>
+              <div class="checkout-form-group">
+                <label for="profPhone">Telemóvel / WhatsApp</label>
+                <input type="tel" id="profPhone" class="checkout-input" required />
+              </div>
+            </div>
+
+            <div class="form-grid-two">
+              <div class="checkout-form-group">
+                <label for="profNif">NIF Fiscal (Pessoa Singular ou Empresa)</label>
+                <input type="text" id="profNif" class="checkout-input" />
+              </div>
+              <div class="checkout-form-group">
+                <label for="profNewPassword">Nova Palavra-passe (Opcional)</label>
+                <input type="password" id="profNewPassword" class="checkout-input" placeholder="Mínimo 6 caracteres" />
+              </div>
+            </div>
+
+            <div class="form-actions-box">
+              <button type="submit" class="btn-dark" id="btnSaveProfile">Guardar Alterações</button>
+              <span class="profile-feedback" id="profileFeedback"></span>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+
+    <!-- Modal de Adição de Novo Endereço -->
+    <div class="auth-modal-overlay" id="newAddressModalOverlay">
+      <div class="auth-modal-card">
+        <div class="auth-modal-header">
+          <div class="auth-modal-title-wrap">
+            <h3 class="auth-modal-title">Novo Endereço de Entrega</h3>
+            <p class="auth-modal-subtitle">Indique a localização em Angola para descarga da mercadoria.</p>
+          </div>
+          <button type="button" class="auth-modal-close" id="btnCloseAddressModal">&times;</button>
+        </div>
+        <form id="modalNewAddressForm" class="auth-tab-content active">
+          <div class="checkout-form-group">
+            <label for="mAddrLabel">Identificador (ex: Escritório Central, Obra Talatona)</label>
+            <input type="text" id="mAddrLabel" class="checkout-input" placeholder="Ex: Escritório Talatona" required />
+          </div>
+          <div class="checkout-form-row">
+            <div class="checkout-form-group">
+              <label for="mAddrProvince">Província</label>
+              <select id="mAddrProvince" class="checkout-select">
+                <option value="Luanda" selected>Luanda</option>
+                <option value="Benguela">Benguela</option>
+                <option value="Huambo">Huambo</option>
+                <option value="Huíla">Huíla</option>
+                <option value="Cabinda">Cabinda</option>
+                <option value="Kwanza Sul">Kwanza Sul</option>
+              </select>
+            </div>
+            <div class="checkout-form-group">
+              <label for="mAddrMunicipality">Município</label>
+              <input type="text" id="mAddrMunicipality" class="checkout-input" placeholder="Talatona, Maianga..." required />
+            </div>
+          </div>
+          <div class="checkout-form-group">
+            <label for="mAddrStreet">Rua, Edifício ou Lote</label>
+            <input type="text" id="mAddrStreet" class="checkout-input" placeholder="Rua Comandante Gika, Edifício X..." required />
+          </div>
+          <div class="checkout-form-group">
+            <label for="mAddrReference">Ponto de Referência</label>
+            <input type="text" id="mAddrReference" class="checkout-input" placeholder="Junto ao Banco ou Shopping..." />
+          </div>
+          <button type="submit" class="btn-dark btn-full">Guardar Endereço</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de Detalhes da Encomenda & Fatura Pró-forma -->
+    <div class="auth-modal-overlay" id="orderDetailModalOverlay">
+      <div class="auth-modal-card order-modal-large">
+        <div class="auth-modal-header">
+          <div class="auth-modal-title-wrap">
+            <h3 class="auth-modal-title" id="modalOrderTitle">Encomenda #TDX-AO-2026-001</h3>
+            <p class="auth-modal-subtitle" id="modalOrderSubtitle">Emitida em Kwanzas &bull; Despacho Aduaneiro TradeX</p>
+          </div>
+          <button type="button" class="auth-modal-close" id="btnCloseOrderModal">&times;</button>
+        </div>
+        <div class="order-modal-body" id="modalOrderBody">
+          <!-- Injetado dinamicamente via cliente.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="footer-main">
+      <div class="footer-container">
+        <div class="footer-left">
+          <p class="footer-brand">TRADEX <span>GLOBAL</span></p>
+          <p class="footer-copy">&copy; 2026 TradeX Global Trading Lda. Luanda, Angola — Guangzhou, China. Todos os direitos reservados.</p>
+        </div>
+        <div class="footer-right">
+          <a href="index.html">Início</a>
+          <a href="catalogo.html">Catálogo</a>
+          <a href="rastreio.html">Rastreio</a>
+          <a href="index.html#simulador">Simulador</a>
+          <a href="index.html#contacto">Contacto</a>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/cliente.js"></script>
+  </body>
+</html>
