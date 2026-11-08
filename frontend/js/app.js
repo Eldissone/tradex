@@ -368,14 +368,23 @@ function renderFaqSection() {
     return;
   }
 
+  // Destaca por padrão o item sobre Pagamento por Referência (ou 3º item) como no design de referência
+  const defaultIdx = faqs.findIndex(f => f.question.toLowerCase().includes('referência'));
+  const initialOpenIndex = defaultIdx !== -1 ? defaultIdx : (faqs.length > 2 ? 2 : 0);
+
   container.innerHTML = faqs.map((faq, idx) => `
-    <div class="faq-item ${idx === 0 ? 'open' : ''}">
-      <button type="button" class="faq-question">
+    <div class="faq-item ${idx === initialOpenIndex ? 'open' : ''}">
+      <button type="button" class="faq-question" aria-expanded="${idx === initialOpenIndex ? 'true' : 'false'}">
         <span class="faq-question-title">${faq.question}</span>
-        <span class="faq-category-tag">${faq.category}</span>
-        <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
+        <span class="faq-action-icon" aria-hidden="true">
+          <svg class="faq-icon-plus" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <svg class="faq-icon-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </span>
       </button>
       <div class="faq-answer">
         <p>${faq.answer}</p>
@@ -389,10 +398,14 @@ function renderFaqSection() {
       if (!parentItem) return;
 
       const isOpen = parentItem.classList.contains('open');
-      container.querySelectorAll('.faq-item').forEach(item => item.classList.remove('open'));
+      container.querySelectorAll('.faq-item').forEach(item => {
+        item.classList.remove('open');
+        item.querySelector('.faq-question')?.setAttribute('aria-expanded', 'false');
+      });
 
       if (!isOpen) {
         parentItem.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
       }
     });
   });

@@ -391,6 +391,73 @@
         </div>
       </section>
 
+      
+        <!-- Secção de Perguntas Frequentes (FAQ) - Layout Moderno Dividido -->
+      <section id="faq" class="faq-section" aria-label="Perguntas Frequentes">
+        <div class="faq-container">
+          <!-- Coluna Esquerda: Título + Accordion -->
+          <div class="faq-main-col">
+            <div class="faq-header-block">
+              <span class="faq-eyebrow">FAQ</span>
+              <h2 class="faq-title">Perguntas Frequentes</h2>
+            </div>
+
+            <div class="faq-accordion" id="faqAccordionContainer">
+              <!-- Injetado dinamicamente via app.js a partir do CMS -->
+            </div>
+          </div>
+
+          <!-- Coluna Direita: Ilustração Geométrica 3D Isometric Layers -->
+          <div class="faq-graphic-col" aria-hidden="true">
+            <div class="faq-isometric-illustration">
+              <svg class="faq-isometric-svg" viewBox="0 0 440 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Plano Wireframe Inferior -->
+                <polygon points="110,310 230,250 350,310 230,370" class="faq-iso-plane-bottom" />
+                
+                <!-- Eixo Vertical Central e Ponto de Ancoragem Verde -->
+                <line x1="230" y1="340" x2="230" y2="160" class="faq-iso-axis-line" />
+                <circle cx="230" cy="340" r="7" class="faq-iso-node-pulse" />
+                <circle cx="230" cy="340" r="3.5" class="faq-iso-node-core" />
+
+                <!-- Plano Intermédio Flutuante (Translúcido) -->
+                <polygon points="120,230 240,170 360,230 240,290" class="faq-iso-plane-middle" />
+
+                <!-- Pilha de Camadas Superiores (Stack 3D) -->
+                <!-- Camada 1 -->
+                <polygon points="200,180 280,140 360,180 280,220" class="faq-iso-stack-layer l1" />
+                <polygon points="200,180 280,220 280,225 200,185" class="faq-iso-stack-edge" />
+                <polygon points="280,220 360,180 360,185 280,225" class="faq-iso-stack-edge dark" />
+
+                <!-- Camada 2 -->
+                <polygon points="200,165 280,125 360,165 280,205" class="faq-iso-stack-layer l2" />
+                <polygon points="200,165 280,205 280,210 200,170" class="faq-iso-stack-edge" />
+                <polygon points="280,205 360,165 360,170 280,210" class="faq-iso-stack-edge dark" />
+
+                <!-- Camada 3 -->
+                <polygon points="200,150 280,110 360,150 280,190" class="faq-iso-stack-layer l3" />
+                <polygon points="200,150 280,190 280,195 200,155" class="faq-iso-stack-edge" />
+                <polygon points="280,190 360,150 360,155 280,195" class="faq-iso-stack-edge dark" />
+
+                <!-- Camada 4 -->
+                <polygon points="200,135 280,95 360,135 280,175" class="faq-iso-stack-layer l4" />
+                <polygon points="200,135 280,175 280,180 200,140" class="faq-iso-stack-edge" />
+                <polygon points="280,175 360,135 360,140 280,180" class="faq-iso-stack-edge dark" />
+
+                <!-- Camada 5 -->
+                <polygon points="200,120 280,80 360,120 280,160" class="faq-iso-stack-layer l5" />
+                <polygon points="200,120 280,160 280,165 200,125" class="faq-iso-stack-edge" />
+                <polygon points="280,160 360,120 360,125 280,165" class="faq-iso-stack-edge dark" />
+
+                <!-- Camada 6 (Topo) -->
+                <polygon points="200,105 280,65 360,105 280,145" class="faq-iso-stack-layer l6 top" />
+                <polygon points="200,105 280,145 280,150 200,110" class="faq-iso-stack-edge" />
+                <polygon points="280,145 360,105 360,110 280,150" class="faq-iso-stack-edge dark" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Sourcing Personalizado / Pedido de Cotação Direta -->
       <section id="sourcing" class="section-standard cta-section">
         <div class="section-head">
@@ -422,6 +489,7 @@
           </form>
         </div>
       </section>
+
 
       <!-- Secção de Contactos & Canais Oficiais -->
       <section id="contacto" class="section-standard contact-section">
@@ -470,23 +538,7 @@
         </div>
       </section>
 
-      <!-- Secção de Perguntas Frequentes (FAQ) - Gerida pelo CMS -->
-      <section id="faq" class="section-standard faq-section">
-        <div class="section-head">
-          <p class="eyebrow eyebrow-dark">ESCLARECIMENTO DE DÚVIDAS</p>
-          <h2>Perguntas Frequentes (FAQ)</h2>
-          <p>Tudo o que precisa de saber sobre cotações em Kwanzas, frete marítimo da China e desalfandegamento em Luanda.</p>
-        </div>
-
-        <div class="faq-accordion" id="faqAccordionContainer">
-          <!-- Injetado dinamicamente via app.js a partir do CMS (cmsStore.getData().faqs) -->
-        </div>
-
-        <div class="faq-footer-cta">
-          <p>Ainda tem dúvidas sobre o processo de importação?</p>
-          <a href="#sourcing" class="btn-dark">Falar com um Consultor de Importação &rarr;</a>
-        </div>
-      </section>
+    
 
       <!-- Rodapé Oficial -->
       <footer class="footer-site">

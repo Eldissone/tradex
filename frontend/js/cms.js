@@ -112,26 +112,50 @@ export const DEFAULT_CMS_DATA = {
   faqs: [
     {
       id: 'faq-1',
-      question: 'Como funciona o pagamento em Kwanzas via Multicaixa Express e Referência?',
-      answer: 'O cliente realiza o pagamento em Kwanzas (AOA) via Multicaixa Express ou Referência bancária. A TradeX processa o pagamento e efetua a liquidação cambial junto aos fabricantes na China.',
-      category: 'Pagamentos',
+      question: 'O que é a TradeX Global Trading?',
+      answer: 'A TradeX é uma plataforma corporativa de comércio e logística internacional que conecta empresas e importadores em Angola diretamente aos principais fabricantes industriais da China, com cotação e liquidação oficial em Kwanzas (AOA).',
+      category: 'Geral',
       order: 1,
       active: true
     },
     {
       id: 'faq-2',
-      question: 'Qual é o prazo médio de entrega de mercadorias vindas da China?',
-      answer: 'Para remessas marítimas consolidadas, o trânsito varia entre 32 e 38 dias até ao Porto de Luanda. Para frete aéreo expresso, o prazo é de 7 a 12 dias úteis.',
-      category: 'Logística & Prazos',
+      question: 'Quais métodos de pagamento a TradeX suporta?',
+      answer: 'Suportamos pagamentos diretos em Kwanzas através de Multicaixa Express, Pagamento por Referência Bancária (GPO/EMIS) e transferência direta para as nossas contas corporativas em Luanda.',
+      category: 'Pagamentos',
       order: 2,
       active: true
     },
     {
       id: 'faq-3',
-      question: 'A TradeX trata de todo o desembaraço aduaneiro no Porto de Luanda?',
-      answer: 'Sim, a nossa equipa de despachantes oficiais em Luanda cuida de todas as formalidades fiscais, DU (Documento Único) e taxas portuárias.',
-      category: 'Alfândega',
+      question: 'Como funciona o Pagamento por Referência?',
+      answer: 'O Pagamento por Referência permite gerar referências bancárias únicas para pagamentos e confirmar a transação de forma simples, organizada e com reconciliação imediata.',
+      category: 'Pagamentos',
       order: 3,
+      active: true
+    },
+    {
+      id: 'faq-4',
+      question: 'Quanto tempo demora para receber as mercadorias da China?',
+      answer: 'Para frete marítimo consolidado (contentores FCL ou grupagem LCL), o tempo médio de trânsito é de 32 a 38 dias até ao Porto de Luanda. Para envios aéreos prioritários, a entrega é realizada em 7 a 12 dias úteis.',
+      category: 'Logística',
+      order: 4,
+      active: true
+    },
+    {
+      id: 'faq-5',
+      question: 'A TradeX trata de todo o desembaraço aduaneiro no Porto de Luanda?',
+      answer: 'Sim, a nossa equipa de despachantes oficiais em Luanda cuida de todas as formalidades fiscais, DU (Documento Único) e taxas portuárias até à libertação e entrega da mercadoria.',
+      category: 'Alfândega',
+      order: 5,
+      active: true
+    },
+    {
+      id: 'faq-6',
+      question: 'Posso solicitar cotação de produtos que não constam no catálogo online?',
+      answer: 'Sim! Através do nosso serviço de Sourcing Especializado, pode submeter especificações técnicas, referências ou catálogos de fornecedores chineses para receber uma proposta completa chave-na-mão.',
+      category: 'Sourcing',
+      order: 6,
       active: true
     }
   ],
@@ -172,7 +196,8 @@ export const cmsStore = {
         ...DEFAULT_CMS_DATA,
         ...parsed,
         featuredCatalog: { ...DEFAULT_CMS_DATA.featuredCatalog, ...(parsed.featuredCatalog || {}) },
-        catalogHeroSlides: parsed.catalogHeroSlides || DEFAULT_CMS_DATA.catalogHeroSlides
+        catalogHeroSlides: parsed.catalogHeroSlides || DEFAULT_CMS_DATA.catalogHeroSlides,
+        faqs: (Array.isArray(parsed.faqs) && parsed.faqs.length >= 6) ? parsed.faqs : DEFAULT_CMS_DATA.faqs
       };
     } catch {
       return DEFAULT_CMS_DATA;
