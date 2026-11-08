@@ -485,7 +485,7 @@ function renderProductsModule() {
     <tr>
       <td>
         <div class="admin-prod-cell">
-          <img src="${prod.image}" alt="${prod.title}" class="admin-prod-thumb" />
+          <img src="${prod.image}" alt="${prod.title}" class="admin-prod-thumb" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=200';" />
           <div>
             <strong>${prod.title}</strong>
             <span class="table-sub-detail">${prod.specs || ''}</span>
@@ -501,7 +501,13 @@ function renderProductsModule() {
         <strong class="pay-amount">${cartStore.formatAoa(prod.priceAoa)}</strong>
       </td>
       <td>
-        <button type="button" class="btn-outline-dark btn-xs">Editar Preço</button>
+        <button type="button" class="btn-action-edit" title="Editar Preço e Condições">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          <span>Editar Preço</span>
+        </button>
       </td>
     </tr>
   `).join('');

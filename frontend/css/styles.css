@@ -7442,3 +7442,229 @@ footer {
   border-radius: 16px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
 }
+
+
+/* ==========================================================================
+   SISTEMA UNIVERSAL DE BOTÕES E AJUSTES DE INTERFACE DO BACKOFFICE
+   ========================================================================== */
+
+/* Topbar Header Direita - Alinhamento Flex */
+.admin-topbar-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1.25rem !important;
+}
+
+/* Botão Terminar Sessão no Topo */
+.btn-logout-header {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.45rem !important;
+  padding: 0.48rem 0.95rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  color: #dc2626 !important;
+  background: #ffffff !important;
+  border: 1.5px solid #fee2e2 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.btn-logout-header:hover {
+  background: #fef2f2 !important;
+  border-color: #fca5a5 !important;
+  color: #b91c1c !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 5px rgba(220, 38, 38, 0.12) !important;
+}
+
+/* Botão de Ação "Editar Preço" nas Tabelas */
+.btn-action-edit {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  padding: 0.45rem 0.95rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.btn-action-edit:hover {
+  background: #0f172a !important;
+  border-color: #0f172a !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Botão de Transição de Estado da Encomenda */
+.btn-open-status-modal {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  padding: 0.45rem 0.95rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  background: #0f172a !important;
+  border: 1.5px solid #0f172a !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+}
+
+.btn-open-status-modal:hover {
+  background: #1e293b !important;
+  border-color: #1e293b !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.2) !important;
+}
+
+/* Botão de Conciliação Financeira de Pagamentos */
+.btn-conciliate-pay {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  padding: 0.45rem 0.95rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  background: #16a34a !important;
+  border: 1.5px solid #16a34a !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 1px 3px rgba(22, 163, 74, 0.15) !important;
+}
+
+.btn-conciliate-pay:hover {
+  background: #15803d !important;
+  border-color: #15803d !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 6px -1px rgba(22, 163, 74, 0.3) !important;
+}
+
+/* Botões Globais Outline Dark */
+.btn-outline-dark {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  padding: 0.62rem 1.25rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  border-radius: 8px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.btn-outline-dark:hover {
+  background: #0f172a !important;
+  border-color: #0f172a !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Botões Primários Dark no Backoffice */
+.admin-head-actions .btn-dark {
+  background: #0f172a !important;
+  border: 1.5px solid #0f172a !important;
+  color: #ffffff !important;
+  font-family: inherit !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  padding: 0.62rem 1.25rem !important;
+  border-radius: 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  cursor: pointer !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+}
+
+.admin-head-actions .btn-dark:hover {
+  background: #1e293b !important;
+  border-color: #1e293b !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px -1px rgba(15, 23, 42, 0.18) !important;
+}
+
+/* Botões de Ação Completa (Modais / Formulários) */
+.admin-page-body .btn-full {
+  width: 100% !important;
+  padding: 0.85rem 1.25rem !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+  background: #0f172a !important;
+  border: 1.5px solid #0f172a !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  font-family: inherit !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.admin-page-body .btn-full:hover {
+  background: #1e293b !important;
+  border-color: #1e293b !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px -1px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Ajuste das Células da Tabela Administrativa */
+.admin-table th:last-child,
+.admin-table td:last-child {
+  text-align: right !important;
+  white-space: nowrap !important;
+}
+
+.admin-table td {
+  vertical-align: middle !important;
+}
+
+/* Fallback e Borda Suave para Miniaturas de Produtos */
+.admin-prod-thumb {
+  background-color: #f1f5f9 !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 6px !important;
+}
