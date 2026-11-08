@@ -1219,6 +1219,13 @@ footer {
   border-bottom: 1px solid #1f242d;
 }
 
+#catalogSlideTrack {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
 .catalog-slide {
   position: absolute;
   inset: 0;
@@ -1235,21 +1242,21 @@ footer {
 .catalog-slide.active {
   opacity: 1;
   visibility: visible;
-  z-index: 2;
+  z-index: 5;
 }
 
-.catalog-slide-bg {
+/* Camada 1: Imagem de Fundo */
+.catalog-slide-bg,
+.catalog-slide-bg-img {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   background-size: cover;
   background-position: center;
-  transform: scale(1.06);
-  transition: transform 6s ease-out;
-  z-index: -2;
-}
-
-.catalog-slide.active .catalog-slide-bg {
-  transform: scale(1);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .slide-bg-1 {
@@ -1264,6 +1271,7 @@ footer {
   background-image: url('https://images.unsplash.com/photo-1541888946425-d0fbb186f5f8?w=1600&auto=format&fit=crop&q=80');
 }
 
+/* Camada 2: Overlay Escuro / Gradiente para Leitura */
 .catalog-slide-overlay {
   position: absolute;
   inset: 0;
@@ -1273,12 +1281,16 @@ footer {
     rgba(11, 11, 11, 0.82) 50%,
     rgba(11, 11, 11, 0.65) 100%
   );
-  z-index: -1;
+  z-index: 2;
+  pointer-events: none;
 }
 
+/* Camada 3: Conteúdo Textual em Destaque */
 .catalog-slide-content {
+  position: relative;
+  z-index: 10;
   max-width: 820px;
-  color: #fff;
+  color: #ffffff;
   transform: translateY(16px);
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -1292,15 +1304,26 @@ footer {
   letter-spacing: -.05em;
   line-height: 1.05;
   margin: 0.5rem 0 1rem;
+  color: #ffffff;
+}
+
+.catalog-slide-content .eyebrow {
+  color: #38bdf8;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  display: block;
 }
 
 .catalog-slide-content .lead {
-  color: #d1d5db;
+  color: #e2e8f0;
   font-size: 1.05rem;
   line-height: 1.7;
   max-width: 680px;
 }
 
+/* Camada 4: Controlos */
 .catalog-slider-controls {
   position: absolute;
   bottom: 2rem;
@@ -1308,7 +1331,7 @@ footer {
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  z-index: 10;
+  z-index: 20;
 }
 
 .catalog-slider-arrow {
@@ -7598,6 +7621,7 @@ footer {
 }
 
 /* Botões Primários Dark no Backoffice */
+.admin-page-body .btn-dark,
 .admin-head-actions .btn-dark {
   background: #0f172a !important;
   border: 1.5px solid #0f172a !important;
@@ -7618,6 +7642,7 @@ footer {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
 }
 
+.admin-page-body .btn-dark:hover,
 .admin-head-actions .btn-dark:hover {
   background: #1e293b !important;
   border-color: #1e293b !important;
@@ -7667,4 +7692,1469 @@ footer {
   background-color: #f1f5f9 !important;
   border: 1.5px solid #e2e8f0 !important;
   border-radius: 6px !important;
+}
+
+/* Modal de Edição Completa de Produto (Todos os Atributos) */
+.product-modal-large {
+  max-width: 820px !important;
+  width: 95% !important;
+  max-height: 90vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.product-modal-large .auth-modal-header {
+  padding: 1.5rem 2rem 1.25rem !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+}
+
+.product-modal-scroll {
+  max-height: calc(90vh - 85px) !important;
+  overflow-y: auto !important;
+  padding: 1.5rem 2rem 2rem !important;
+}
+
+.product-modal-scroll .checkout-form-row {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 1.25rem !important;
+  margin-bottom: 1.15rem !important;
+}
+
+@media (max-width: 640px) {
+  .product-modal-scroll .checkout-form-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+}
+
+.product-modal-scroll .checkout-form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.45rem !important;
+  margin-bottom: 1.15rem !important;
+}
+
+.product-modal-scroll .checkout-form-group label {
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  color: #334155 !important;
+  letter-spacing: 0.02em !important;
+}
+
+.product-modal-scroll .checkout-input,
+.product-modal-scroll .checkout-select,
+.product-modal-scroll textarea.checkout-input {
+  width: 100% !important;
+  padding: 0.7rem 0.95rem !important;
+  font-size: 0.85rem !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  font-family: inherit !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.product-modal-scroll .checkout-input:focus,
+.product-modal-scroll .checkout-select:focus,
+.product-modal-scroll textarea.checkout-input:focus {
+  border-color: #0f172a !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1) !important;
+}
+
+.product-modal-scroll textarea.checkout-input {
+  resize: vertical !important;
+  min-height: 80px !important;
+}
+
+/* ==========================================================================
+   SISTEMA DE UPLOAD DINÂMICO DE FICHEIROS LOCAIS (MODAL DE PRODUTO)
+   ========================================================================== */
+
+.admin-upload-section {
+  background: #f8fafc !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 1.25rem 1.4rem !important;
+  margin-bottom: 1.4rem !important;
+}
+
+.admin-upload-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+  margin-bottom: 1.25rem !important;
+  flex-wrap: wrap !important;
+}
+
+.admin-upload-head-left {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.2rem !important;
+}
+
+.admin-upload-title {
+  display: block !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  letter-spacing: 0.02em !important;
+}
+
+.admin-upload-desc {
+  display: block !important;
+  font-size: 0.75rem !important;
+  color: #64748b !important;
+}
+
+.btn-add-photo-header {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.5rem 1rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  white-space: nowrap !important;
+}
+
+.btn-add-photo-header:hover {
+  background: #0f172a !important;
+  border-color: #0f172a !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.admin-upload-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 1rem !important;
+}
+
+@media (max-width: 820px) {
+  .admin-upload-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.85rem !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-upload-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+  }
+}
+
+.admin-upload-card {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.admin-upload-card:hover {
+  border-color: #94a3b8 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+}
+
+.upload-card-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0.5rem 0.75rem !important;
+  background: #f1f5f9 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.upload-badge-tag {
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: #475569 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
+}
+
+.upload-badge-tag.required {
+  color: #0f172a !important;
+}
+
+.btn-delete-slot {
+  background: transparent !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  font-size: 1.25rem !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  padding: 0 0.25rem !important;
+  border-radius: 4px !important;
+  transition: color 0.15s ease, background-color 0.15s ease !important;
+}
+
+.btn-delete-slot:hover {
+  color: #dc2626 !important;
+  background-color: #fee2e2 !important;
+}
+
+.upload-dropzone {
+  position: relative !important;
+  min-height: 140px !important;
+  height: 140px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease !important;
+}
+
+.upload-dropzone:hover {
+  background-color: #f8fafc !important;
+}
+
+.upload-dropzone.drag-over {
+  background-color: #eff6ff !important;
+  outline: 2px dashed #0284c7 !important;
+  outline-offset: -4px !important;
+}
+
+.upload-file-input {
+  display: none !important;
+}
+
+.upload-empty-state {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.35rem !important;
+  padding: 1rem !important;
+  text-align: center !important;
+}
+
+.upload-icon-svg {
+  width: 28px !important;
+  height: 28px !important;
+  stroke: #94a3b8 !important;
+  transition: stroke 0.2s ease !important;
+}
+
+.upload-dropzone:hover .upload-icon-svg {
+  stroke: #0f172a !important;
+}
+
+.upload-btn-fake {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  padding: 0.3rem 0.65rem !important;
+  margin-top: 0.15rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.upload-dropzone:hover .upload-btn-fake {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  border-color: #0f172a !important;
+}
+
+.upload-drop-hint {
+  font-size: 0.68rem !important;
+  color: #94a3b8 !important;
+}
+
+.upload-preview-container {
+  display: none !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.upload-dropzone.has-image .upload-empty-state {
+  display: none !important;
+}
+
+.upload-dropzone.has-image .upload-preview-container {
+  display: block !important;
+}
+
+.upload-preview-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.upload-preview-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 0 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.upload-dropzone:hover .upload-preview-overlay {
+  opacity: 1 !important;
+}
+
+.upload-overlay-text {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  padding: 0.35rem 0.75rem !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.upload-card-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0.45rem 0.75rem !important;
+  background: #ffffff !important;
+  border-top: 1px solid #e2e8f0 !important;
+  min-height: 34px !important;
+}
+
+.upload-filename {
+  font-size: 0.72rem !important;
+  color: #64748b !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 170px !important;
+}
+
+.btn-clear-upload {
+  background: transparent !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  font-size: 1.15rem !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  padding: 0 0.25rem !important;
+  border-radius: 4px !important;
+  transition: color 0.15s ease, background-color 0.15s ease !important;
+  display: none !important;
+}
+
+.upload-dropzone.has-image + .upload-card-footer .btn-clear-upload {
+  display: block !important;
+}
+
+.btn-clear-upload:hover {
+  color: #dc2626 !important;
+  background-color: #fee2e2 !important;
+}
+
+/* Card Interativo para Adicionar Mais Fotos (+ Card) */
+.upload-add-card {
+  background: #ffffff !important;
+  border: 2px dashed #cbd5e1 !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  min-height: 200px !important;
+  cursor: pointer !important;
+  padding: 1.25rem 1rem !important;
+  text-align: center !important;
+  color: #475569 !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.upload-add-card:hover {
+  border-color: #0f172a !important;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06) !important;
+}
+
+.upload-add-card-icon {
+  width: 32px !important;
+  height: 32px !important;
+  stroke: #94a3b8 !important;
+  transition: stroke 0.2s ease, transform 0.2s ease !important;
+}
+
+.upload-add-card:hover .upload-add-card-icon {
+  stroke: #0f172a !important;
+  transform: scale(1.1) !important;
+}
+
+.upload-add-card-title {
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+}
+
+.upload-add-card-sub {
+  font-size: 0.7rem !important;
+  color: #64748b !important;
+}
+
+/* ==========================================================================
+   MÓDULO DE CMS & CONTEÚDOS PÚBLICOS (BACKOFFICE)
+   ========================================================================== */
+
+.cms-sub-panel {
+  display: none !important;
+}
+
+.cms-sub-panel.active {
+  display: block !important;
+}
+
+.cms-badge-active {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0.25rem 0.65rem !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: #166534 !important;
+  background: #dcfce7 !important;
+  border-radius: 9999px !important;
+}
+
+.cms-badge-paused {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0.25rem 0.65rem !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: #854d0e !important;
+  background: #fef9c3 !important;
+  border-radius: 9999px !important;
+}
+
+.cms-actions-cell {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.45rem !important;
+}
+
+.btn-action-cms-edit {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0.38rem 0.75rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  background: #ffffff !important;
+  border: 1.2px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-action-cms-edit:hover {
+  background: #0f172a !important;
+  border-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+.btn-action-cms-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0.38rem 0.75rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #475569 !important;
+  background: #f1f5f9 !important;
+  border: 1.2px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-action-cms-toggle:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.btn-action-cms-delete {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0.38rem 0.6rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #dc2626 !important;
+  background: #ffffff !important;
+  border: 1.2px solid #fee2e2 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-action-cms-delete:hover {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: #dc2626 !important;
+}
+
+/* Card de Configuração de Secção do CMS */
+.cms-config-box {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.cms-config-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 1.25rem !important;
+  gap: 1rem !important;
+  flex-wrap: wrap !important;
+}
+
+.cms-config-title {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin-bottom: 0.2rem !important;
+}
+
+.cms-config-sub {
+  font-size: 0.78rem !important;
+  color: #64748b !important;
+}
+
+/* ==========================================================================
+   SECÇÃO DE CONTACTOS (index.html)
+   ========================================================================== */
+
+.contact-section {
+  padding-top: 4rem !important;
+  padding-bottom: 2rem !important;
+}
+
+.contact-cards-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 1.5rem !important;
+  margin-top: 2.5rem !important;
+}
+
+@media (max-width: 860px) {
+  .contact-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+}
+
+.contact-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 1.75rem 1.5rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.65rem !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.contact-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05) !important;
+  border-color: #cbd5e1 !important;
+}
+
+.contact-card-icon {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 10px !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 0.35rem !important;
+}
+
+.contact-card-title {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.01em !important;
+}
+
+.contact-card-text {
+  font-size: 0.88rem !important;
+  color: #475569 !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+.contact-card-meta {
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  color: #0284c7 !important;
+  margin-top: auto !important;
+  padding-top: 0.5rem !important;
+  border-top: 1px dashed #e2e8f0 !important;
+}
+
+/* ==========================================================================
+   SECÇÃO DE PERGUNTAS FREQUENTES (FAQ) - GERIDA PELO CMS
+   ========================================================================== */
+
+.faq-section {
+  padding-top: 4rem !important;
+  padding-bottom: 5rem !important;
+  background: #f8fafc !important;
+  border-top: 1px solid #e2e8f0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.faq-accordion {
+  max-width: 860px !important;
+  margin: 2.5rem auto 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.85rem !important;
+}
+
+.faq-item {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.faq-item:hover {
+  border-color: #cbd5e1 !important;
+}
+
+.faq-item.open {
+  border-color: #0f172a !important;
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06) !important;
+}
+
+.faq-question {
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 1.25rem 1.5rem !important;
+  font-family: inherit !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  gap: 0.85rem !important;
+}
+
+.faq-question-title {
+  flex: 1 !important;
+}
+
+.faq-category-tag {
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  color: #475569 !important;
+  background: #f1f5f9 !important;
+  padding: 0.25rem 0.6rem !important;
+  border-radius: 9999px !important;
+  white-space: nowrap !important;
+}
+
+.faq-icon {
+  stroke: #64748b !important;
+  flex-shrink: 0 !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.2s ease !important;
+}
+
+.faq-item.open .faq-icon {
+  transform: rotate(180deg) !important;
+  stroke: #0f172a !important;
+}
+
+.faq-answer {
+  max-height: 0 !important;
+  overflow: hidden !important;
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), padding 0.25s ease !important;
+  padding: 0 1.5rem !important;
+}
+
+.faq-item.open .faq-answer {
+  max-height: 400px !important;
+  padding: 0 1.5rem 1.4rem 1.5rem !important;
+}
+
+.faq-answer p {
+  font-size: 0.88rem !important;
+  line-height: 1.65 !important;
+  color: #475569 !important;
+  margin: 0 !important;
+}
+
+.faq-footer-cta {
+  text-align: center !important;
+  margin-top: 3rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0.85rem !important;
+}
+
+.faq-footer-cta p {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  margin: 0 !important;
+}
+
+/* Rodapé Oficial da Plataforma */
+.footer-site {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 2.5rem 4rem !important;
+  border-top: 1px solid #1e293b !important;
+  background: #0b0f19 !important;
+  color: #94a3b8 !important;
+  flex-wrap: wrap !important;
+  gap: 1.5rem !important;
+}
+
+@media (max-width: 768px) {
+  .footer-site {
+    padding: 2rem 1.5rem !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+}
+
+/* ==========================================================================
+   SISTEMA DE UPLOAD DINÂMICO DE FICHEIROS LOCAIS (MODAL DE PRODUTO)
+   ========================================================================== */
+
+.admin-upload-section {
+  background: #f8fafc !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 1.25rem 1.4rem !important;
+  margin-bottom: 1.4rem !important;
+}
+
+.admin-upload-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+  margin-bottom: 1.25rem !important;
+  flex-wrap: wrap !important;
+}
+
+.admin-upload-head-left {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.2rem !important;
+}
+
+.admin-upload-title {
+  display: block !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  letter-spacing: 0.02em !important;
+}
+
+.admin-upload-desc {
+  display: block !important;
+  font-size: 0.75rem !important;
+  color: #64748b !important;
+}
+
+.btn-add-photo-header {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.5rem 1rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  white-space: nowrap !important;
+}
+
+.btn-add-photo-header:hover {
+  background: #0f172a !important;
+  border-color: #0f172a !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.admin-upload-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 1rem !important;
+}
+
+@media (max-width: 820px) {
+  .admin-upload-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.85rem !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-upload-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+  }
+}
+
+.admin-upload-card {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.admin-upload-card:hover {
+  border-color: #94a3b8 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+}
+
+.upload-card-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0.5rem 0.75rem !important;
+  background: #f1f5f9 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.upload-badge-tag {
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: #475569 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
+}
+
+.upload-badge-tag.required {
+  color: #0f172a !important;
+}
+
+.btn-delete-slot {
+  background: transparent !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  font-size: 1.25rem !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  padding: 0 0.25rem !important;
+  border-radius: 4px !important;
+  transition: color 0.15s ease, background-color 0.15s ease !important;
+}
+
+.btn-delete-slot:hover {
+  color: #dc2626 !important;
+  background-color: #fee2e2 !important;
+}
+
+.upload-dropzone {
+  position: relative !important;
+  min-height: 140px !important;
+  height: 140px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease !important;
+}
+
+.upload-dropzone:hover {
+  background-color: #f8fafc !important;
+}
+
+.upload-dropzone.drag-over {
+  background-color: #eff6ff !important;
+  outline: 2px dashed #0284c7 !important;
+  outline-offset: -4px !important;
+}
+
+.upload-file-input {
+  display: none !important;
+}
+
+.upload-empty-state {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.35rem !important;
+  padding: 1rem !important;
+  text-align: center !important;
+}
+
+.upload-icon-svg {
+  width: 28px !important;
+  height: 28px !important;
+  stroke: #94a3b8 !important;
+  transition: stroke 0.2s ease !important;
+}
+
+.upload-dropzone:hover .upload-icon-svg {
+  stroke: #0f172a !important;
+}
+
+.upload-btn-fake {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  padding: 0.3rem 0.65rem !important;
+  margin-top: 0.15rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.upload-dropzone:hover .upload-btn-fake {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  border-color: #0f172a !important;
+}
+
+.upload-drop-hint {
+  font-size: 0.68rem !important;
+  color: #94a3b8 !important;
+}
+
+.upload-preview-container {
+  display: none !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.upload-dropzone.has-image .upload-empty-state {
+  display: none !important;
+}
+
+.upload-dropzone.has-image .upload-preview-container {
+  display: block !important;
+}
+
+.upload-preview-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.upload-preview-overlay {
+  position: absolute !important;
+  inset: 0 !important;
+  background: rgba(15, 23, 42, 0.6) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 0 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.upload-dropzone:hover .upload-preview-overlay {
+  opacity: 1 !important;
+}
+
+.upload-overlay-text {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  padding: 0.35rem 0.75rem !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.upload-card-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0.45rem 0.75rem !important;
+  background: #ffffff !important;
+  border-top: 1px solid #e2e8f0 !important;
+  min-height: 34px !important;
+}
+
+.upload-filename {
+  font-size: 0.72rem !important;
+  color: #64748b !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 170px !important;
+}
+
+.btn-clear-upload {
+  background: transparent !important;
+  border: none !important;
+  color: #94a3b8 !important;
+  font-size: 1.15rem !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  padding: 0 0.25rem !important;
+  border-radius: 4px !important;
+  transition: color 0.15s ease, background-color 0.15s ease !important;
+  display: none !important;
+}
+
+.upload-dropzone.has-image + .upload-card-footer .btn-clear-upload {
+  display: block !important;
+}
+
+.btn-clear-upload:hover {
+  color: #dc2626 !important;
+  background-color: #fee2e2 !important;
+}
+
+/* Card Interativo para Adicionar Mais Fotos (+ Card) */
+.upload-add-card {
+  background: #ffffff !important;
+  border: 2px dashed #cbd5e1 !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  min-height: 200px !important;
+  cursor: pointer !important;
+  padding: 1.25rem 1rem !important;
+  text-align: center !important;
+  color: #475569 !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.upload-add-card:hover {
+  border-color: #0f172a !important;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06) !important;
+}
+
+.upload-add-card-icon {
+  width: 32px !important;
+  height: 32px !important;
+  stroke: #94a3b8 !important;
+  transition: stroke 0.2s ease, transform 0.2s ease !important;
+}
+
+.upload-add-card:hover .upload-add-card-icon {
+  stroke: #0f172a !important;
+  transform: scale(1.1) !important;
+}
+
+.upload-add-card-title {
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+}
+
+.upload-add-card-sub {
+  font-size: 0.7rem !important;
+  color: #64748b !important;
+}
+
+/* ==========================================================================
+   MÓDULO DE CMS & CONTEÚDOS PÚBLICOS (BACKOFFICE)
+   ========================================================================== */
+
+.cms-sub-panel {
+  display: none !important;
+}
+
+.cms-sub-panel.active {
+  display: block !important;
+}
+
+.cms-badge-active {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0.25rem 0.65rem !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: #166534 !important;
+  background: #dcfce7 !important;
+  border-radius: 9999px !important;
+}
+
+.cms-badge-paused {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0.25rem 0.65rem !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: #854d0e !important;
+  background: #fef9c3 !important;
+  border-radius: 9999px !important;
+}
+
+.cms-actions-cell {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 0.45rem !important;
+}
+
+.btn-action-cms-edit {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0.38rem 0.75rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  background: #ffffff !important;
+  border: 1.2px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-action-cms-edit:hover {
+  background: #0f172a !important;
+  border-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+.btn-action-cms-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0.38rem 0.75rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #475569 !important;
+  background: #f1f5f9 !important;
+  border: 1.2px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-action-cms-toggle:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.btn-action-cms-delete {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0.38rem 0.6rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  color: #dc2626 !important;
+  background: #ffffff !important;
+  border: 1.2px solid #fee2e2 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-action-cms-delete:hover {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border-color: #dc2626 !important;
+}
+
+/* Card de Configuração de Secção do CMS */
+.cms-config-box {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.cms-config-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 1.25rem !important;
+  gap: 1rem !important;
+  flex-wrap: wrap !important;
+}
+
+.cms-config-title {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin-bottom: 0.2rem !important;
+}
+
+.cms-config-sub {
+  font-size: 0.78rem !important;
+  color: #64748b !important;
+}
+
+/* ==========================================================================
+   SECÇÃO DE CONTACTOS (index.html)
+   ========================================================================== */
+
+.contact-section {
+  padding-top: 4rem !important;
+  padding-bottom: 2rem !important;
+}
+
+.contact-cards-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 1.5rem !important;
+  margin-top: 2.5rem !important;
+}
+
+@media (max-width: 860px) {
+  .contact-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+}
+
+.contact-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 1.75rem 1.5rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.65rem !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.contact-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05) !important;
+  border-color: #cbd5e1 !important;
+}
+
+.contact-card-icon {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 10px !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 0.35rem !important;
+}
+
+.contact-card-title {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.01em !important;
+}
+
+.contact-card-text {
+  font-size: 0.88rem !important;
+  color: #475569 !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+.contact-card-meta {
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  color: #0284c7 !important;
+  margin-top: auto !important;
+  padding-top: 0.5rem !important;
+  border-top: 1px dashed #e2e8f0 !important;
+}
+
+/* ==========================================================================
+   SECÇÃO DE PERGUNTAS FREQUENTES (FAQ) - GERIDA PELO CMS
+   ========================================================================== */
+
+.faq-section {
+  padding-top: 4rem !important;
+  padding-bottom: 5rem !important;
+  background: #f8fafc !important;
+  border-top: 1px solid #e2e8f0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.faq-accordion {
+  max-width: 860px !important;
+  margin: 2.5rem auto 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.85rem !important;
+}
+
+.faq-item {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.faq-item:hover {
+  border-color: #cbd5e1 !important;
+}
+
+.faq-item.open {
+  border-color: #0f172a !important;
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06) !important;
+}
+
+.faq-question {
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 1.25rem 1.5rem !important;
+  font-family: inherit !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  gap: 0.85rem !important;
+}
+
+.faq-question-title {
+  flex: 1 !important;
+}
+
+.faq-category-tag {
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  color: #475569 !important;
+  background: #f1f5f9 !important;
+  padding: 0.25rem 0.6rem !important;
+  border-radius: 9999px !important;
+  white-space: nowrap !important;
+}
+
+.faq-icon {
+  stroke: #64748b !important;
+  flex-shrink: 0 !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.2s ease !important;
+}
+
+.faq-item.open .faq-icon {
+  transform: rotate(180deg) !important;
+  stroke: #0f172a !important;
+}
+
+.faq-answer {
+  max-height: 0 !important;
+  overflow: hidden !important;
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), padding 0.25s ease !important;
+  padding: 0 1.5rem !important;
+}
+
+.faq-item.open .faq-answer {
+  max-height: 400px !important;
+  padding: 0 1.5rem 1.4rem 1.5rem !important;
+}
+
+.faq-answer p {
+  font-size: 0.88rem !important;
+  line-height: 1.65 !important;
+  color: #475569 !important;
+  margin: 0 !important;
+}
+
+.faq-footer-cta {
+  text-align: center !important;
+  margin-top: 3rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0.85rem !important;
+}
+
+.faq-footer-cta p {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  margin: 0 !important;
+}
+
+/* Rodapé Oficial da Plataforma */
+.footer-site {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 2.5rem 4rem !important;
+  border-top: 1px solid #1e293b !important;
+  background: #0b0f19 !important;
+  color: #94a3b8 !important;
+  flex-wrap: wrap !important;
+  gap: 1.5rem !important;
+}
+
+@media (max-width: 768px) {
+  .footer-site {
+    padding: 2rem 1.5rem !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
 }

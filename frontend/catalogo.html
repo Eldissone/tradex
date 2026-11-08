@@ -39,8 +39,6 @@
         </div>
         <div class="nav-links">
           <a href="catalogo.html" class="nav-link-active">Produtos</a>
-          <a href="catalogo.html?cat=electronics">Eletrónicos</a>
-          <a href="catalogo.html?cat=industrial">Construção</a>
           <a href="rastreio.html">Rastreio</a>
              <a href="index.html" class="nav-btn-store mode-tab" title="Website Institucional e Operações Globais">
               <svg class="mode-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -77,43 +75,20 @@
 
     <main>
 
-      <!-- Cabeçalho do Catálogo com Slider de 3 Banners -->
+      <!-- Cabeçalho do Catálogo com Slider de Banners Dinâmico (Gerido pelo CMS) -->
       <section class="catalog-hero-slider" id="catalogHeroSlider" aria-label="Banners em Destaque do Catálogo">
-        <!-- Slide 1: Logística Internacional & Sourcing Geral -->
-        <div class="catalog-slide active" data-slide="0">
-          <div class="catalog-slide-bg slide-bg-1"></div>
-          <div class="catalog-slide-overlay"></div>
-          <div class="catalog-slide-content">
-            <p class="eyebrow">CHINA ➔ ANGOLA</p>
-            <h1>Produtos industriais e comerciais com preços em Kwanza.</h1>
-            <p class="lead">
-              Fornecedores validados nas principais províncias industriais da China (Guangdong, Zhejiang, Jiangsu, Shandong). Despacho aduaneiro e entrega integrada em Luanda.
-            </p>
-          </div>
-        </div>
-
-        <!-- Slide 2: Energia Solar & Sistemas Híbridos -->
-        <div class="catalog-slide" data-slide="1">
-          <div class="catalog-slide-bg slide-bg-2"></div>
-          <div class="catalog-slide-overlay"></div>
-          <div class="catalog-slide-content">
-            <h1>Soluções solares completas com garantia de fábrica.</h1>
-            <p class="lead">
-              Painéis monocristalinos Tier 1, inversores híbridos inteligentes e baterias de lítio LiFePO4 para projetos residenciais, comerciais e industriais em Angola.
-            </p>
-          </div>
-        </div>
-
-        <!-- Slide 3: Maquinaria Pesada & Construção -->
-        <div class="catalog-slide" data-slide="2">
-          <div class="catalog-slide-bg slide-bg-3"></div>
-          <div class="catalog-slide-overlay"></div>
-          <div class="catalog-slide-content">
-            <p class="eyebrow">MAQUINARIA INDUSTRIAL & OBRAS</p>
-            <h1>Equipamento pesado e materiais para grandes projetos.</h1>
-            <p class="lead">
-              Máquinas bloqueiras hidráulicas, andaimes modulares galvanizados e geradores diesel com frete marítimo consolidado FCL e LCL até ao Porto de Luanda.
-            </p>
+        <div id="catalogSlideTrack">
+          <!-- Slide inicial / Injetado dinamicamente via catalogo.js a partir do CMS -->
+          <div class="catalog-slide active" data-slide="0">
+            <div class="catalog-slide-bg slide-bg-1"></div>
+            <div class="catalog-slide-overlay"></div>
+            <div class="catalog-slide-content">
+              <p class="eyebrow">CHINA ➔ ANGOLA</p>
+              <h1>Produtos industriais e comerciais com preços em Kwanza.</h1>
+              <p class="lead">
+                Fornecedores validados nas principais províncias industriais da China (Guangdong, Zhejiang, Jiangsu, Shandong). Despacho aduaneiro e entrega integrada em Luanda.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -127,8 +102,6 @@
           </button>
           <div class="catalog-slider-dots" id="sliderDots">
             <button class="catalog-slider-dot active" data-go="0" aria-label="Ir para banner 1"></button>
-            <button class="catalog-slider-dot" data-go="1" aria-label="Ir para banner 2"></button>
-            <button class="catalog-slider-dot" data-go="2" aria-label="Ir para banner 3"></button>
           </div>
           <button id="sliderNextBtn" class="catalog-slider-arrow" aria-label="Próximo banner">
             <svg class="slider-arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">

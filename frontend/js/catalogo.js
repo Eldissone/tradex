@@ -1,6 +1,7 @@
 import { cartStore } from './cart.js';
 import { api } from './api.js';
 import { PRODUCTS_DATA as ALL_PRODUCTS } from './products-data.js';
+import { cmsStore } from './cms.js';
 
 export { ALL_PRODUCTS };
 
@@ -234,7 +235,30 @@ function setupSourcingForm() {
 
 function setupCatalogHeroSlider() {
   const slider = document.getElementById('catalogHeroSlider');
+  const track = document.getElementById('catalogSlideTrack');
+  const dotsContainer = document.getElementById('sliderDots');
   if (!slider) return;
+
+  const slidesData = cmsStore.getActiveCatalogHeroSlides();
+  if (track && slidesData.length > 0) {
+    track.innerHTML = slidesData.map((slide, idx) => `
+      <div class="catalog-slide ${idx === 0 ? 'active' : ''}" data-slide="${idx}">
+        <img src="${slide.image}" class="catalog-slide-bg-img" alt="${slide.title}" />
+        <div class="catalog-slide-overlay"></div>
+        <div class="catalog-slide-content">
+          ${slide.eyebrow ? `<p class="eyebrow">${slide.eyebrow}</p>` : ''}
+          <h1>${slide.title}</h1>
+          <p class="lead">${slide.lead || ''}</p>
+        </div>
+      </div>
+    `).join('');
+
+    if (dotsContainer) {
+      dotsContainer.innerHTML = slidesData.map((_, idx) => `
+        <button class="catalog-slider-dot ${idx === 0 ? 'active' : ''}" data-go="${idx}" aria-label="Ir para banner ${idx + 1}"></button>
+      `).join('');
+    }
+  }
 
   const slides = slider.querySelectorAll('.catalog-slide');
   const dots = slider.querySelectorAll('.catalog-slider-dot');
@@ -277,15 +301,23 @@ function setupCatalogHeroSlider() {
     }
   }
 
-  prevBtn?.addEventListener('click', () => {
-    prevSlide();
-    startAutoPlay();
-  });
+  if (prevBtn) {
+    const newPrev = prevBtn.cloneNode(true);
+    prevBtn.parentNode.replaceChild(newPrev, prevBtn);
+    newPrev.addEventListener('click', () => {
+      prevSlide();
+      startAutoPlay();
+    });
+  }
 
-  nextBtn?.addEventListener('click', () => {
-    nextSlide();
-    startAutoPlay();
-  });
+  if (nextBtn) {
+    const newNext = nextBtn.cloneNode(true);
+    nextBtn.parentNode.replaceChild(newNext, nextBtn);
+    newNext.addEventListener('click', () => {
+      nextSlide();
+      startAutoPlay();
+    });
+  }
 
   dots.forEach(dot => {
     dot.addEventListener('click', () => {
@@ -297,8 +329,8 @@ function setupCatalogHeroSlider() {
     });
   });
 
-  slider.addEventListener('mouseenter', stopAutoPlay);
-  slider.addEventListener('mouseleave', startAutoPlay);
+  slider.onmouseenter = stopAutoPlay;
+  slider.onmouseleave = startAutoPlay;
 
   startAutoPlay();
 }
@@ -324,6 +356,7 @@ function setupHeaderScroll() {
 document.addEventListener('DOMContentLoaded', () => {
   setupHeaderScroll();
   setupCatalogHeroSlider();
+  window.addEventListener('tradex:cms-changed', setupCatalogHeroSlider);
   renderCatalog();
   setupFiltersAndSearch();
   setupCartDrawer();

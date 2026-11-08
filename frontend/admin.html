@@ -87,6 +87,17 @@
             </svg>
             <span>Canais & WhatsApp API</span>
           </button>
+
+          <div class="admin-nav-group-title">MARKETING & CONTEÚDOS</div>
+
+          <button type="button" class="admin-nav-item" data-tab="cms">
+            <svg class="admin-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+            <span>CMS & Conteúdos Públicos</span>
+          </button>
         </nav>
 
         <div class="admin-sidebar-footer">
@@ -420,6 +431,200 @@
             </div>
           </div>
         </section>
+
+        <!-- Módulo 8: CMS & Conteúdos Públicos -->
+        <section class="admin-tab-panel" id="adminPanelCms">
+          <div class="admin-panel-head">
+            <div>
+              <h1 class="admin-panel-title">CMS & Gestão de Conteúdos Públicos</h1>
+              <p class="admin-panel-subtitle">Controle central de banners, promoções, notícias de importação, FAQ e páginas institucionais.</p>
+            </div>
+            <div class="admin-head-actions">
+              <button type="button" class="btn-dark" id="btnOpenCmsModal">+ Novo Item de Conteúdo</button>
+            </div>
+          </div>
+
+          <!-- Abas de Navegação do CMS -->
+          <div class="admin-filter-bar" id="cmsSubNav">
+            <button type="button" class="admin-filter-pill active" data-cms-tab="featured">Catálogo em Destaque (index.html)</button>
+            <button type="button" class="admin-filter-pill" data-cms-tab="catalog-hero">Hero Slider do Catálogo (catalogo.html)</button>
+            <button type="button" class="admin-filter-pill" data-cms-tab="banners">Banners & Destaques</button>
+            <button type="button" class="admin-filter-pill" data-cms-tab="promotions">Promoções & Cupões</button>
+            <button type="button" class="admin-filter-pill" data-cms-tab="news">Notícias TradeX</button>
+            <button type="button" class="admin-filter-pill" data-cms-tab="faqs">Perguntas Frequentes (FAQ)</button>
+            <button type="button" class="admin-filter-pill" data-cms-tab="pages">Páginas Institucionais</button>
+          </div>
+
+          <!-- Sub-Aba 0: Catálogo em Destaque (index.html) -->
+          <div class="cms-sub-panel active" id="cmsPanelFeatured">
+            <div class="cms-config-box">
+              <div class="cms-config-head">
+                <div>
+                  <h3 class="cms-config-title">Textos Oficiais da Secção "Catálogo em Destaque" (index.html)</h3>
+                  <p class="cms-config-sub">Personalize o título, chamada de atenção e subtítulo que aparecem na homepage.</p>
+                </div>
+                <button type="button" class="btn-dark" id="btnSaveFeaturedTexts">Salvar Textos da Secção</button>
+              </div>
+              <div class="checkout-form-row">
+                <div class="checkout-form-group">
+                  <label for="cmsFeaturedEyebrow">Selo / Eyebrow da Secção</label>
+                  <input type="text" id="cmsFeaturedEyebrow" class="checkout-input" value="CATÁLOGO EM DESTAQUE" required />
+                </div>
+                <div class="checkout-form-group">
+                  <label for="cmsFeaturedTitle">Título Principal (H2)</label>
+                  <input type="text" id="cmsFeaturedTitle" class="checkout-input" value="Produtos com fornecedor validado na China" required />
+                </div>
+              </div>
+              <div class="checkout-form-group">
+                <label for="cmsFeaturedSubtitle">Subtítulo Explicativo</label>
+                <input type="text" id="cmsFeaturedSubtitle" class="checkout-input" value="Equipamentos industriais, soluções de energia solar e bens de consumo com cotação imediata em Kwanza (AOA)." required />
+              </div>
+              <div id="feedbackFeaturedTexts" class="auth-feedback"></div>
+            </div>
+
+            <!-- Tabela de Seleção dos Produtos em Destaque na Homepage -->
+            <div class="admin-table-card">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Produto / Equipamento</th>
+                    <th>Categoria</th>
+                    <th>Origem na China</th>
+                    <th>Preço (AOA)</th>
+                    <th>Exibição na Homepage</th>
+                    <th>Ações de Destaque</th>
+                  </tr>
+                </thead>
+                <tbody id="cmsTableFeaturedProducts">
+                  <!-- Injetado via admin.js com botão para ativar/remover do destaque da homepage -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Sub-Aba 0.5: Hero Slider do Catálogo (catalogo.html) -->
+          <div class="cms-sub-panel" id="cmsPanelCatalogHero">
+            <div class="admin-table-card">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Slide do Catálogo / Título (H1)</th>
+                    <th>Eyebrow / Tema</th>
+                    <th>Ordem</th>
+                    <th>Fundo / Imagem</th>
+                    <th>Estado</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="cmsTableCatalogHero">
+                  <!-- Injetado via admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Sub-Aba 1: Banners -->
+          <div class="cms-sub-panel" id="cmsPanelBanners">
+            <div class="admin-table-card">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Banner / Título</th>
+                    <th>Localização</th>
+                    <th>Botão / CTA</th>
+                    <th>Estado</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="cmsTableBanners">
+                  <!-- Injetado via admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Sub-Aba 2: Promoções -->
+          <div class="cms-sub-panel" id="cmsPanelPromotions">
+            <div class="admin-table-card">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Campanha Promocional</th>
+                    <th>Código de Cupão</th>
+                    <th>Desconto</th>
+                    <th>Validade</th>
+                    <th>Estado</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="cmsTablePromotions">
+                  <!-- Injetado via admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Sub-Aba 3: Notícias TradeX -->
+          <div class="cms-sub-panel" id="cmsPanelNews">
+            <div class="admin-table-card">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Título da Notícia / Artigo</th>
+                    <th>Categoria</th>
+                    <th>Data</th>
+                    <th>Autor</th>
+                    <th>Estado</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="cmsTableNews">
+                  <!-- Injetado via admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Sub-Aba 4: FAQ (Perguntas Frequentes) -->
+          <div class="cms-sub-panel" id="cmsPanelFaqs">
+            <div class="admin-table-card">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Pergunta Frequente</th>
+                    <th>Categoria</th>
+                    <th>Ordem</th>
+                    <th>Estado</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="cmsTableFaqs">
+                  <!-- Injetado via admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Sub-Aba 5: Páginas Institucionais -->
+          <div class="cms-sub-panel" id="cmsPanelPages">
+            <div class="admin-table-card">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Nome da Página</th>
+                    <th>Slug URL</th>
+                    <th>Última Atualização</th>
+                    <th>Estado</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="cmsTablePages">
+                  <!-- Injetado via admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
 
@@ -474,51 +679,137 @@
       </div>
     </div>
 
-    <!-- Modal de Cadastro de Novo Produto -->
-    <div class="auth-modal-overlay" id="newProductModalOverlay">
-      <div class="auth-modal-card">
+    <!-- Modal de Cadastro e Edição Completa de Produto -->
+    <div class="auth-modal-overlay" id="productModalOverlay">
+      <div class="auth-modal-card product-modal-large">
         <div class="auth-modal-header">
           <div class="auth-modal-title-wrap">
-            <h3 class="auth-modal-title">Novo Equipamento / Produto</h3>
-            <p class="auth-modal-subtitle">Adicione mercadorias para importação da China.</p>
+            <h3 class="auth-modal-title" id="productModalTitle">Editar Produto</h3>
+            <p class="auth-modal-subtitle" id="productModalSubtitle">Atualize as informações comerciais, técnicas e logísticas da mercadoria.</p>
           </div>
           <button type="button" class="auth-modal-close" id="btnCloseProductModal">&times;</button>
         </div>
-        <form id="formNewProduct" class="auth-tab-content active">
-          <div class="checkout-form-group">
-            <label for="newProdTitle">Título do Produto *</label>
-            <input type="text" id="newProdTitle" class="checkout-input" placeholder="Ex: Gerador Industrial a Diesel 50kVA Cummins" required />
-          </div>
+        <form id="formProductEdit" class="auth-tab-content active product-modal-scroll">
+          <input type="hidden" id="prodFormId" />
+
+          <!-- Título e Categoria -->
           <div class="checkout-form-row">
             <div class="checkout-form-group">
-              <label for="newProdCategory">Categoria</label>
-              <select id="newProdCategory" class="checkout-select">
+              <label for="prodFormTitle">Título Completo do Produto *</label>
+              <input type="text" id="prodFormTitle" class="checkout-input" placeholder="Ex: Kit Painéis Solares Monocristalinos 550W" required />
+            </div>
+            <div class="checkout-form-group">
+              <label for="prodFormCategory">Categoria Comercial *</label>
+              <select id="prodFormCategory" class="checkout-select" required>
                 <option value="solar">Energia Solar</option>
                 <option value="construction">Construção & Equipamento</option>
                 <option value="machinery">Maquinaria & Geradores</option>
                 <option value="electronics">Eletrónicos & Iluminação</option>
               </select>
             </div>
-            <div class="checkout-form-group">
-              <label for="newProdPrice">Preço em Kwanzas (AOA) *</label>
-              <input type="number" id="newProdPrice" class="checkout-input" placeholder="Ex: 5800000" required />
-            </div>
           </div>
+
+          <!-- Preço, Unidade e MOQ -->
           <div class="checkout-form-row">
             <div class="checkout-form-group">
-              <label for="newProdOrigin">Origem na China</label>
-              <input type="text" id="newProdOrigin" class="checkout-input" placeholder="Foshan, Guangdong" required />
+              <label for="prodFormPrice">Preço Unitário em Kwanzas (AOA) *</label>
+              <input type="number" id="prodFormPrice" class="checkout-input" placeholder="Ex: 3450000" required />
             </div>
             <div class="checkout-form-group">
-              <label for="newProdMoq">Quantidade Mínima (MOQ)</label>
-              <input type="text" id="newProdMoq" class="checkout-input" placeholder="1 Unidade ou 1 Palete" required />
+              <label for="prodFormUnit">Unidade de Venda *</label>
+              <input type="text" id="prodFormUnit" class="checkout-input" placeholder="Ex: palete, unidade, m², lote" required />
             </div>
           </div>
-          <div class="checkout-form-group">
-            <label for="newProdImage">URL da Imagem</label>
-            <input type="url" id="newProdImage" class="checkout-input" placeholder="https://images.unsplash.com/..." />
+
+          <div class="checkout-form-row">
+            <div class="checkout-form-group">
+              <label for="prodFormMoq">Quantidade Mínima de Encomenda (MOQ) *</label>
+              <input type="text" id="prodFormMoq" class="checkout-input" placeholder="Ex: 1 Palete (30 painéis)" required />
+            </div>
+            <div class="checkout-form-group">
+              <label for="prodFormBadge">Selo / Destaque de Qualidade</label>
+              <input type="text" id="prodFormBadge" class="checkout-input" placeholder="Ex: Tier 1 Fabrico, Grau AAA" />
+            </div>
           </div>
-          <button type="submit" class="btn-dark btn-full">Publicar no Catálogo</button>
+
+          <!-- Origem e Logística Internacional -->
+          <div class="checkout-form-row">
+            <div class="checkout-form-group">
+              <label for="prodFormOrigin">Polo Industrial / Cidade na China *</label>
+              <input type="text" id="prodFormOrigin" class="checkout-input" placeholder="Ex: Foshan, Guangdong" required />
+            </div>
+            <div class="checkout-form-group">
+              <label for="prodFormOriginPort">Porto de Embarque de Origem</label>
+              <input type="text" id="prodFormOriginPort" class="checkout-input" placeholder="Ex: Porto de Nansha / Shenzhen (China)" />
+            </div>
+          </div>
+
+          <div class="checkout-form-row">
+            <div class="checkout-form-group">
+              <label for="prodFormTransitTime">Prazo de Trânsito Estimado (China ➔ Luanda)</label>
+              <input type="text" id="prodFormTransitTime" class="checkout-input" placeholder="Ex: 32 a 38 dias" />
+            </div>
+            <div class="checkout-form-group">
+              <label for="prodFormPacking">Embalagem & Acondicionamento</label>
+              <input type="text" id="prodFormPacking" class="checkout-input" placeholder="Ex: Palete vertical com filme retrátil" />
+            </div>
+          </div>
+
+          <!-- Galeria Dinâmica de Fotografias (Upload de Ficheiros Locais) -->
+          <div class="admin-upload-section">
+            <div class="admin-upload-head">
+              <div class="admin-upload-head-left">
+                <label class="admin-upload-title">Fotografias & Ângulos do Equipamento *</label>
+                <span class="admin-upload-desc">Carregue imagens locais do computador (JPG, PNG, WEBP). Adicione mais fotos e ângulos clicando no botão (+).</span>
+              </div>
+              <button type="button" class="btn-add-photo-header" id="btnAddPhotoSlot">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>+ Adicionar Ângulo / Foto</span>
+              </button>
+            </div>
+
+            <div class="admin-upload-grid" id="productPhotoGrid">
+              <!-- Cards de fotos e botão de adicionar injetados dinamicamente via admin.js -->
+            </div>
+          </div>
+
+          <!-- Especificações e Descrição Completa -->
+          <div class="checkout-form-group">
+            <label for="prodFormSpecs">Especificações Técnicas Resumidas</label>
+            <input type="text" id="prodFormSpecs" class="checkout-input" placeholder="Ex: Eficiência 21.3% | Vidro temperado | Garantia 12 anos" />
+          </div>
+
+          <div class="checkout-form-group">
+            <label for="prodFormDescription">Descrição Comercial e Técnica do Produto</label>
+            <textarea id="prodFormDescription" class="checkout-input" rows="3" placeholder="Descreva os diferenciais, utilidade no mercado angolano e conformidades técnicas..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-dark btn-full" id="btnSubmitProductForm">Salvar Alterações do Produto</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal Versátil de Gestão de Conteúdos CMS -->
+    <div class="auth-modal-overlay" id="cmsModalOverlay">
+      <div class="auth-modal-card">
+        <div class="auth-modal-header">
+          <div class="auth-modal-title-wrap">
+            <h3 class="auth-modal-title" id="cmsModalTitle">Novo Item de Conteúdo</h3>
+            <p class="auth-modal-subtitle" id="cmsModalSubtitle">Preencha as informações públicas a exibir na plataforma TradeX.</p>
+          </div>
+          <button type="button" class="auth-modal-close" id="btnCloseCmsModal">&times;</button>
+        </div>
+        <form id="formCmsItem" class="auth-tab-content active product-modal-scroll">
+          <input type="hidden" id="cmsItemId" />
+          <input type="hidden" id="cmsItemType" value="banners" />
+
+          <!-- Campos Dinâmicos injetados via admin.js de acordo com a aba selecionada -->
+          <div id="cmsDynamicFields"></div>
+
+          <button type="submit" class="btn-dark btn-full" id="btnSubmitCmsForm">Salvar Conteúdo</button>
         </form>
       </div>
     </div>

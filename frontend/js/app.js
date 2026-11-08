@@ -1,20 +1,38 @@
 import { api } from './api.js';
 import { cartStore } from './cart.js';
 import { PRODUCTS_DATA } from './products-data.js';
+import { cmsStore } from './cms.js';
 
 const PRODUCTS = PRODUCTS_DATA;
 
 let activeCategory = 'all';
 
-// 1. Renderização do Carrossel com View Espelhada
+// 1. Renderização do Carrossel com View Espelhada & Gestão CMS
 function renderCarousel(filterCategory = 'all') {
   const track = document.getElementById('productCarouselTrack');
   const dotsContainer = document.getElementById('carouselDots');
   if (!track) return;
 
+  // Atualiza textos da secção a partir do CMS
+  const featuredConfig = cmsStore.getFeaturedCatalog();
+  const elEyebrow = document.getElementById('featuredCatalogEyebrow');
+  const elTitle = document.getElementById('featuredCatalogTitle');
+  const elSubtitle = document.getElementById('featuredCatalogSubtitle');
+
+  if (elEyebrow && featuredConfig.eyebrow) elEyebrow.textContent = featuredConfig.eyebrow;
+  if (elTitle && featuredConfig.title) elTitle.textContent = featuredConfig.title;
+  if (elSubtitle && featuredConfig.subtitle) elSubtitle.textContent = featuredConfig.subtitle;
+
+  // Filtra produtos marcados no CMS para exibição em destaque
+  const featuredIds = featuredConfig.productIds || [];
+  let sourceProducts = PRODUCTS.filter(p => featuredIds.includes(p.id));
+  if (sourceProducts.length === 0) {
+    sourceProducts = PRODUCTS; // fallback caso nenhum esteja marcado
+  }
+
   const filtered = filterCategory === 'all' 
-    ? PRODUCTS 
-    : PRODUCTS.filter(p => p.category === filterCategory);
+    ? sourceProducts 
+    : sourceProducts.filter(p => p.category === filterCategory);
 
   if (filtered.length === 0) {
     track.innerHTML = `
@@ -336,6 +354,50 @@ function setupSourcingForm() {
   });
 }
 
+// 6. Gestão Dinâmica do Accordion de Perguntas Frequentes (FAQ)
+function renderFaqSection() {
+  const container = document.getElementById('faqAccordionContainer');
+  if (!container) return;
+
+  const faqs = (cmsStore.getData().faqs || [])
+    .filter(f => f.active)
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  if (faqs.length === 0) {
+    container.innerHTML = '<p class="faq-empty">Perguntas frequentes em atualização.</p>';
+    return;
+  }
+
+  container.innerHTML = faqs.map((faq, idx) => `
+    <div class="faq-item ${idx === 0 ? 'open' : ''}">
+      <button type="button" class="faq-question">
+        <span class="faq-question-title">${faq.question}</span>
+        <span class="faq-category-tag">${faq.category}</span>
+        <svg class="faq-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+      <div class="faq-answer">
+        <p>${faq.answer}</p>
+      </div>
+    </div>
+  `).join('');
+
+  container.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const parentItem = btn.closest('.faq-item');
+      if (!parentItem) return;
+
+      const isOpen = parentItem.classList.contains('open');
+      container.querySelectorAll('.faq-item').forEach(item => item.classList.remove('open'));
+
+      if (!isOpen) {
+        parentItem.classList.add('open');
+      }
+    });
+  });
+}
+
 function setupHeaderScroll() {
   const header = document.getElementById('mainHeader');
   const hero = document.getElementById('inicio');
@@ -364,6 +426,12 @@ document.addEventListener('DOMContentLoaded', () => {
   setupCalculator();
   setupTracking();
   setupSourcingForm();
+  renderFaqSection();
+
+  window.addEventListener('tradex:cms-changed', () => {
+    renderCarousel(activeCategory);
+    renderFaqSection();
+  });
 
   void api.health();
 });

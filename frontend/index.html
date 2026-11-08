@@ -43,6 +43,7 @@
           <a href="index.html#importacao-encomendas">Importação</a>
           <a href="index.html#como-funciona">Como funciona</a>
           <a href="index.html#contacto">Contacto</a>
+          <a href="index.html#faq">FAQ</a>
           <a href="catalogo.html" class="nav-btn-store mode-tab" title="Loja Online e Catálogo de Produtos com Cotação em Kwanzas">
               <svg class="mode-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="9" cy="21" r="1"></circle>
@@ -144,9 +145,9 @@
       <section id="catalogo" class="section-standard">
         <div class="carousel-section-head">
           <div class="section-head">
-            <p class="eyebrow eyebrow-dark">CATÁLOGO EM DESTAQUE</p>
-            <h2>Produtos com fornecedor validado na China</h2>
-            <p>Equipamentos industriais, soluções de energia solar e bens de consumo com cotação imediata em Kwanza (AOA).</p>
+            <p class="eyebrow eyebrow-dark" id="featuredCatalogEyebrow">CATÁLOGO EM DESTAQUE</p>
+            <h2 id="featuredCatalogTitle">Produtos com fornecedor validado na China</h2>
+            <p id="featuredCatalogSubtitle">Equipamentos industriais, soluções de energia solar e bens de consumo com cotação imediata em Kwanza (AOA).</p>
           </div>
           <div class="carousel-controls">
             <button id="carouselPrevBtn" class="carousel-btn" aria-label="Produto anterior">←</button>
@@ -422,8 +423,73 @@
         </div>
       </section>
 
-      <!-- Rodapé Original -->
-      <footer id="contacto">
+      <!-- Secção de Contactos & Canais Oficiais -->
+      <section id="contacto" class="section-standard contact-section">
+        <div class="section-head">
+          <p class="eyebrow eyebrow-dark">HUB OPERACIONAL & CONTACTOS</p>
+          <h2>Fale diretamente com os nossos especialistas em Luanda e Guangzhou</h2>
+          <p>Apoio comercial, cotações alfandegárias e acompanhamento de importações corporativas.</p>
+        </div>
+
+        <div class="contact-cards-grid">
+          <div class="contact-card">
+            <div class="contact-card-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <strong class="contact-card-title">Hub Luanda (Sede Angola)</strong>
+            <p class="contact-card-text">Edifício Kilamba, Av. 4 de Fevereiro, Marginal de Luanda</p>
+            <span class="contact-card-meta">Segunda a Sexta: 08:00 – 17:30</span>
+          </div>
+
+          <div class="contact-card">
+            <div class="contact-card-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </div>
+            <strong class="contact-card-title">Armazém e Hub Guangzhou</strong>
+            <p class="contact-card-text">Yuexiu Logistics Zone, Baiyun District, Guangzhou, China</p>
+            <span class="contact-card-meta">Horário China: GMT+8 | Inspeção & Consolidação</span>
+          </div>
+
+          <div class="contact-card">
+            <div class="contact-card-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </div>
+            <strong class="contact-card-title">Linha Direta & WhatsApp</strong>
+            <p class="contact-card-text">+244 923 000 000 / +244 912 345 678</p>
+            <span class="contact-card-meta">comercial@tradex.ao | Atendimento Imediato</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Secção de Perguntas Frequentes (FAQ) - Gerida pelo CMS -->
+      <section id="faq" class="section-standard faq-section">
+        <div class="section-head">
+          <p class="eyebrow eyebrow-dark">ESCLARECIMENTO DE DÚVIDAS</p>
+          <h2>Perguntas Frequentes (FAQ)</h2>
+          <p>Tudo o que precisa de saber sobre cotações em Kwanzas, frete marítimo da China e desalfandegamento em Luanda.</p>
+        </div>
+
+        <div class="faq-accordion" id="faqAccordionContainer">
+          <!-- Injetado dinamicamente via app.js a partir do CMS (cmsStore.getData().faqs) -->
+        </div>
+
+        <div class="faq-footer-cta">
+          <p>Ainda tem dúvidas sobre o processo de importação?</p>
+          <a href="#sourcing" class="btn-dark">Falar com um Consultor de Importação &rarr;</a>
+        </div>
+      </section>
+
+      <!-- Rodapé Oficial -->
+      <footer class="footer-site">
         <div>
           <strong class="footer-brand-title">TRADEX GLOBAL TRADING</strong>
           <p class="footer-address">
