@@ -450,7 +450,7 @@ function renderProductsModule() {
         <button type="button" class="btn-outline-dark btn-xs btn-toggle-product" data-product-id="${prod.id}" data-active="${prod.active === false ? '0' : '1'}">
           ${prod.active === false ? 'Activar' : 'Desactivar'}
         </button>
-        <button type="button" class="btn-outline-dark btn-xs btn-delete-product" data-product-id="${prod.id}" style="color:#b91c1c;border-color:#fca5a5">Eliminar</button>
+        <button type="button" class="btn-outline-dark btn-xs btn-delete-product" data-product-id="${prod.id}">Eliminar</button>
       </td>
     </tr>
   `).join('');

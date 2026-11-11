@@ -45,9 +45,12 @@ async function renderCategoryChart() {
   box.innerHTML = rows.map(r => `
     <div class="chart-row">
       <span class="chart-label">${esc(r.category)}</span>
-      <div class="chart-track"><div class="chart-track-fill" style="width:${Math.max(3, Math.round((r.revenueAoa / max) * 100))}%"></div></div>
+      <div class="chart-track"><div class="chart-track-fill" data-pct="${Math.max(3, Math.round((r.revenueAoa / max) * 100))}"></div></div>
       <span class="chart-val">${fmt(r.revenueAoa)}</span>
     </div>`).join('');
+  box.querySelectorAll('.chart-track-fill[data-pct]').forEach(el => {
+    el.style.width = el.getAttribute('data-pct') + '%';
+  });
 }
 
 async function renderConversion() {

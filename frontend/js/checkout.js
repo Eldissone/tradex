@@ -77,10 +77,19 @@ function renderCheckoutOrderSummary() {
   const breakdown = calculateBreakdown(items);
 
   if (listEl) {
-    listEl.innerHTML = items.map(item => `
+    const fallbackThumb = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300';
+    listEl.innerHTML = items.map(item => {
+      const itemImg = (typeof item.image === 'string' && item.image.trim())
+        ? item.image
+        : (Array.isArray(item.images) && item.images.length > 0)
+          ? (typeof item.images[0] === 'string' ? item.images[0] : item.images[0]?.url)
+          : fallbackThumb;
+      const validSrc = itemImg || fallbackThumb;
+
+      return `
       <div class="checkout-item-row">
         <div class="checkout-item-thumb">
-          <img src="${item.images && item.images[0] ? item.images[0] : 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300'}" alt="${item.title}" />
+          <img src="${validSrc}" alt="${item.title}" onerror="this.onerror=null;this.src='${fallbackThumb}';" />
           <span class="checkout-item-qty-badge">${item.quantity}</span>
         </div>
         <div class="checkout-item-info">
@@ -92,7 +101,8 @@ function renderCheckoutOrderSummary() {
           ${cartStore.formatAoa(item.priceAoa * item.quantity)}
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
 
   // Atualização dos totais
