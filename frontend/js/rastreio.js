@@ -2,6 +2,11 @@ import { cartStore } from './cart.js';
 import { authStore } from './auth.js';
 import { api } from './api.js';
 import { renderProofUploader } from './proof-upload.js';
+import { openDocViewer } from './doc-viewer.js';
+
+// Última consulta bem-sucedida (para abrir documentos com o mesmo e-mail)
+let currentLookup = { code: '', email: '' };
+const escapeHtmlText = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 // Renderização Completa dos Detalhes de Rastreio
 function renderShipmentDetails(shipment) {
@@ -140,16 +145,17 @@ function renderShipmentDetails(shipment) {
           <h3 class="track-card-title">Documentos da Encomenda</h3>
           <p class="sidebar-subtext">Fatura e comprovativos associados a esta encomenda.</p>
           <div class="doc-list-group">
+            ${shipment.documents.length === 0 ? '<p class="sidebar-subtext">Ainda não há documentos disponíveis.</p>' : ''}
             ${shipment.documents.map(doc => `
-              <div class="doc-item-row">
+              <div class="doc-item-row is-clickable" role="button" tabindex="0" data-doc-id="${doc.id}">
                 <div class="doc-icon-wrap">
                   <svg class="doc-file-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                 </div>
                 <div class="doc-info-block">
-                  <span class="doc-name">${doc.name}</span>
-                  <span class="doc-code">${doc.code}</span>
+                  <span class="doc-name">${escapeHtmlText(doc.name)}</span>
+                  <span class="doc-code">${new Date(doc.createdAt).toLocaleDateString('pt-AO', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                 </div>
-                <span class="doc-status-tag">${doc.status}</span>
+                <span class="doc-status-tag">Ver</span>
               </div>
             `).join('')}
           </div>
@@ -271,7 +277,9 @@ function initTrackingPage() {
 
     const res = await api.tracking.lookup(code, email);
     if (res.ok) {
+      currentLookup = { code: res.data.data.code, email: email || '' };
       renderShipmentDetails(res.data.data);
+      bindDocuments(res.data.data);
       renderPaymentProofCard(res.data.data, () => executeSearch(code), email);
     } else if (dashboard) {
       if (!email) emailInput?.focus();
@@ -412,3 +420,20 @@ function setupCartDrawer() {
 
 document.addEventListener('DOMContentLoaded', initTrackingPage);
 
+
+function bindDocuments(shipment) {
+  const open = (row) => {
+    const doc = shipment.documents.find(d => d.id === row.dataset.docId);
+    if (!doc) return;
+    openDocViewer({
+      title: doc.name,
+      subtitle: `Encomenda ${shipment.code}`,
+      fileName: doc.fileName,
+      loadBlob: () => api.tracking.documentBlob(currentLookup.code, doc.id, currentLookup.email)
+    });
+  };
+  document.querySelectorAll('#trackingDashboard .doc-item-row[data-doc-id]').forEach(row => {
+    row.addEventListener('click', () => open(row));
+    row.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(row); } });
+  });
+}

@@ -88,6 +88,8 @@ const productSchema = z.object({
   logistics: z.record(z.string(), z.any()).optional(),
   active: z.boolean().optional(),
   featured: z.boolean().optional(),
+  immediateAvailable: z.boolean().optional(),
+  chargeShipping: z.boolean().optional(),
   supplierId: z.string().optional().nullable()
 });
 

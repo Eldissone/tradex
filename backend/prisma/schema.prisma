@@ -157,6 +157,8 @@ model Product {
   logistics   Json        @default("{}")
   active      Boolean     @default(true)
   featured    Boolean     @default(false)
+  immediateAvailable Boolean @default(false)
+  chargeShipping     Boolean @default(true)
   categoryId  String
   category    Category    @relation(fields: [categoryId], references: [id])
   supplierId  String?
@@ -214,6 +216,7 @@ model Order {
   customer          Customer?       @relation(fields: [customerId], references: [id])
   items             OrderItem[]
   payments          Payment[]
+  documents         OrderDocument[]
   trackingEvents    TrackingEvent[]
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
@@ -371,4 +374,20 @@ model ConversationMessage {
   createdAt      DateTime     @default(now())
 
   @@index([conversationId, createdAt])
+}
+
+// Documentos anexados pela equipa a uma encomenda (visíveis ao cliente no rastreio)
+model OrderDocument {
+  id           String   @id @default(cuid())
+  orderId      String
+  name         String
+  fileName     String
+  path         String
+  mimeType     String
+  size         Int
+  uploadedById String?
+  createdAt    DateTime @default(now())
+  order        Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
 }

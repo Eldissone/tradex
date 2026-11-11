@@ -181,6 +181,15 @@ export const authStore = {
     return order;
   },
 
+  // Remove da cache uma encomenda eliminada
+  forgetOrder(id) {
+    if (this.isLoggedIn()) writeJson(CACHE_KEYS.orders, this.getOrders().filter(o => o.id !== id));
+    const last = readJson(LAST_ORDER_KEY, null);
+    if (last?.id === id) { try { localStorage.removeItem(LAST_ORDER_KEY); } catch {} }
+    emit('tradex:orders-changed');
+    this.refreshPayments();
+  },
+
   async refreshPayments() {
     const res = await api.payments.list();
     if (res.ok) {

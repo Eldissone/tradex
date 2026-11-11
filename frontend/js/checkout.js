@@ -21,11 +21,14 @@ function calculateBreakdown(items) {
   const subtotal = items.reduce((acc, i) => acc + (i.priceAoa * i.quantity), 0);
   
   // Frete Internacional baseado na modalidade
+  // Produtos de aquisição imediata sem taxa de envio não pagam frete nem seguro
+  const freightable = items.filter(i => !(i.immediateAvailable && i.chargeShipping === false))
+    .reduce((acc, i) => acc + (i.priceAoa * i.quantity), 0);
   const freightRate = getShippingMode(checkoutState.shippingMode).freightRate;
-  const internationalFreight = Math.round(subtotal * freightRate);
+  const internationalFreight = Math.round(freightable * freightRate);
 
   // Seguro de carga
-  const customsInsurance = Math.round((subtotal + internationalFreight) * CARGO_INSURANCE_RATE);
+  const customsInsurance = Math.round((freightable + internationalFreight) * CARGO_INSURANCE_RATE);
 
   // Entrega local
   const deliveryCost = getDeliveryFee(checkoutState.deliveryMethod);

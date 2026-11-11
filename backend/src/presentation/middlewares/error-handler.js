@@ -27,7 +27,7 @@ export function errorHandler(error, _request, response, _next) {
 
   if (error?.name === 'MulterError') {
     const message = error.code === 'LIMIT_FILE_SIZE'
-      ? 'O ficheiro excede o limite de 5 MB.'
+      ? 'O ficheiro excede o limite de tamanho permitido.'
       : 'Envie apenas um ficheiro no campo indicado.';
     return response.status(error.code === 'LIMIT_FILE_SIZE' ? 413 : 400).json({ ok: false, error: error.code, message });
   }

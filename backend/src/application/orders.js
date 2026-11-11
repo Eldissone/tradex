@@ -45,10 +45,11 @@ export async function createOrder(input, { customer = null, channel = 'WEB', con
   for (const i of input.items) qty.set(i.id, (qty.get(i.id) || 0) + i.quantity);
   const lines = [...qty.entries()].map(([id, quantity]) => {
     const p = byId.get(id);
-    return { productId: p.id, title: p.title, image: p.image, quantity, unitPriceAoa: Number(p.priceAoa) };
+    return { productId: p.id, title: p.title, image: p.image, quantity, unitPriceAoa: Number(p.priceAoa), noFreight: p.immediateAvailable && !p.chargeShipping };
   });
   const subtotal = lines.reduce((acc, l) => acc + l.unitPriceAoa * l.quantity, 0);
-  const costs = await computeOrderCosts({ subtotal, shippingMode: input.shippingMode, deliveryMethod: input.deliveryMethod });
+  const freightableSubtotal = lines.filter(l => !l.noFreight).reduce((acc, l) => acc + l.unitPriceAoa * l.quantity, 0);
+  const costs = await computeOrderCosts({ subtotal, freightableSubtotal, shippingMode: input.shippingMode, deliveryMethod: input.deliveryMethod });
 
   // Morada: guardada do cliente (com sessão) ou enviada no pedido
   let address = input.address || null;
@@ -87,7 +88,7 @@ export async function createOrder(input, { customer = null, channel = 'WEB', con
         deliveryFeeAoa: costs.deliveryFee,
         totalAoa: costs.total,
         estimatedDelivery: costs.transitLabel,
-        items: { create: lines },
+        items: { create: lines.map(({ noFreight, ...l }) => l) },
         payments: {
           create: {
             method: input.paymentMethod,

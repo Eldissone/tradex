@@ -70,6 +70,8 @@ export function serializeProduct(p) {
     logistics: p.logistics || {},
     active: p.active,
     featured: p.featured,
+    immediateAvailable: p.immediateAvailable,
+    chargeShipping: p.chargeShipping,
     supplierId: p.supplierId
   };
 }

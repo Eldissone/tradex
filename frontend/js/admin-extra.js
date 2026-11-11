@@ -1,6 +1,7 @@
 // TradeX Global Trading - Backoffice (Fase 3)
 // Utilizadores e conversão, fornecedores, lotes de envio, resumo financeiro,
 // configurações e gráfico de vendas por categoria.
+import { iconBtn } from './icons.js';
 import { api } from './api.js';
 import { authStore } from './auth.js';
 import { cartStore } from './cart.js';
@@ -122,9 +123,7 @@ async function renderUsers() {
       <td><span class="table-pay-badge ${u.active ? 'table-badge-approved' : 'table-badge-pending'}">${u.active ? 'Activo' : 'Desactivado'}</span></td>
       <td>
         ${canEdit && u.id !== me?.id ? `
-          <button type="button" class="btn-outline-dark btn-xs" data-user-toggle="${u.id}" data-active="${u.active ? '1' : '0'}">
-            ${u.active ? 'Desactivar' : 'Activar'}
-          </button>` : '<span class="table-sub-detail">—</span>'}
+          ${iconBtn({ icon: 'power', title: u.active ? 'Desactivar conta' : 'Activar conta', variant: u.active ? 'danger' : 'success', attrs: `data-user-toggle="${u.id}" data-active="${u.active ? '1' : '0'}"` })}` : '<span class="table-sub-detail">—</span>'}
       </td>
     </tr>`).join('');
 }
@@ -202,7 +201,7 @@ function renderSuppliers() {
           <td>${esc(sup.terms || '—')}</td>
           <td>${sup.productsCount ?? 0}</td>
           <td>${sup.active ? 'Activo' : 'Inactivo'}</td>
-          <td><button type="button" class="btn-outline-dark btn-xs" data-supplier-edit="${sup.id}">Editar</button></td>
+          <td>${iconBtn({ icon: 'edit', title: 'Editar fornecedor', attrs: `data-supplier-edit="${sup.id}"` })}</td>
         </tr>`).join('')}</tbody>
     </table>`;
 }
@@ -338,7 +337,7 @@ function renderShipments() {
           ${SHIPMENT_FLOW.map(([k, v]) => `<option value="${k}" ${k === shp.statusKey ? 'selected' : ''}>${v}</option>`).join('')}
         </select>
         <button type="button" class="btn-dark btn-xs" data-status-apply="${esc(shp.id)}">Actualizar estado</button>
-        <button type="button" class="btn-outline-dark btn-xs" data-shipment-edit="${esc(shp.id)}">Editar</button>
+        ${iconBtn({ icon: 'edit', title: 'Editar lote', attrs: `data-shipment-edit="${esc(shp.id)}"` })}
       </div>
     </div>`).join('');
 }

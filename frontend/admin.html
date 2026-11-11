@@ -866,6 +866,17 @@
 
           <button type="submit" class="btn-dark btn-full">Salvar e Propagar Estado</button>
         </form>
+
+        <div class="order-docs" id="orderDocsSection">
+          <h4 class="order-docs-title">Documentos da encomenda <small>(opcional, visíveis ao cliente no rastreio)</small></h4>
+          <ul class="order-docs-list" id="orderDocsList"></ul>
+          <div class="order-docs-upload">
+            <input type="text" id="orderDocName" class="checkout-input" placeholder="Nome do documento (ex.: Fatura, Packing list)" maxlength="120" />
+            <input type="file" id="orderDocFile" accept="application/pdf,image/jpeg,image/png" hidden />
+            <button type="button" class="btn-outline-dark btn-xs" id="btnPickOrderDoc">Anexar ficheiro</button>
+          </div>
+          <p class="proof-upload-feedback" id="orderDocFeedback" role="status"></p>
+        </div>
       </div>
     </div>
 
@@ -971,6 +982,11 @@
           <div class="checkout-form-group">
             <label for="prodFormSpecs">Especificações Técnicas Resumidas</label>
             <input type="text" id="prodFormSpecs" class="checkout-input" placeholder="Ex: Eficiência 21.3% | Vidro temperado | Garantia 12 anos" />
+          </div>
+
+          <div class="checkout-form-group">
+            <label class="auth-checkbox-label"><input type="checkbox" id="prodFormImmediate" /> <span>Disponível para aquisição imediata (em stock)</span></label>
+            <label class="auth-checkbox-label" id="prodFormChargeShippingWrap"><input type="checkbox" id="prodFormChargeShipping" checked /> <span>Cobrar taxa de envio (frete e seguro)</span></label>
           </div>
 
           <div class="checkout-form-group">

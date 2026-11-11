@@ -3,6 +3,8 @@ import { authStore } from './auth.js';
 import { cartStore } from './cart.js';
 import { PRODUCTS_DATA, loadProducts } from './product-store.js';
 import { api } from './api.js';
+import { openDocViewer } from './doc-viewer.js';
+import { iconBtn, icon } from './icons.js';
 import { cmsStore, loadCms } from './cms.js';
 import { initAdminExtras, refreshAdminExtras, supplierStore } from './admin-extra.js';
 import { initConversations, refreshConversations, refreshNotificationLogs, fillNotificationOrders } from './admin-conversations.js';
@@ -277,7 +279,22 @@ function bindOrdersModule() {
     });
   });
 
-  tbody?.addEventListener('click', (e) => {
+  tbody?.addEventListener('click', async (e) => {
+    const del = e.target.closest('.btn-delete-order');
+    if (del) {
+      const number = del.getAttribute('data-order-number');
+      const order = authStore.getOrderById(number);
+      if (!confirm(`Eliminar a encomenda ${number} definitivamente?
+
+São apagados também o pagamento, o comprovativo, os documentos e o histórico de rastreio. Não pode ser desfeito.`)) return;
+      del.disabled = true;
+      const res = await api.orders.remove(number);
+      del.disabled = false;
+      if (!res.ok) return alert(res.message || 'Não foi possível eliminar a encomenda.');
+      if (order) authStore.forgetOrder(order.id);
+      renderOrdersModule();
+      return;
+    }
     const btn = e.target.closest('.btn-open-status-modal');
     if (!btn) return;
     const order = authStore.getOrderById(btn.getAttribute('data-order-number'));
@@ -344,9 +361,10 @@ function renderOrdersModule() {
           <span class="client-order-badge ${statusBadge}">${statusLabel}</span>
         </td>
         <td>
-          <button type="button" class="btn-dark btn-xs btn-open-status-modal" data-order-number="${order.number}">
-            Alterar Estado &rarr;
-          </button>
+          <div class="row-actions">
+            ${iconBtn({ icon: 'refresh', title: 'Alterar estado', variant: 'primary', cls: 'btn-open-status-modal', attrs: `data-order-number="${order.number}"` })}
+            ${iconBtn({ icon: 'trash', title: 'Eliminar encomenda', variant: 'danger', cls: 'btn-delete-order', attrs: `data-order-number="${order.number}"` })}
+          </div>
         </td>
       </tr>
     `;
@@ -359,6 +377,7 @@ function escapeHtml(value) {
 
 // Modal da Máquina de Estados da Encomenda
 function setupOrderStatusModal() {
+  setupOrderDocuments();
   const modal = document.getElementById('orderStatusModalOverlay');
   const btnClose = document.getElementById('btnCloseStatusModal');
   const form = document.getElementById('formUpdateOrderStatus');
@@ -412,6 +431,74 @@ function openStatusModal(order) {
   if (inpResp && me) inpResp.value = `${me.firstName} ${me.lastName}`.trim() || me.email;
 
   modal.classList.add('visible');
+  loadOrderDocuments(order.number);
+}
+
+// Documentos anexados à encomenda (visíveis ao cliente no rastreio)
+const fmtSize = (b) => (b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB');
+
+async function loadOrderDocuments(orderNumber) {
+  const list = document.getElementById('orderDocsList');
+  if (!list) return;
+  list.dataset.order = orderNumber;
+  list.innerHTML = '<li class="order-docs-empty">A carregar…</li>';
+  const res = await api.orders.documents.list(orderNumber);
+  if (list.dataset.order !== orderNumber) return;
+  if (!res.ok) { list.innerHTML = '<li class="order-docs-empty">Não foi possível carregar os documentos.</li>'; return; }
+  const docs = res.data.data;
+  list._docs = docs;
+  list.innerHTML = docs.length ? docs.map(d => `
+    <li class="order-docs-item">
+      <span class="order-doc-name"><strong>${escapeHtml(d.name)}</strong> <small>${escapeHtml(d.fileName)} • ${fmtSize(d.size)}</small></span>
+      ${iconBtn({ icon: 'eye', title: 'Ver documento', attrs: `data-doc-view="${d.id}"` })}
+      ${iconBtn({ icon: 'trash', title: 'Remover documento', variant: 'danger', attrs: `data-doc-del="${d.id}"` })}
+    </li>`).join('') : '<li class="order-docs-empty">Sem documentos anexados.</li>';
+}
+
+function setupOrderDocuments() {
+  const list = document.getElementById('orderDocsList');
+  const pick = document.getElementById('btnPickOrderDoc');
+  const file = document.getElementById('orderDocFile');
+  const nameInput = document.getElementById('orderDocName');
+  const fb = document.getElementById('orderDocFeedback');
+  if (!list || !pick || !file) return;
+
+  pick.addEventListener('click', () => file.click());
+  file.addEventListener('change', async () => {
+    const f = file.files[0];
+    file.value = '';
+    if (!f) return;
+    const orderNumber = list.dataset.order;
+    fb.textContent = 'A enviar…';
+    pick.disabled = true;
+    const res = await api.orders.documents.upload(orderNumber, f, nameInput.value.trim());
+    pick.disabled = false;
+    fb.textContent = res.ok ? 'Documento anexado.' : (res.message || 'Não foi possível anexar o documento.');
+    if (res.ok) { nameInput.value = ''; loadOrderDocuments(orderNumber); }
+  });
+
+  list.addEventListener('click', async (e) => {
+    const orderNumber = list.dataset.order;
+    const view = e.target.closest('[data-doc-view]');
+    const del = e.target.closest('[data-doc-del]');
+    if (view) {
+      const doc = (list._docs || []).find(d => d.id === view.dataset.docView);
+      if (!doc) return;
+      openDocViewer({
+        title: doc.name,
+        subtitle: `Encomenda ${orderNumber}`,
+        fileName: doc.fileName,
+        loadBlob: () => api.tracking.documentBlob(orderNumber, doc.id)
+      });
+    } else if (del) {
+      if (!confirm('Remover este documento? O cliente deixa de o ver no rastreio.')) return;
+      del.disabled = true;
+      const res = await api.orders.documents.remove(orderNumber, del.dataset.docDel);
+      if (!res.ok) { del.disabled = false; fb.textContent = res.message || 'Não foi possível remover.'; return; }
+      fb.textContent = '';
+      loadOrderDocuments(orderNumber);
+    }
+  });
 }
 
 // 4. Módulo de Produtos & Catálogo
@@ -440,17 +527,11 @@ function renderProductsModule() {
         <strong class="pay-amount">${cartStore.formatAoa(prod.priceAoa)}</strong>
       </td>
       <td>
-        <button type="button" class="btn-action-edit btn-edit-product" data-product-id="${prod.id}" title="Editar Todos os Dados do Produto">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-          </svg>
-          <span>Editar Produto</span>
-        </button>
-        <button type="button" class="btn-outline-dark btn-xs btn-toggle-product" data-product-id="${prod.id}" data-active="${prod.active === false ? '0' : '1'}">
-          ${prod.active === false ? 'Activar' : 'Desactivar'}
-        </button>
-        <button type="button" class="btn-outline-dark btn-xs btn-delete-product" data-product-id="${prod.id}">Eliminar</button>
+        <div class="row-actions">
+          ${iconBtn({ icon: 'edit', title: 'Editar produto', cls: 'btn-edit-product', attrs: `data-product-id="${prod.id}"` })}
+          ${iconBtn({ icon: prod.active === false ? 'eye' : 'eyeOff', title: prod.active === false ? 'Activar produto' : 'Desactivar produto', cls: 'btn-toggle-product', attrs: `data-product-id="${prod.id}" data-active="${prod.active === false ? '0' : '1'}"` })}
+          ${iconBtn({ icon: 'trash', title: 'Eliminar produto', variant: 'danger', cls: 'btn-delete-product', attrs: `data-product-id="${prod.id}"` })}
+        </div>
       </td>
     </tr>
   `).join('');
@@ -702,9 +783,18 @@ function setupProductModal() {
     renderModalPhotoCards();
   }
 
+  // A opção de taxa de envio só faz sentido para produtos de aquisição imediata
+  function syncShippingToggle() {
+    const imm = document.getElementById('prodFormImmediate');
+    const wrap = document.getElementById('prodFormChargeShippingWrap');
+    if (wrap && imm) wrap.style.display = imm.checked ? '' : 'none';
+  }
+  document.getElementById('prodFormImmediate')?.addEventListener('change', syncShippingToggle);
+
   // Abre para CRIAR novo produto
   btnOpen?.addEventListener('click', () => {
     form?.reset();
+    syncShippingToggle();
     if (inpId) inpId.value = '';
     if (titleModal) titleModal.textContent = 'Novo Equipamento / Produto';
     if (subModal) subModal.textContent = 'Adicione novas mercadorias para importação da China com cotação em Kwanzas e fotos locais.';
@@ -753,6 +843,9 @@ function setupProductModal() {
       if (inpDesc) inpDesc.value = prod.description || '';
       const supSel = document.getElementById('prodFormSupplier');
       if (supSel) supSel.value = prod.supplierId || '';
+      document.getElementById('prodFormImmediate').checked = !!prod.immediateAvailable;
+      document.getElementById('prodFormChargeShipping').checked = prod.chargeShipping !== false;
+      syncShippingToggle();
 
       // Carrega fotos existentes do produto
       modalPhotosState = [];
@@ -859,6 +952,8 @@ function setupProductModal() {
     const { categoryLabel, ...payload } = updatedData;
     payload.logistics = { ...payload.logistics, transitTimeAir: '5 a 15 dias' };
     payload.supplierId = document.getElementById('prodFormSupplier')?.value || null;
+    payload.immediateAvailable = document.getElementById('prodFormImmediate').checked;
+    payload.chargeShipping = payload.immediateAvailable ? document.getElementById('prodFormChargeShipping').checked : true;
 
     if (btnSubmit) btnSubmit.disabled = true;
     const res = prodId ? await api.products.update(prodId, payload) : await api.products.create(payload);
@@ -941,17 +1036,11 @@ function renderFinanceModule() {
         </td>
         <td>
           ${pay.hasProof ? `
-            <button type="button" class="btn-outline-dark btn-xs btn-view-proof" data-pay-id="${pay.id}" title="${escapeHtml(pay.proofFileName || 'Comprovativo')}">
-              Ver comprovativo
-            </button>
+            ${iconBtn({ icon: 'file', title: 'Ver comprovativo', cls: 'btn-view-proof', attrs: `data-pay-id="${pay.id}"` })}
           ` : ''}
           ${isReview ? `
-            <button type="button" class="btn-primary-action btn-xs btn-conciliate-pay" data-pay-id="${pay.id}" data-approve="1">
-              Aprovar
-            </button>
-            <button type="button" class="btn-outline-dark btn-xs btn-conciliate-pay" data-pay-id="${pay.id}" data-approve="0">
-              Rejeitar
-            </button>
+            ${iconBtn({ icon: 'check', title: 'Aprovar pagamento', variant: 'success', cls: 'btn-conciliate-pay', attrs: `data-pay-id="${pay.id}" data-approve="1"` })}
+            ${iconBtn({ icon: 'x', title: 'Rejeitar pagamento', variant: 'danger', cls: 'btn-conciliate-pay', attrs: `data-pay-id="${pay.id}" data-approve="0"` })}
           ` : isApproved ? `
             <span class="table-sub-detail">${pay.reviewedBy ? `Validado por ${escapeHtml(pay.reviewedBy)}` : 'Validado'}</span>
           ` : `
@@ -1111,9 +1200,7 @@ function renderCmsFeaturedTable() {
         </td>
         <td>
           <div class="cms-actions-cell">
-            <button type="button" class="btn-action-cms-toggle" data-action="toggle-featured-prod" data-id="${prod.id}">
-              ${isFeatured ? 'Remover Destaque' : '★ Destacar na Homepage'}
-            </button>
+            ${iconBtn({ icon: 'star', title: isFeatured ? 'Remover destaque da homepage' : 'Destacar na homepage', variant: isFeatured ? 'primary' : '', cls: 'btn-action-cms-toggle', attrs: `data-action="toggle-featured-prod" data-id="${prod.id}"` })}
           </div>
         </td>
       </tr>
@@ -1153,11 +1240,9 @@ function renderCmsCatalogHeroTable() {
       </td>
       <td>
         <div class="cms-actions-cell">
-          <button type="button" class="btn-action-cms-edit" data-action="edit-catalog-hero" data-id="${slide.id}">Editar</button>
-          <button type="button" class="btn-action-cms-toggle" data-action="toggle-catalog-hero" data-id="${slide.id}">
-            ${slide.active ? 'Pausar' : 'Ativar'}
-          </button>
-          <button type="button" class="btn-action-cms-delete" data-action="delete-catalog-hero" data-id="${slide.id}">&times;</button>
+          ${iconBtn({ icon: 'edit', title: 'Editar', cls: 'btn-action-cms-edit', attrs: `data-action="edit-catalog-hero" data-id="${slide.id}"` })}
+          ${iconBtn({ icon: slide.active ? 'eyeOff' : 'eye', title: slide.active ? 'Pausar' : 'Ativar', cls: 'btn-action-cms-toggle', attrs: `data-action="toggle-catalog-hero" data-id="${slide.id}"` })}
+          ${iconBtn({ icon: 'trash', title: 'Eliminar', variant: 'danger', cls: 'btn-action-cms-delete', attrs: `data-action="delete-catalog-hero" data-id="${slide.id}"` })}
         </div>
       </td>
     </tr>
@@ -1189,11 +1274,9 @@ function renderCmsBannersTable() {
       </td>
       <td>
         <div class="cms-actions-cell">
-          <button type="button" class="btn-action-cms-edit" data-action="edit-banner" data-id="${b.id}">Editar</button>
-          <button type="button" class="btn-action-cms-toggle" data-action="toggle-banner" data-id="${b.id}">
-            ${b.active ? 'Pausar' : 'Ativar'}
-          </button>
-          <button type="button" class="btn-action-cms-delete" data-action="delete-banner" data-id="${b.id}">&times;</button>
+          ${iconBtn({ icon: 'edit', title: 'Editar', cls: 'btn-action-cms-edit', attrs: `data-action="edit-banner" data-id="${b.id}"` })}
+          ${iconBtn({ icon: b.active ? 'eyeOff' : 'eye', title: b.active ? 'Pausar' : 'Ativar', cls: 'btn-action-cms-toggle', attrs: `data-action="toggle-banner" data-id="${b.id}"` })}
+          ${iconBtn({ icon: 'trash', title: 'Eliminar', variant: 'danger', cls: 'btn-action-cms-delete', attrs: `data-action="delete-banner" data-id="${b.id}"` })}
         </div>
       </td>
     </tr>
@@ -1224,11 +1307,9 @@ function renderCmsPromotionsTable() {
       </td>
       <td>
         <div class="cms-actions-cell">
-          <button type="button" class="btn-action-cms-edit" data-action="edit-promo" data-id="${p.id}">Editar</button>
-          <button type="button" class="btn-action-cms-toggle" data-action="toggle-promo" data-id="${p.id}">
-            ${p.active ? 'Pausar' : 'Ativar'}
-          </button>
-          <button type="button" class="btn-action-cms-delete" data-action="delete-promo" data-id="${p.id}">&times;</button>
+          ${iconBtn({ icon: 'edit', title: 'Editar', cls: 'btn-action-cms-edit', attrs: `data-action="edit-promo" data-id="${p.id}"` })}
+          ${iconBtn({ icon: p.active ? 'eyeOff' : 'eye', title: p.active ? 'Pausar' : 'Ativar', cls: 'btn-action-cms-toggle', attrs: `data-action="toggle-promo" data-id="${p.id}"` })}
+          ${iconBtn({ icon: 'trash', title: 'Eliminar', variant: 'danger', cls: 'btn-action-cms-delete', attrs: `data-action="delete-promo" data-id="${p.id}"` })}
         </div>
       </td>
     </tr>
@@ -1255,8 +1336,8 @@ function renderCmsNewsTable() {
       <td><span class="cms-badge-active">● ${n.status}</span></td>
       <td>
         <div class="cms-actions-cell">
-          <button type="button" class="btn-action-cms-edit" data-action="edit-news" data-id="${n.id}">Editar</button>
-          <button type="button" class="btn-action-cms-delete" data-action="delete-news" data-id="${n.id}">&times;</button>
+          ${iconBtn({ icon: 'edit', title: 'Editar', cls: 'btn-action-cms-edit', attrs: `data-action="edit-news" data-id="${n.id}"` })}
+          ${iconBtn({ icon: 'trash', title: 'Eliminar', variant: 'danger', cls: 'btn-action-cms-delete', attrs: `data-action="delete-news" data-id="${n.id}"` })}
         </div>
       </td>
     </tr>
@@ -1286,11 +1367,9 @@ function renderCmsFaqsTable() {
       </td>
       <td>
         <div class="cms-actions-cell">
-          <button type="button" class="btn-action-cms-edit" data-action="edit-faq" data-id="${f.id}">Editar</button>
-          <button type="button" class="btn-action-cms-toggle" data-action="toggle-faq" data-id="${f.id}">
-            ${f.active ? 'Ocultar' : 'Publicar'}
-          </button>
-          <button type="button" class="btn-action-cms-delete" data-action="delete-faq" data-id="${f.id}">&times;</button>
+          ${iconBtn({ icon: 'edit', title: 'Editar', cls: 'btn-action-cms-edit', attrs: `data-action="edit-faq" data-id="${f.id}"` })}
+          ${iconBtn({ icon: f.active ? 'eyeOff' : 'eye', title: f.active ? 'Ocultar' : 'Publicar', cls: 'btn-action-cms-toggle', attrs: `data-action="toggle-faq" data-id="${f.id}"` })}
+          ${iconBtn({ icon: 'trash', title: 'Eliminar', variant: 'danger', cls: 'btn-action-cms-delete', attrs: `data-action="delete-faq" data-id="${f.id}"` })}
         </div>
       </td>
     </tr>
@@ -1313,7 +1392,7 @@ function renderCmsPagesTable() {
       <td><span class="cms-badge-active">● ${p.status}</span></td>
       <td>
         <div class="cms-actions-cell">
-          <button type="button" class="btn-action-cms-edit" data-action="edit-page" data-id="${p.id}">Editar Conteúdo</button>
+          ${iconBtn({ icon: 'edit', title: 'Editar', cls: 'btn-action-cms-edit', attrs: `data-action="edit-page" data-id="${p.id}"` })}
         </div>
       </td>
     </tr>

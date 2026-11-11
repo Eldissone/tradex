@@ -2,6 +2,7 @@ import { api } from './api.js';
 import { cartStore } from './cart.js';
 import { PRODUCTS_DATA, loadProducts } from './product-store.js';
 import { cmsStore, loadCms } from './cms.js';
+import { SHIPPING_MODES, DELIVERY_METHODS, CARGO_INSURANCE_RATE, getShippingMode, getDeliveryFee, formatTransitDays, loadShippingConfig } from './shipping-config.js';
 
 const PRODUCTS = PRODUCTS_DATA;
 
@@ -267,60 +268,71 @@ function setupCartDrawer() {
   });
 }
 
-// 4. Simulador Logístico China ➔ Angola
+// 4. Simulador: custo de um produto do catálogo (preços do catálogo + taxas das Configurações)
 function setupCalculator() {
+  const productSelect = document.getElementById('calcProduct');
+  const qtyInput = document.getElementById('calcQuantity');
   const modeSelect = document.getElementById('transportMode');
-  const volumeInput = document.getElementById('cargoVolume');
-  const weightInput = document.getElementById('cargoWeight');
-  const valueInput = document.getElementById('cargoValue');
-  const btnCalculate = document.getElementById('btnCalculate');
+  const deliverySelect = document.getElementById('calcDelivery');
+  const note = document.getElementById('calcProductNote');
+  if (!productSelect || !modeSelect) return;
 
-  const valMercadoriaAoa = document.getElementById('valMercadoriaAoa');
-  const valFreteAoa = document.getElementById('valFreteAoa');
-  const valSeguroAoa = document.getElementById('valSeguroAoa');
-  const valDespachoAoa = document.getElementById('valDespachoAoa');
-  const valTotalAoa = document.getElementById('valTotalAoa');
+  const out = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
 
-  const USD_TO_AOA = 950;
+  function fillOptions() {
+    const prevProduct = productSelect.value;
+    const prevMode = modeSelect.value;
+    const prevDelivery = deliverySelect.value;
 
-  function calculate() {
-    if (!modeSelect) return;
-    const mode = modeSelect.value;
-    const volume = parseFloat(volumeInput?.value) || 0;
-    const weight = parseFloat(weightInput?.value) || 0;
-    const cargoUsd = parseFloat(valueInput?.value) || 0;
+    const products = PRODUCTS_DATA.filter(p => p.active !== false);
+    productSelect.innerHTML = products.map(p =>
+      `<option value="${p.id}">${p.title} — ${cartStore.formatAoa(p.priceAoa)}${p.unit ? ' / ' + p.unit : ''}</option>`
+    ).join('');
+    if (prevProduct && products.some(p => p.id === prevProduct)) productSelect.value = prevProduct;
 
-    const baseMercadoriaAoa = cargoUsd * USD_TO_AOA;
-    let freightUsd = 0;
+    modeSelect.innerHTML = Object.entries(SHIPPING_MODES).map(([key, m]) =>
+      `<option value="${key}">${m.longLabel} (${m.minDays} a ${m.maxDays} dias)</option>`
+    ).join('');
+    if (prevMode && SHIPPING_MODES[prevMode]) modeSelect.value = prevMode;
 
-    if (mode === 'sea_lcl') {
-      const chargeableVolume = Math.max(volume, weight / 500);
-      freightUsd = chargeableVolume * 190;
-    } else if (mode === 'sea_fcl') {
-      freightUsd = 3200;
-    } else if (mode === 'air_exp') {
-      freightUsd = Math.max(weight, volume * 167) * 14.5;
-    }
-
-    const freteAoa = freightUsd * USD_TO_AOA;
-    const seguroAoa = (baseMercadoriaAoa + freteAoa) * 0.02;
-    const taxasDespachoAoa = (baseMercadoriaAoa * 0.14) + 120000;
-    const totalGeral = baseMercadoriaAoa + freteAoa + seguroAoa + taxasDespachoAoa;
-
-    if (valMercadoriaAoa) valMercadoriaAoa.textContent = cartStore.formatAoa(baseMercadoriaAoa);
-    if (valFreteAoa) valFreteAoa.textContent = cartStore.formatAoa(freteAoa);
-    if (valSeguroAoa) valSeguroAoa.textContent = cartStore.formatAoa(seguroAoa);
-    if (valDespachoAoa) valDespachoAoa.textContent = cartStore.formatAoa(taxasDespachoAoa);
-    if (valTotalAoa) valTotalAoa.textContent = cartStore.formatAoa(totalGeral);
+    deliverySelect.innerHTML = Object.entries(DELIVERY_METHODS).map(([key, m]) =>
+      `<option value="${key}">${m.label}</option>`
+    ).join('');
+    if (prevDelivery && DELIVERY_METHODS[prevDelivery]) deliverySelect.value = prevDelivery;
   }
 
-  btnCalculate?.addEventListener('click', calculate);
-  modeSelect?.addEventListener('change', calculate);
-  volumeInput?.addEventListener('input', calculate);
-  weightInput?.addEventListener('input', calculate);
-  valueInput?.addEventListener('input', calculate);
+  function calculate() {
+    const product = PRODUCTS_DATA.find(p => p.id === productSelect.value);
+    const qty = Math.max(1, Math.floor(Number(qtyInput.value) || 1));
+    if (!product) {
+      ['valMercadoriaAoa', 'valFreteAoa', 'valSeguroAoa', 'valDespachoAoa', 'valPrazo', 'valTotalAoa'].forEach(id => out(id, '—'));
+      return;
+    }
 
-  calculate();
+    const subtotal = Number(product.priceAoa) * qty;
+    // Produtos de aquisição imediata sem taxa de envio não pagam frete nem seguro
+    const noFreight = product.immediateAvailable && product.chargeShipping === false;
+    const mode = getShippingMode(modeSelect.value);
+    const freight = noFreight ? 0 : Math.round(subtotal * mode.freightRate);
+    const insurance = noFreight ? 0 : Math.round((subtotal + freight) * CARGO_INSURANCE_RATE);
+    const delivery = getDeliveryFee(deliverySelect.value);
+
+    out('valMercadoriaAoa', cartStore.formatAoa(subtotal));
+    out('valFreteAoa', noFreight ? 'Isento' : cartStore.formatAoa(freight));
+    out('valSeguroAoa', noFreight ? 'Isento' : cartStore.formatAoa(insurance));
+    out('valDespachoAoa', delivery === 0 ? 'Gratuito' : cartStore.formatAoa(delivery));
+    out('valPrazo', noFreight ? 'Entrega imediata' : formatTransitDays(modeSelect.value));
+    out('valTotalAoa', cartStore.formatAoa(subtotal + freight + insurance + delivery));
+    if (note) note.textContent = noFreight ? 'Este produto está disponível para aquisição imediata, sem taxa de envio.' : '';
+  }
+
+  const refresh = () => { fillOptions(); calculate(); };
+  [productSelect, modeSelect, deliverySelect].forEach(el => el.addEventListener('change', calculate));
+  qtyInput?.addEventListener('input', calculate);
+  window.addEventListener('tradex:products-changed', refresh);
+  window.addEventListener('tradex:shipping-config-changed', refresh);
+  loadShippingConfig();
+  refresh();
 }
 
 // 5. Rastreio de Carga

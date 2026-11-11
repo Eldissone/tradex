@@ -3,8 +3,12 @@ import { z } from 'zod';
 import { prisma } from '../../infrastructure/database/prisma.js';
 import { createOrder, OrderError } from '../../application/orders.js';
 import { notifyOrderEvent } from '../../infrastructure/notifications/index.js';
-import { optionalAuth, requireAuth, requireStaff, isStaff } from '../middlewares/auth.js';
+import { optionalAuth, requireAuth, requireStaff, requireAdmin, isStaff } from '../middlewares/auth.js';
 import { serializeOrder, ORDER_INCLUDE, ORDER_STATUS_LABELS } from '../serializers.js';
+
+import multer from 'multer';
+import { deleteProof } from '../../infrastructure/storage/payment-proofs.js';
+import { MAX_DOCUMENT_BYTES, detectDocumentType, saveDocument, deleteDocumentFile } from '../../infrastructure/storage/order-documents.js';
 
 export const ordersRouter = Router();
 
@@ -130,4 +134,62 @@ ordersRouter.patch('/:number/status', requireStaff, async (req, res) => {
   }
   const updated = await prisma.order.findUnique({ where: { id: order.id }, include: ORDER_INCLUDE });
   return res.json({ ok: true, data: serializeOrder(updated) });
+});
+
+// Eliminação definitiva (só ADMIN): apaga pagamentos, itens, rastreio, documentos e ficheiros
+ordersRouter.delete('/:number', requireAdmin, async (req, res) => {
+  const order = await prisma.order.findUnique({
+    where: { number: req.params.number },
+    include: { documents: true, payments: { select: { proofPath: true } } }
+  });
+  if (!order) return res.status(404).json({ ok: false, message: 'Encomenda não encontrada.' });
+  await prisma.order.delete({ where: { id: order.id } });
+  await Promise.all([
+    ...order.documents.map(d => deleteDocumentFile(d.path)),
+    ...order.payments.map(p => deleteProof(p.proofPath))
+  ]);
+  return res.json({ ok: true });
+});
+
+// ---- Documentos da encomenda (staff) ----
+const docUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_DOCUMENT_BYTES, files: 1, fields: 3 }
+});
+
+const serializeDocument = (d) => ({
+  id: d.id, name: d.name, fileName: d.fileName, mimeType: d.mimeType, size: d.size, createdAt: d.createdAt
+});
+
+ordersRouter.get('/:number/documents', requireStaff, async (req, res) => {
+  const order = await prisma.order.findUnique({
+    where: { number: req.params.number },
+    include: { documents: { orderBy: { createdAt: 'asc' } } }
+  });
+  if (!order) return res.status(404).json({ ok: false, message: 'Encomenda não encontrada.' });
+  return res.json({ ok: true, data: order.documents.map(serializeDocument) });
+});
+
+ordersRouter.post('/:number/documents', requireStaff, docUpload.single('file'), async (req, res) => {
+  const order = await prisma.order.findUnique({ where: { number: req.params.number }, select: { id: true } });
+  if (!order) return res.status(404).json({ ok: false, message: 'Encomenda não encontrada.' });
+  if (!req.file) return res.status(400).json({ ok: false, message: 'Seleccione um ficheiro.' });
+  const type = detectDocumentType(req.file.buffer);
+  if (!type) return res.status(400).json({ ok: false, message: 'Formato não suportado. Envie PDF, JPG ou PNG.' });
+
+  const fileName = (req.file.originalname || `documento.${type.ext}`).slice(0, 150);
+  const name = String(req.body?.name || '').trim().slice(0, 120) || fileName.replace(/\.[^.]+$/, '');
+  const stored = await saveDocument(req.file.buffer, type);
+  const doc = await prisma.orderDocument.create({
+    data: { orderId: order.id, name, fileName, path: stored, mimeType: type.mime, size: req.file.size, uploadedById: req.user.id }
+  });
+  return res.status(201).json({ ok: true, data: serializeDocument(doc) });
+});
+
+ordersRouter.delete('/:number/documents/:id', requireStaff, async (req, res) => {
+  const doc = await prisma.orderDocument.findFirst({ where: { id: req.params.id, order: { number: req.params.number } } });
+  if (!doc) return res.status(404).json({ ok: false, message: 'Documento não encontrado.' });
+  await prisma.orderDocument.delete({ where: { id: doc.id } });
+  await deleteDocumentFile(doc.path);
+  return res.json({ ok: true });
 });

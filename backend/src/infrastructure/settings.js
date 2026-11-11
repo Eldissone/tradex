@@ -44,11 +44,13 @@ export async function setSetting(key, value) {
 }
 
 // Cálculo autoritativo dos custos de uma encomenda (nunca confiar nos valores do cliente)
-export async function computeOrderCosts({ subtotal, shippingMode, deliveryMethod }) {
+// freightableSubtotal: parte do subtotal que paga frete e seguro (produtos de aquisição imediata
+// marcados como "sem taxa de envio" ficam de fora). Por defeito, todo o subtotal.
+export async function computeOrderCosts({ subtotal, freightableSubtotal = subtotal, shippingMode, deliveryMethod }) {
   const s = await getSetting('shipping');
   const mode = s.modes[shippingMode] || s.modes.sea_lcl;
-  const freight = Math.round(subtotal * mode.freightRate);
-  const insurance = Math.round((subtotal + freight) * s.cargoInsuranceRate);
+  const freight = Math.round(freightableSubtotal * mode.freightRate);
+  const insurance = Math.round((freightableSubtotal + freight) * s.cargoInsuranceRate);
   const deliveryFee = s.deliveryMethods[deliveryMethod]?.feeAoa ?? 0;
   return {
     freight,

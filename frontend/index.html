@@ -295,53 +295,50 @@
       <section id="simulador" class="section-standard">
         <div class="section-head">
           <p class="eyebrow eyebrow-dark">SIMULADOR LOGÍSTICO</p>
-          <h2>Calcule o custo estimado da sua remessa</h2>
-          <p>Obtenha uma previsão imediata do custo porta a porta da China até Angola.</p>
+          <h2>Calcule o custo do seu produto em Angola</h2>
+          <p>Escolha um produto do catálogo e veja o total com frete, seguro e entrega.</p>
         </div>
 
         <div class="calculator-box">
           <form id="calcForm">
             <div class="calc-form-group">
-              <label for="transportMode">Modalidade de Envio</label>
-              <select id="transportMode" class="calc-select">
-                <option value="sea_lcl">Marítimo LCL (Carga Consolidada por m³)</option>
-                <option value="sea_fcl">Marítimo FCL (Contentor Completo 20ft)</option>
-                <option value="air_exp">Aéreo Expresso (Por kg - 5 a 15 dias)</option>
-              </select>
+              <label for="calcProduct">Produto</label>
+              <select id="calcProduct" class="calc-select"></select>
             </div>
 
             <div class="calc-row">
               <div class="calc-form-group">
-                <label for="cargoVolume" id="volumeLabel">Volume (m³)</label>
-                <input type="number" id="cargoVolume" class="calc-input" value="2.5" step="0.1" min="0.1" />
+                <label for="calcQuantity">Quantidade</label>
+                <input type="number" id="calcQuantity" class="calc-input" value="1" step="1" min="1" />
               </div>
               <div class="calc-form-group">
-                <label for="cargoWeight">Peso Estimado (kg)</label>
-                <input type="number" id="cargoWeight" class="calc-input" value="450" step="1" min="1" />
+                <label for="transportMode">Modalidade de Envio</label>
+                <select id="transportMode" class="calc-select"></select>
               </div>
             </div>
 
             <div class="calc-form-group">
-              <label for="cargoValue">Valor da Mercadoria na China (USD ou AOA)</label>
-              <input type="number" id="cargoValue" class="calc-input" value="2500" placeholder="Valor FOB em USD" />
+              <label for="calcDelivery">Entrega em Angola</label>
+              <select id="calcDelivery" class="calc-select"></select>
             </div>
 
-            <button type="button" id="btnCalculate" class="btn-dark">Actualizar Simulação</button>
+            <p class="calc-note" id="calcProductNote"></p>
           </form>
 
           <div class="calc-result-panel">
             <div>
-              <span class="calc-result-title">Estimativa da Operação</span>
+              <span class="calc-result-title">Estimativa da Encomenda</span>
               <ul class="calc-breakdown">
-                <li><span>Valor da Carga (AOA)</span> <strong id="valMercadoriaAoa">2.375.000 Kz</strong></li>
-                <li><span>Frete Internacional</span> <strong id="valFreteAoa">480.000 Kz</strong></li>
-                <li><span>Seguro de Trânsito</span> <strong id="valSeguroAoa">47.500 Kz</strong></li>
-                <li><span>Serviço Porta a Porta (agente parceiro)</span> <strong id="valDespachoAoa">380.000 Kz</strong></li>
+                <li><span>Valor dos produtos</span> <strong id="valMercadoriaAoa">—</strong></li>
+                <li><span>Frete internacional</span> <strong id="valFreteAoa">—</strong></li>
+                <li><span>Seguro de carga</span> <strong id="valSeguroAoa">—</strong></li>
+                <li><span>Entrega em Angola</span> <strong id="valDespachoAoa">—</strong></li>
+                <li><span>Prazo estimado</span> <strong id="valPrazo">—</strong></li>
               </ul>
             </div>
             <div class="calc-total">
-              <span class="calc-total-label">Custo Total Previsto (Porta a Porta)</span>
-              <div class="calc-total-value" id="valTotalAoa">3.282.500 Kz</div>
+              <span class="calc-total-label">Total previsto</span>
+              <div class="calc-total-value" id="valTotalAoa">—</div>
             </div>
           </div>
         </div>

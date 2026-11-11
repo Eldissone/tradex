@@ -6,6 +6,29 @@ const API_CONFIG = {
 
 const TOKEN_STORAGE_KEY = 'tradex_auth_token_v1';
 
+// Pedido que devolve um ficheiro (Blob) em vez de JSON
+async function fetchBlob(endpoint, options = {}) {
+  const token = tokenStore.get();
+  try {
+    const res = await fetch(`${API_CONFIG.baseUrl}${endpoint}`, {
+      ...options,
+      headers: {
+        ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined
+    });
+    if (!res.ok) {
+      let message = 'Não foi possível abrir o documento.';
+      try { message = (await res.json()).message || message; } catch {}
+      return { ok: false, message };
+    }
+    return { ok: true, blob: await res.blob() };
+  } catch {
+    return { ok: false, message: 'Não foi possível contactar o servidor TradeX.' };
+  }
+}
+
 export const tokenStore = {
   get() {
     try { return localStorage.getItem(TOKEN_STORAGE_KEY); } catch { return null; }
@@ -112,7 +135,18 @@ export const api = {
     list: (params) => request(`/orders${qs(params)}`),
     getByNumber: (number) => request(`/orders/${encodeURIComponent(number)}`),
     updateStatus: (number, { status, note, responsible, notify = true }) =>
-      request(`/orders/${encodeURIComponent(number)}/status`, { method: 'PATCH', body: { status, note, responsible, notify } })
+      request(`/orders/${encodeURIComponent(number)}/status`, { method: 'PATCH', body: { status, note, responsible, notify } }),
+    remove: (number) => request(`/orders/${encodeURIComponent(number)}`, { method: 'DELETE' }),
+    documents: {
+      list: (number) => request(`/orders/${encodeURIComponent(number)}/documents`),
+      upload: (number, file, name) => {
+        const form = new FormData();
+        form.append('file', file);
+        if (name) form.append('name', name);
+        return request(`/orders/${encodeURIComponent(number)}/documents`, { method: 'POST', body: form, timeoutMs: 60000 });
+      },
+      remove: (number, id) => request(`/orders/${encodeURIComponent(number)}/documents/${encodeURIComponent(id)}`, { method: 'DELETE' })
+    }
   },
 
   payments: {
@@ -146,7 +180,10 @@ export const api = {
   },
 
   tracking: {
-    lookup: (code, email) => request('/tracking/lookup', { method: 'POST', body: { code, email: email || undefined } })
+    lookup: (code, email) => request('/tracking/lookup', { method: 'POST', body: { code, email: email || undefined } }),
+    // Ficheiro de um documento (dono, staff ou e-mail da compra)
+    documentBlob: (code, documentId, email) =>
+      fetchBlob('/tracking/documents/file', { method: 'POST', body: { code, documentId, email: email || undefined } })
   },
 
   admin: {

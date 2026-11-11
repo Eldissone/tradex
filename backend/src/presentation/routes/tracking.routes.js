@@ -5,10 +5,19 @@ import { z } from 'zod';
 import { ORDER_STATUS_LABELS } from '../serializers.js';
 import { optionalAuth, isStaff } from '../middlewares/auth.js';
 import { rateLimit } from '../middlewares/rate-limit.js';
+import { resolveDocumentPath } from '../../infrastructure/storage/order-documents.js';
 
 const lookupLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 30 });
 
 export const trackingRouter = Router();
+
+// Sessão do dono, sessão de staff ou e-mail da compra
+function canAccessOrder(order, user, email) {
+  return Boolean(order && (
+    (user && (isStaff(user) || (user.customer && order.customerId === user.customer.id) || order.customerEmail === user.email)) ||
+    (email && order.customerEmail === email)
+  ));
+}
 
 // Ordem das etapas visíveis ao cliente
 const STEPS = [
@@ -58,14 +67,11 @@ trackingRouter.post('/lookup', lookupLimiter, optionalAuth, async (req, res) => 
   const code = rawCode.toUpperCase();
   const order = await prisma.order.findUnique({
     where: { number: code },
-    include: { trackingEvents: { orderBy: { occurredAt: 'desc' } }, items: true, payments: { orderBy: { createdAt: 'desc' }, take: 1 } }
+    include: { trackingEvents: { orderBy: { occurredAt: 'desc' } }, items: true, payments: { orderBy: { createdAt: 'desc' }, take: 1 }, documents: { orderBy: { createdAt: 'asc' } } }
   });
 
   const user = req.user;
-  const allowed = order && (
-    (user && (isStaff(user) || (user.customer && order.customerId === user.customer.id) || order.customerEmail === user.email)) ||
-    (email && order.customerEmail === email)
-  );
+  const allowed = canAccessOrder(order, user, email);
 
   // Mesma resposta para "não existe" e "e-mail errado" (não revela que o código existe)
   if (!allowed) {
@@ -124,7 +130,34 @@ trackingRouter.post('/lookup', lookupLimiter, optionalAuth, async (req, res) => 
         badge: i === 0 ? 'Mais recente' : 'Concluído',
         badgeClass: i === 0 ? 'badge-transit' : 'badge-done'
       })),
-      documents: [{ name: 'Fatura Pró-forma', code: order.number, status: 'Emitida' }]
+      documents: order.documents.map(d => ({
+        id: d.id, name: d.name, fileName: d.fileName, mimeType: d.mimeType, size: d.size, createdAt: d.createdAt
+      }))
     }
   });
+});
+
+// Ficheiro de um documento da encomenda. POST para o e-mail não ir na URL.
+const docFileSchema = z.object({
+  code: z.string().trim().min(1).max(40),
+  documentId: z.string().trim().min(1).max(60),
+  email: z.string().trim().toLowerCase().email().optional().or(z.literal('').transform(() => undefined))
+});
+
+trackingRouter.post('/documents/file', lookupLimiter, optionalAuth, async (req, res) => {
+  const { code, documentId, email } = docFileSchema.parse(req.body || {});
+  const order = await prisma.order.findUnique({
+    where: { number: code.toUpperCase() },
+    include: { documents: { where: { id: documentId } } }
+  });
+  const doc = order?.documents[0];
+  if (!doc || !canAccessOrder(order, req.user, email)) {
+    return res.status(404).json({ ok: false, message: 'Documento não encontrado.' });
+  }
+  const safeName = doc.fileName.replace(/[^\w.\- ]+/g, '_');
+  res.setHeader('Content-Type', doc.mimeType);
+  res.setHeader('Content-Disposition', `inline; filename="${safeName}"`);
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Cache-Control', 'private, no-store');
+  return res.sendFile(resolveDocumentPath(doc.path));
 });
