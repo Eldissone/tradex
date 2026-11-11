@@ -9951,3 +9951,4 @@ body.doc-viewer-open {
   width: 0;
   height: 0;
 }
+.checkout-step-card[hidden] { display: none !important; }

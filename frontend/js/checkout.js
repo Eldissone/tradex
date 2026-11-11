@@ -16,13 +16,16 @@ let checkoutState = {
   customsInsuranceAoa: 0
 };
 
+// Produto de aquisição imediata sem taxa de envio: não passa pelo transporte internacional
+const isNoFreight = (i) => Boolean(i.immediateAvailable) && i.chargeShipping === false;
+
 // Cálculo de encargos e frete
 function calculateBreakdown(items) {
   const subtotal = items.reduce((acc, i) => acc + (i.priceAoa * i.quantity), 0);
   
   // Frete Internacional baseado na modalidade
   // Produtos de aquisição imediata sem taxa de envio não pagam frete nem seguro
-  const freightable = items.filter(i => !(i.immediateAvailable && i.chargeShipping === false))
+  const freightable = items.filter(i => !isNoFreight(i))
     .reduce((acc, i) => acc + (i.priceAoa * i.quantity), 0);
   const freightRate = getShippingMode(checkoutState.shippingMode).freightRate;
   const internationalFreight = Math.round(freightable * freightRate);
@@ -78,6 +81,13 @@ function renderCheckoutOrderSummary() {
   if (mainContent) mainContent.classList.remove('hidden');
 
   const breakdown = calculateBreakdown(items);
+
+  // Só encomendas imediatas: o passo da modalidade de envio internacional não se aplica
+  const skipIntl = items.every(isNoFreight);
+  const shippingStep = document.getElementById('checkoutShippingStep');
+  if (shippingStep) shippingStep.hidden = skipIntl;
+  const payBadge = document.getElementById('stepBadgePayment');
+  if (payBadge) payBadge.textContent = skipIntl ? '3' : '4';
 
   if (listEl) {
     const fallbackThumb = 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300';

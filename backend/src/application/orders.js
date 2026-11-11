@@ -87,7 +87,7 @@ export async function createOrder(input, { customer = null, channel = 'WEB', con
         insuranceAoa: costs.insurance,
         deliveryFeeAoa: costs.deliveryFee,
         totalAoa: costs.total,
-        estimatedDelivery: costs.transitLabel,
+        estimatedDelivery: lines.every(l => l.noFreight) ? 'Entrega imediata' : costs.transitLabel,
         items: { create: lines.map(({ noFreight, ...l }) => l) },
         payments: {
           create: {
