@@ -52,7 +52,7 @@ export const DEFAULT_CMS_DATA = {
       subtitle: 'Compre a preços de fábrica com liquidação em Kwanzas e entrega porta a porta.',
       badge: 'Cotação Oficial em Kwanzas (AOA)',
       ctaText: 'Explorar Catálogo',
-      ctaLink: 'catalogo.html',
+      ctaLink: 'catalogo',
       location: 'Hero Principal (index.html)',
       active: true
     },
@@ -62,7 +62,7 @@ export const DEFAULT_CMS_DATA = {
       subtitle: 'Contentores com saídas regulares, controlo de qualidade e rastreamento digital.',
       badge: 'Rotas Semanais Marítimas',
       ctaText: 'Simular Frete',
-      ctaLink: 'index.html#simulador',
+      ctaLink: '/#simulador',
       location: 'Faixa Intermediária',
       active: true
     }

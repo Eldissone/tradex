@@ -1457,7 +1457,7 @@ function openCmsModal(sectionKey, editId) {
         </div>
         <div class="checkout-form-group">
           <label for="cmsFieldBannerLink">Destino do Botão (Link)</label>
-          <input type="text" id="cmsFieldBannerLink" class="checkout-input" value="${existing?.ctaLink || 'catalogo.html'}" />
+          <input type="text" id="cmsFieldBannerLink" class="checkout-input" value="${existing?.ctaLink || 'catalogo'}" />
         </div>
       </div>
     `;

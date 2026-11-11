@@ -52,7 +52,7 @@ function renderCatalog() {
           <span class="product-origin">${p.origin}</span>
         </div>
 
-        <a href="produto.html?id=${p.id}" class="nav-link">
+        <a href="produto?id=${p.id}" class="nav-link">
           <div class="product-mirror-box">
             <div class="product-mirror-sheen"></div>
             <img src="${p.image}" alt="${p.title}" class="product-mirror-img" loading="lazy" />
@@ -166,7 +166,7 @@ function setupCartDrawer() {
       alert('Adicione pelo menos um produto ao seu pedido para avançar para o checkout.');
       return;
     }
-    window.location.href = 'checkout.html';
+    window.location.href = 'checkout';
   });
 }
 

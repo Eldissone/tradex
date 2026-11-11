@@ -401,7 +401,7 @@ function showOrderSuccessScreen(order) {
   if (elTotal) elTotal.textContent = cartStore.formatAoa(order.financial.totalAoa);
   if (elCustomer) elCustomer.textContent = `${order.customer.name} (${order.customer.email})`;
   if (elMethod) elMethod.textContent = payment.methodName || 'Transferência Bancária';
-  if (elTrackLink) elTrackLink.href = `rastreio.html?codigo=${encodeURIComponent(order.number)}`;
+  if (elTrackLink) elTrackLink.href = `rastreio?codigo=${encodeURIComponent(order.number)}`;
 
   if (elDetailsBox) {
     if (payment.status === 'APPROVED') {
@@ -502,7 +502,7 @@ function renderGuestAccountOffer(order) {
     if (result.ok) {
       box.innerHTML = `
         <h3 class="success-account-title">Conta criada</h3>
-        <p class="success-account-text">A encomenda ${order.number} já está na sua conta. <a href="cliente.html">Abrir a área do cliente &rarr;</a></p>`;
+        <p class="success-account-text">A encomenda ${order.number} já está na sua conta. <a href="cliente">Abrir a área do cliente &rarr;</a></p>`;
       return;
     }
     feedback.className = 'proof-upload-feedback error';

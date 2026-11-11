@@ -62,7 +62,7 @@ Verificação: `http://localhost:3000/api/v1/health` deve responder `"database":
 
 | Conta | Origem | Acesso |
 |---|---|---|
-| Administrador | `ADMIN_EMAIL` / `ADMIN_PASSWORD` do `backend/.env` | `http://localhost:5174/admin.html` |
+| Administrador | `ADMIN_EMAIL` / `ADMIN_PASSWORD` do `backend/.env` | `http://localhost:5174/admin` |
 | Cliente de demonstração | `SEED_DEMO_CUSTOMER_EMAIL` / `_PASSWORD` (só em desenvolvimento) | Área do cliente |
 
 O administrador é criado no arranque da API se ainda não existir. Alterar `ADMIN_PASSWORD` no `.env` **não** muda a palavra-passe de uma conta já criada.
@@ -71,14 +71,14 @@ O administrador é criado no arranque da API se ainda não existir. Alterar `ADM
 
 | Página | Para quê |
 |---|---|
-| `index.html` | Página inicial, destaques, simulador, FAQ |
-| `catalogo.html` | Catálogo com filtro por categoria (`?categoria=solar`) |
-| `produto.html?id=…` | Detalhe do produto |
-| `checkout.html` | Finalizar compra (com conta ou como convidado) |
-| `rastreio.html` | Estado da encomenda (código + e-mail da compra, ou com sessão) |
-| `cliente.html` | Área do cliente: encomendas, pagamentos, moradas, favoritos |
-| `redefinir-password.html` | Nova palavra-passe a partir do link enviado por e-mail |
-| `admin.html` | Backoffice (contas ADMIN e STAFF) |
+| `/` | Página inicial, destaques, simulador, FAQ |
+| `catalogo` | Catálogo com filtro por categoria (`?categoria=solar`) |
+| `produto?id=…` | Detalhe do produto |
+| `checkout` | Finalizar compra (com conta ou como convidado) |
+| `rastreio` | Estado da encomenda (código + e-mail da compra, ou com sessão) |
+| `cliente` | Área do cliente: encomendas, pagamentos, moradas, favoritos |
+| `redefinir-password` | Nova palavra-passe a partir do link enviado por e-mail |
+| `admin` | Backoffice (contas ADMIN e STAFF) |
 
 ## Estrutura
 

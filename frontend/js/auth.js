@@ -520,19 +520,19 @@ function setupHeaderUserButton(openModalCallback) {
         </div>
       </div>
       <div class="user-popover-links">
-        <a href="cliente.html" class="user-popover-item">
+        <a href="cliente" class="user-popover-item">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
           <span>Painel do Cliente & Encomendas</span>
         </a>
-        <a href="checkout.html" class="user-popover-item">
+        <a href="checkout" class="user-popover-item">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
           <span>Finalizar Compra / Checkout</span>
         </a>
-        <a href="rastreio.html" class="user-popover-item">
+        <a href="rastreio" class="user-popover-item">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
           <span>Acompanhar Encomendas</span>
         </a>
-        ${authStore.isStaff() ? `<a href="admin.html" class="user-popover-item admin-portal-link">
+        ${authStore.isStaff() ? `<a href="admin" class="user-popover-item admin-portal-link">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
           <span>Acesso ao Backoffice &rarr;</span>
         </a>` : ''}

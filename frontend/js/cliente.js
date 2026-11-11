@@ -36,7 +36,7 @@ function showLoginRequired() {
       <button type="button" class="btn-dark" data-auth="login">Iniciar Sessão</button>
       <button type="button" class="btn-outline-dark" data-auth="register">Criar Conta</button>
     </div>
-    <p class="client-login-hint">Fez uma compra sem conta? Pode <a href="rastreio.html">acompanhar a encomenda pelo código</a>.</p>
+    <p class="client-login-hint">Fez uma compra sem conta? Pode <a href="rastreio">acompanhar a encomenda pelo código</a>.</p>
   `;
   main.appendChild(box);
   box.querySelectorAll('[data-auth]').forEach(btn => {
@@ -165,7 +165,7 @@ function renderOrdersList() {
     container.innerHTML = `
       <div class="client-empty-box">
         <p>Ainda não possui nenhuma encomenda de importação registada.</p>
-        <a href="catalogo.html" class="btn-dark">Explorar Produtos no Catálogo &rarr;</a>
+        <a href="catalogo" class="btn-dark">Explorar Produtos no Catálogo &rarr;</a>
       </div>
     `;
     return;
@@ -238,7 +238,7 @@ function renderOrdersList() {
         </div>
 
         <div class="order-card-actions">
-          <a href="rastreio.html?codigo=${encodeURIComponent(order.number)}" class="btn-dark btn-sm">
+          <a href="rastreio?codigo=${encodeURIComponent(order.number)}" class="btn-dark btn-sm">
             <span>Acompanhar Rastreio &rarr;</span>
           </a>
           <button type="button" class="btn-outline-dark btn-sm btn-view-order-details" data-order-number="${order.number}">
@@ -306,7 +306,7 @@ function renderPaymentsTable() {
           <strong class="pay-tx-code">${pay.reference || pay.transactionId || '—'}</strong>
         </td>
         <td>
-          <a href="rastreio.html?codigo=${encodeURIComponent(pay.orderNumber)}" class="table-order-link">${pay.orderNumber}</a>
+          <a href="rastreio?codigo=${encodeURIComponent(pay.orderNumber)}" class="table-order-link">${pay.orderNumber}</a>
         </td>
         <td>${pay.methodName || 'Transferência Bancária'}</td>
         <td>${new Date(pay.date).toLocaleDateString('pt-AO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
@@ -357,7 +357,7 @@ function renderFavoritesGrid() {
     container.innerHTML = `
       <div class="client-empty-box">
         <p>Ainda não adicionou produtos aos seus favoritos.</p>
-        <a href="catalogo.html" class="btn-dark">Explorar Produtos no Catálogo &rarr;</a>
+        <a href="catalogo" class="btn-dark">Explorar Produtos no Catálogo &rarr;</a>
       </div>
     `;
     return;
@@ -373,7 +373,7 @@ function renderFavoritesGrid() {
         <h4 class="fav-card-title">${p.title}</h4>
         <strong class="fav-card-price">${cartStore.formatAoa(p.priceAoa)}</strong>
         <div class="fav-card-actions">
-          <a href="produto.html?id=${encodeURIComponent(p.id)}" class="btn-outline-dark btn-sm">Ver Detalhes</a>
+          <a href="produto?id=${encodeURIComponent(p.id)}" class="btn-outline-dark btn-sm">Ver Detalhes</a>
           <button type="button" class="btn-dark btn-sm btn-add-fav-cart" data-product-id="${p.id}">Adicionar</button>
         </div>
       </div>
@@ -563,7 +563,7 @@ function openOrderModal(order, autoTriggerPayment = false) {
     ` : ''}
 
     <div class="modal-bottom-actions">
-      <a href="rastreio.html?codigo=${encodeURIComponent(order.number)}" class="btn-dark">
+      <a href="rastreio?codigo=${encodeURIComponent(order.number)}" class="btn-dark">
         Acompanhar no Portal de Rastreio &rarr;
       </a>
       <button type="button" class="btn-outline-dark" id="btnModalPrintInvoice">

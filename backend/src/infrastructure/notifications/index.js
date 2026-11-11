@@ -19,7 +19,7 @@ async function bankLines() {
 // Texto curto (WhatsApp) e assunto (e-mail) por evento
 async function buildMessage(order, event, extra = {}) {
   const first = order.customerName.split(/\s+/)[0];
-  const track = `${siteUrl()}/rastreio.html?codigo=${encodeURIComponent(order.number)}`;
+  const track = `${siteUrl()}/rastreio?codigo=${encodeURIComponent(order.number)}`;
 
   switch (event) {
     case 'order_created':

@@ -45,7 +45,7 @@ function renderNav(container) {
 
   const items = NAV_CATEGORIES.map(c => `
     <li role="none">
-      <a role="menuitem" href="catalogo.html?categoria=${c.slug}" class="nav-dd-item">
+      <a role="menuitem" href="catalogo?categoria=${c.slug}" class="nav-dd-item">
         ${c.label}
       </a>
     </li>`).join('');
@@ -60,7 +60,7 @@ function renderNav(container) {
         <div class="nav-dd-inner">
           <div class="nav-dd-intro">
             <p class="nav-dd-title">Tudo da China, entregue em Angola</p>
-            <a href="catalogo.html" class="nav-dd-cta">Ver todos os produtos</a>
+            <a href="catalogo" class="nav-dd-cta">Ver todos os produtos</a>
           </div>
           <div class="nav-dd-section">
             <p class="nav-dd-heading">Categorias</p>
@@ -71,7 +71,7 @@ function renderNav(container) {
         </div>
       </div>
     </div>
-    <a href="rastreio.html"${trackingActive ? ' class="nav-link-active"' : ''}>Rastreio</a>
+    <a href="rastreio"${trackingActive ? ' class="nav-link-active"' : ''}>Rastreio</a>
   `;
 
   const dd = container.querySelector('.nav-dd');

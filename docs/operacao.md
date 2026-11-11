@@ -1,6 +1,6 @@
 # Operação e backoffice
 
-Guia para a equipa TradeX e para quem mantém o sistema. O backoffice está em `admin.html`; só contas `ADMIN` e `STAFF` entram.
+Guia para a equipa TradeX e para quem mantém o sistema. O backoffice está em `/admin`; só contas `ADMIN` e `STAFF` entram.
 
 ## Papéis
 
@@ -133,3 +133,15 @@ Depois reinicie a API. Nunca use `prisma migrate dev` nem `migrate reset` em pro
 - [ ] Dados bancários reais em Configurações (os do seed são de exemplo).
 - [ ] Apagar encomendas, utilizadores e conversas de teste.
 - [ ] O limite de tentativas é por processo: com mais de uma instância da API, passa a ser por instância.
+
+## URLs sem `.html`
+
+As páginas usam URLs limpos (`/catalogo`, `/rastreio?codigo=…`, `/admin`). O Vite (`npm run dev` e `vite preview`) trata disto sozinho e redirecciona `/pagina.html` para `/pagina`. Em produção, o servidor web que serve o `frontend/dist` tem de fazer o mesmo. Exemplo em Nginx:
+
+```nginx
+location / {
+    try_files $uri $uri.html $uri/ =404;
+}
+```
+
+Sem esta regra, abrir `/catalogo` directamente dá 404 (a navegação dentro do site também deixa de funcionar).

@@ -158,7 +158,7 @@ function renderRelatedProducts(current) {
   container.innerHTML = related.map(p => `
     <article class="product-card" data-id="${p.id}">
       <div>
-        <a href="produto.html?id=${p.id}" class="nav-link">
+        <a href="produto?id=${p.id}" class="nav-link">
           <div class="product-mirror-box">
             <div class="product-mirror-sheen"></div>
             <img src="${p.image}" alt="${p.title}" class="product-mirror-img" loading="lazy" />
@@ -174,7 +174,7 @@ function renderRelatedProducts(current) {
           ${cartStore.formatAoa(p.priceAoa)}
           <small>por ${p.unit}</small>
         </div>
-        <a href="produto.html?id=${p.id}" class="btn-add-item">
+        <a href="produto?id=${p.id}" class="btn-add-item">
           Ver Detalhes
         </a>
       </div>
@@ -298,7 +298,7 @@ function setupCartDrawer() {
       alert('Adicione pelo menos um produto ao seu pedido para avançar para o checkout.');
       return;
     }
-    window.location.href = 'checkout.html';
+    window.location.href = 'checkout';
   });
 }
 

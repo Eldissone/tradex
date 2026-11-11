@@ -406,7 +406,7 @@ function setupCartDrawer() {
       alert('Adicione pelo menos um produto ao seu pedido para avançar para o checkout.');
       return;
     }
-    window.location.href = 'checkout.html';
+    window.location.href = 'checkout';
   });
 }
 
