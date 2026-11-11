@@ -16,6 +16,7 @@ export default defineConfig({
         checkout: resolve(__dirname, 'checkout.html'),
         cliente: resolve(__dirname, 'cliente.html'),
         admin: resolve(__dirname, 'admin.html'),
+        redefinirPassword: resolve(__dirname, 'redefinir-password.html'),
       },
     },
   },

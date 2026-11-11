@@ -1,239 +1,133 @@
 import { Router } from 'express';
+import { z } from 'zod';
 import { prisma } from '../../infrastructure/database/prisma.js';
+import { createOrder, OrderError } from '../../application/orders.js';
+import { notifyOrderEvent } from '../../infrastructure/notifications/index.js';
+import { optionalAuth, requireAuth, requireStaff, isStaff } from '../middlewares/auth.js';
+import { serializeOrder, ORDER_INCLUDE, ORDER_STATUS_LABELS } from '../serializers.js';
 
 export const ordersRouter = Router();
 
-// Base de encomendas inicial
-const MOCK_ORDERS = [
-  {
-    id: 'ord_demo_001',
-    number: 'TDX-AO-2026-001',
-    createdAt: '2026-11-02T14:30:00Z',
-    status: 'IN_TRANSIT',
-    statusLabel: 'Em Trânsito Marítimo Internacional',
-    customer: {
-      name: 'Manuel Dos Santos',
-      email: 'cliente@tradex.ao',
-      phone: '+244 923 456 789',
-      nif: '004928172LA041'
-    },
-    items: [
-      {
-        id: 'prod-01',
-        title: 'Kit Painéis Solares Monocristalinos 550W (Palete com 30 un.)',
-        priceAoa: 3450000,
-        quantity: 1,
-        subtotal: 3450000,
-        image: 'https://images.unsplash.com/photo-1509391365360-2e959784a276?w=300'
-      }
-    ],
-    financial: {
-      subtotalAoa: 3450000,
-      internationalFreightAoa: 276000,
-      customsInsuranceAoa: 149040,
-      deliveryCostAoa: 15000,
-      totalAoa: 3890040
-    },
-    logistics: {
-      shippingMode: 'Marítimo LCL Consolidado',
-      deliveryMethod: 'delivery_luanda',
-      origin: 'Porto de Nansha, Guangzhou (China)',
-      destination: 'Luanda, Angola (Talatona)',
-      carrier: 'MSC Mediterranean Shipping Co. (Navio MSC Luanda)',
-      blNumber: 'MSCLU-8839201-AO',
-      container: 'TGHU-984210-4',
-      estimatedDeliveryDays: '18 de Novembro de 2026'
-    },
-    payment: {
-      method: 'mcx_express',
-      methodName: 'Multicaixa Express',
-      status: 'APPROVED',
-      transactionId: 'MCX-TXN-2026-981024',
-      phone: '+244 923 456 789'
-    },
-    history: [
-      {
-        status: 'AWAITING_PAYMENT',
-        label: 'Encomenda Registada',
-        date: '2026-11-02T14:30:00Z',
-        note: 'Encomenda submetida com sucesso.',
-        responsible: 'Sistema TradeX'
-      },
-      {
-        status: 'PAYMENT_CONFIRMED',
-        label: 'Pagamento Confirmado em Kwanzas',
-        date: '2026-11-02T14:38:12Z',
-        note: 'Transação Multicaixa Express aprovada com sucesso.',
-        responsible: 'Gateway EMIS / Multicaixa'
-      },
-      {
-        status: 'IN_TRANSIT',
-        label: 'Em Trânsito Internacional',
-        date: '2026-11-05T18:45:00Z',
-        note: 'Embarque efetuado no Porto de Nansha rumo a Luanda.',
-        responsible: 'MSC Luanda'
-      }
-    ]
-  }
-];
+const addressSchema = z.object({
+  label: z.string().optional().nullable(),
+  recipientName: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  province: z.string().optional().nullable(),
+  municipality: z.string().optional().nullable(),
+  street: z.string().optional().nullable(),
+  reference: z.string().optional().nullable()
+});
 
-// Lista de encomendas
-ordersRouter.get('/', (req, res) => {
+const createOrderSchema = z.object({
+  items: z.array(z.object({
+    id: z.string().min(1),
+    quantity: z.coerce.number().int().positive().max(100000)
+  })).min(1, 'O pedido está vazio.'),
+  customer: z.object({
+    name: z.string().trim().min(1, 'O nome é obrigatório.'),
+    email: z.string().trim().toLowerCase().email('E-mail inválido.'),
+    phone: z.string().trim().min(6, 'O telefone é obrigatório.'),
+    nif: z.string().trim().optional().nullable()
+  }),
+  addressId: z.string().optional().nullable(),
+  address: addressSchema.optional().nullable(),
+  shippingMode: z.enum(['sea_lcl', 'air_exp']).default('sea_lcl'),
+  deliveryMethod: z.enum(['pickup', 'delivery_luanda', 'delivery_interprovincial']).default('pickup'),
+  paymentMethod: z.string().default('bank_transfer')
+});
+
+function canSeeOrder(user, order) {
+  if (!user) return false;
+  if (isStaff(user)) return true;
+  return (user.customer && order.customerId === user.customer.id) || order.customerEmail === user.email;
+}
+
+// Criação de encomenda (cliente com sessão ou convidado)
+ordersRouter.post('/', optionalAuth, async (req, res) => {
+  const input = createOrderSchema.parse(req.body);
+  try {
+    const order = await createOrder(input, { customer: req.user?.customer || null, channel: 'WEB' });
+    notifyOrderEvent(order.id, 'order_created');
+    return res.status(201).json({ ok: true, data: serializeOrder(order) });
+  } catch (err) {
+    if (err instanceof OrderError) return res.status(err.status).json({ ok: false, message: err.message });
+    throw err;
+  }
+});
+
+// Lista: staff vê todas; cliente vê as suas
+ordersRouter.get('/', requireAuth, async (req, res) => {
   const { status, email } = req.query;
-  let list = [...MOCK_ORDERS];
+  const where = {};
 
-  if (status && status !== 'all') {
-    list = list.filter(o => o.status === status);
+  if (isStaff(req.user)) {
+    if (email) where.customerEmail = String(email).toLowerCase();
+  } else {
+    where.OR = [
+      ...(req.user.customer ? [{ customerId: req.user.customer.id }] : []),
+      { customerEmail: req.user.email }
+    ];
   }
+  if (status && status !== 'all') where.status = String(status);
 
-  if (email) {
-    list = list.filter(o => o.customer?.email?.toLowerCase() === email.toLowerCase());
-  }
-
-  return res.json({ ok: true, total: list.length, data: list });
+  const orders = await prisma.order.findMany({ where, include: ORDER_INCLUDE, orderBy: { createdAt: 'desc' } });
+  return res.json({ ok: true, total: orders.length, data: orders.map(serializeOrder) });
 });
 
-// Detalhes da encomenda por código ou ID
-ordersRouter.get('/:number', (req, res) => {
-  const { number } = req.params;
-  const clean = number.trim().toUpperCase();
-  const order = MOCK_ORDERS.find(o => o.number === clean || o.id === number);
-
-  if (!order) {
-    return res.status(404).json({ ok: false, message: 'Encomenda não encontrada.' });
-  }
-
-  return res.json({ ok: true, data: order });
-});
-
-// Criação de nova encomenda de importação (Checkout)
-ordersRouter.post('/', (req, res) => {
-  const { items, customer, address, shippingMode, deliveryMethod, paymentMethod, mcxPhone } = req.body;
-
-  if (!items || !items.length || !customer || !address) {
-    return res.status(400).json({ ok: false, message: 'Dados insuficientes para gerar encomenda.' });
-  }
-
-  const subtotal = items.reduce((acc, i) => acc + (i.priceAoa * i.quantity), 0);
-  const freightRate = shippingMode === 'air_exp' ? 0.18 : 0.08;
-  const internationalFreight = Math.round(subtotal * freightRate);
-  const customsInsurance = Math.round((subtotal + internationalFreight) * 0.04);
-  
-  let deliveryCost = 0;
-  if (deliveryMethod === 'delivery_luanda') deliveryCost = 15000;
-  else if (deliveryMethod === 'delivery_interprovincial') deliveryCost = 35000;
-
-  const totalAoa = subtotal + internationalFreight + customsInsurance + deliveryCost;
-
-  const randomNum = Math.floor(1000 + Math.random() * 9000);
-  const orderNumber = `TDX-AO-2026-${randomNum}`;
-
-  const paymentNames = {
-    mcx_express: 'Multicaixa Express (MCX)',
-    mcx_reference: 'Referência Multicaixa',
-    bank_transfer: 'Transferência Bancária Directa'
-  };
-
-  const newOrder = {
-    id: `ord_${Date.now()}`,
-    number: orderNumber,
-    createdAt: new Date().toISOString(),
-    status: 'AWAITING_PAYMENT',
-    statusLabel: 'Aguardando Pagamento em Kwanzas',
-    customer: {
-      name: customer.name || 'Cliente TradeX',
-      email: customer.email,
-      phone: customer.phone,
-      nif: customer.nif || null
-    },
-    items: items.map(i => ({
-      id: i.id,
-      title: i.title,
-      priceAoa: i.priceAoa,
-      quantity: i.quantity,
-      subtotal: i.priceAoa * i.quantity,
-      image: i.image || (i.images && i.images[0]?.url) || null
-    })),
-    financial: {
-      subtotalAoa: subtotal,
-      internationalFreightAoa: internationalFreight,
-      customsInsuranceAoa: customsInsurance,
-      deliveryCostAoa: deliveryCost,
-      totalAoa: totalAoa
-    },
-    logistics: {
-      shippingMode: shippingMode === 'air_exp' ? 'Aéreo Expresso Internacional' : 'Marítimo LCL Consolidado',
-      deliveryMethod: deliveryMethod,
-      origin: 'Hub Consolidado Yiwu / Guangzhou (China)',
-      destination: `Luanda, Angola (${address.municipality || 'Luanda'})`,
-      address: address,
-      estimatedDeliveryDays: shippingMode === 'air_exp' ? '7 a 12 dias' : '35 a 45 dias'
-    },
-    payment: {
-      method: paymentMethod || 'mcx_express',
-      methodName: paymentNames[paymentMethod] || 'Multicaixa Express',
-      status: 'PENDING',
-      reference: paymentMethod === 'mcx_reference' ? `928 440 ${randomNum}` : null,
-      entity: paymentMethod === 'mcx_reference' ? '00142' : null,
-      phone: mcxPhone || customer.phone || null
-    },
-    history: [
-      {
-        status: 'AWAITING_PAYMENT',
-        label: 'Encomenda Registada',
-        date: new Date().toISOString(),
-        note: `Encomenda oficial emitida. Aguardando pagamento no valor de ${totalAoa.toLocaleString('pt-AO')} Kz.`,
-        responsible: 'Sistema TradeX'
-      }
-    ]
-  };
-
-  MOCK_ORDERS.unshift(newOrder);
-  return res.status(201).json({ ok: true, data: newOrder });
-});
-
-// Atualização de estado da encomenda (Backoffice)
-ordersRouter.patch('/:number/status', (req, res) => {
-  const { number } = req.params;
-  const { status, note, responsible } = req.body;
-
-  const clean = number.trim().toUpperCase();
-  const order = MOCK_ORDERS.find(o => o.number === clean || o.id === number);
-
-  if (!order) {
-    return res.status(404).json({ ok: false, message: 'Encomenda não encontrada.' });
-  }
-
-  const statusLabelsMap = {
-    AWAITING_PAYMENT: 'Aguardando Pagamento em Kwanzas',
-    PAYMENT_CONFIRMED: 'Pagamento Confirmado em Kwanzas',
-    PROCESSING_SUPPLIER: 'Compra no Fornecedor na China',
-    AWAITING_WAREHOUSE: 'Aguardando Recepção no Armazém',
-    WAREHOUSE_RECEIVED: 'Mercadoria Recebida no Armazém China',
-    READY_TO_SHIP: 'Preparada para Expedição & Lacre',
-    IN_INTERNATIONAL_TRANSIT: 'Em Trânsito Marítimo/Aéreo Internacional',
-    ARRIVED_IN_ANGOLA: 'Chegada a Angola (Porto/Aeroporto Luanda)',
-    CUSTOMS_CLEARANCE: 'Em Desembaraço Aduaneiro AGT',
-    OUT_FOR_DELIVERY: 'Em Distribuição / Pronto p/ Levantamento',
-    DELIVERED: 'Carga Entregue com Sucesso',
-    CANCELLED: 'Encomenda Cancelada'
-  };
-
-  order.status = status;
-  order.statusLabel = statusLabelsMap[status] || status;
-
-  if (status === 'PAYMENT_CONFIRMED' || status === 'PROCESSING_SUPPLIER') {
-    order.payment.status = 'APPROVED';
-  }
-
-  order.history.unshift({
-    status: status,
-    label: order.statusLabel,
-    date: new Date().toISOString(),
-    note: note || `Estado atualizado para ${order.statusLabel}.`,
-    responsible: responsible || 'Operador TradeX'
+// Detalhe (dono ou staff)
+ordersRouter.get('/:number', requireAuth, async (req, res) => {
+  const order = await prisma.order.findFirst({
+    where: { OR: [{ number: req.params.number.trim().toUpperCase() }, { id: req.params.number }] },
+    include: ORDER_INCLUDE
   });
-
-  return res.json({ ok: true, data: order });
+  if (!order || !canSeeOrder(req.user, order)) {
+    return res.status(404).json({ ok: false, message: 'Encomenda não encontrada.' });
+  }
+  return res.json({ ok: true, data: serializeOrder(order) });
 });
 
+// Actualização de estado (backoffice)
+const statusSchema = z.object({
+  status: z.enum(Object.keys(ORDER_STATUS_LABELS)),
+  note: z.string().trim().optional(),
+  responsible: z.string().trim().optional(),
+  location: z.string().trim().optional(),
+  notify: z.boolean().default(true)
+});
+
+ordersRouter.patch('/:number/status', requireStaff, async (req, res) => {
+  const { status, note, responsible, location, notify } = statusSchema.parse(req.body);
+  const order = await prisma.order.findFirst({
+    where: { OR: [{ number: req.params.number.trim().toUpperCase() }, { id: req.params.number }] },
+    include: { payments: true }
+  });
+  if (!order) {
+    return res.status(404).json({ ok: false, message: 'Encomenda não encontrada.' });
+  }
+
+  const label = ORDER_STATUS_LABELS[status];
+  const operator = responsible || `${req.user.customer?.firstName || ''} ${req.user.customer?.lastName || ''}`.trim() || req.user.email;
+
+  const ops = [
+    prisma.order.update({ where: { id: order.id }, data: { status } }),
+    prisma.trackingEvent.create({
+      data: { orderId: order.id, status, label, note: note || `Estado actualizado para ${label}.`, responsible: operator, location: location || null }
+    })
+  ];
+
+  // Confirmar pagamento por esta via também aprova o pagamento pendente
+  const pending = order.payments.find(p => p.status === 'PENDING' || p.status === 'REVIEW_PENDING');
+  if (status === 'PAYMENT_CONFIRMED' && pending) {
+    ops.push(prisma.payment.update({
+      where: { id: pending.id },
+      data: { status: 'APPROVED', reviewedBy: req.user.email, reviewedAt: new Date() }
+    }));
+  }
+
+  await prisma.$transaction(ops);
+  if (notify) {
+    notifyOrderEvent(order.id, status === 'PAYMENT_CONFIRMED' ? 'payment_approved' : 'status_changed', { note });
+  }
+  const updated = await prisma.order.findUnique({ where: { id: order.id }, include: ORDER_INCLUDE });
+  return res.json({ ok: true, data: serializeOrder(updated) });
+});

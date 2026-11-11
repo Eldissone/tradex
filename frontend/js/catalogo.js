@@ -1,7 +1,7 @@
 import { cartStore } from './cart.js';
 import { api } from './api.js';
-import { PRODUCTS_DATA as ALL_PRODUCTS } from './products-data.js';
-import { cmsStore } from './cms.js';
+import { PRODUCTS_DATA as ALL_PRODUCTS, loadProducts } from './product-store.js';
+import { cmsStore, loadCms } from './cms.js';
 
 export { ALL_PRODUCTS };
 
@@ -357,11 +357,14 @@ document.addEventListener('DOMContentLoaded', () => {
   setupHeaderScroll();
   setupCatalogHeroSlider();
   window.addEventListener('tradex:cms-changed', setupCatalogHeroSlider);
+  setupFiltersAndSearch(); // lê ?categoria= antes da primeira renderização
   renderCatalog();
-  setupFiltersAndSearch();
   setupCartDrawer();
   updateCartUi();
+  window.addEventListener('tradex:cart-changed', (e) => { if (e.detail?.source === 'server') updateCartUi(); });
   setupSourcingForm();
 
-  void api.health();
+  window.addEventListener('tradex:products-changed', renderCatalog);
+  loadProducts();
+  loadCms();
 });

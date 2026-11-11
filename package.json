@@ -15,7 +15,9 @@
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "db:generate": "npm run prisma:generate --workspace=backend",
-    "db:migrate": "npm run prisma:migrate --workspace=backend"
+    "db:migrate": "npm run prisma:migrate --workspace=backend",
+    "db:deploy": "npm run prisma:deploy --workspace=backend",
+    "db:seed": "npm run prisma:seed --workspace=backend"
   },
   "engines": {
     "node": ">=22"

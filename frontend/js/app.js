@@ -1,7 +1,7 @@
 import { api } from './api.js';
 import { cartStore } from './cart.js';
-import { PRODUCTS_DATA } from './products-data.js';
-import { cmsStore } from './cms.js';
+import { PRODUCTS_DATA, loadProducts } from './product-store.js';
+import { cmsStore, loadCms } from './cms.js';
 
 const PRODUCTS = PRODUCTS_DATA;
 
@@ -436,10 +436,15 @@ document.addEventListener('DOMContentLoaded', () => {
   setupCategoryFilters();
   setupCartDrawer();
   updateCartUi();
+  window.addEventListener('tradex:cart-changed', (e) => { if (e.detail?.source === 'server') updateCartUi(); });
   setupCalculator();
   setupTracking();
   setupSourcingForm();
   renderFaqSection();
+
+  window.addEventListener('tradex:products-changed', () => renderCarousel(activeCategory));
+  loadProducts();
+  loadCms();
 
   window.addEventListener('tradex:cms-changed', () => {
     renderCarousel(activeCategory);

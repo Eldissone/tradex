@@ -1,191 +1,183 @@
 import { Router } from 'express';
+import { z } from 'zod';
 import { prisma } from '../../infrastructure/database/prisma.js';
+import {
+  hashPassword,
+  verifyPassword,
+  signAccessToken,
+  createResetToken,
+  hashResetToken
+} from '../../infrastructure/auth/auth.js';
+import { requireAuth } from '../middlewares/auth.js';
+import { env } from '../../config/env.js';
+import { sendPasswordResetEmail } from '../../infrastructure/notifications/index.js';
+import { emailConfigured } from '../../infrastructure/notifications/email.js';
+import { serializeUser } from '../serializers.js';
+import { rateLimit } from '../middlewares/rate-limit.js';
+
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
+const recoveryLimiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 5 });
 
 export const authRouter = Router();
 
-// Base de utilizadores padrão para fallback e testes imediatos
-const MOCK_USERS = [
-  {
-    id: 'usr_demo_001',
-    firstName: 'Manuel',
-    lastName: 'Dos Santos',
-    email: 'cliente@tradex.ao',
-    phone: '+244 923 456 789',
-    nif: '004928172LA041',
-    role: 'CUSTOMER',
-    password: 'tradex2026',
-    createdAt: '2026-01-15T10:00:00.000Z'
-  },
-  {
-    id: 'usr_admin_001',
-    firstName: 'Carlos',
-    lastName: 'Viana',
-    email: 'admin@tradex.ao',
-    phone: '+244 912 345 678',
-    nif: '541829102LA041',
-    role: 'ADMIN',
-    password: 'tradexadmin2026',
-    createdAt: '2026-01-01T08:00:00.000Z'
-  }
-];
+const registerSchema = z.object({
+  firstName: z.string().trim().min(1, 'O nome é obrigatório.'),
+  lastName: z.string().trim().optional().default(''),
+  email: z.string().trim().toLowerCase().email('E-mail inválido.'),
+  phone: z.string().trim().optional(),
+  nif: z.string().trim().optional(),
+  password: z.string().min(8, 'A palavra-passe deve ter pelo menos 8 caracteres.')
+});
 
-// Função para registar ou atualizar admin em memória vindo das variáveis de ambiente (.env)
-export function registerAdminInMemory({ email, password, firstName, lastName, phone }) {
-  const cleanEmail = email.trim().toLowerCase();
-  const idx = MOCK_USERS.findIndex(u => u.email === cleanEmail);
-  const adminObj = {
-    id: idx >= 0 ? MOCK_USERS[idx].id : `usr_admin_${Date.now()}`,
-    firstName,
-    lastName,
-    email: cleanEmail,
-    phone,
-    role: 'ADMIN',
-    password,
-    createdAt: new Date().toISOString()
-  };
+const loginSchema = z.object({
+  email: z.string().trim().toLowerCase().email('E-mail inválido.'),
+  password: z.string().min(1, 'A palavra-passe é obrigatória.')
+});
 
-  if (idx >= 0) {
-    MOCK_USERS[idx] = adminObj;
-  } else {
-    MOCK_USERS.push(adminObj);
-  }
+const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hora
+
+function sessionResponse(user) {
+  return { ok: true, user: serializeUser(user), token: signAccessToken(user) };
 }
 
-// Registo de utilizador
-authRouter.post('/register', async (req, res, next) => {
-  try {
-    const { firstName, lastName, email, phone, nif, password } = req.body;
-    if (!email || !password || !firstName) {
-      return res.status(400).json({ ok: false, message: 'Dados incompletos: nome, e-mail e palavra-passe são obrigatórios.' });
-    }
+// Registo de cliente
+authRouter.post('/register', authLimiter, async (req, res) => {
+  const data = registerSchema.parse(req.body);
 
-    const cleanEmail = email.trim().toLowerCase();
+  const existing = await prisma.user.findUnique({ where: { email: data.email } });
+  if (existing) {
+    return res.status(409).json({ ok: false, message: 'Já existe uma conta registada com este e-mail.' });
+  }
 
-    // Tenta gravar no Prisma se a base de dados estiver ativa
-    try {
-      const existing = await prisma.user.findUnique({ where: { email: cleanEmail } });
-      if (existing) {
-        return res.status(409).json({ ok: false, message: 'Já existe um utilizador registado com este e-mail.' });
-      }
-
-      const created = await prisma.user.create({
-        data: {
-          email: cleanEmail,
-          passwordHash: password, // Em produção adicionar bcrypt
-          role: 'CUSTOMER',
-          customer: {
-            create: {
-              firstName: firstName.trim(),
-              lastName: lastName ? lastName.trim() : '',
-              phone: phone ? phone.trim() : null
-            }
-          }
-        },
-        include: { customer: true }
-      });
-
-      return res.status(201).json({
-        ok: true,
-        user: {
-          id: created.id,
-          email: created.email,
-          role: created.role,
-          firstName: created.customer?.firstName,
-          lastName: created.customer?.lastName,
-          phone: created.customer?.phone
+  const user = await prisma.user.create({
+    data: {
+      email: data.email,
+      passwordHash: await hashPassword(data.password),
+      role: 'CUSTOMER',
+      lastLoginAt: new Date(),
+      customer: {
+        create: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phone: data.phone || null,
+          nif: data.nif || null
         }
-      });
-    } catch (dbErr) {
-      // Fallback em memória
-      const found = MOCK_USERS.find(u => u.email === cleanEmail);
-      if (found) {
-        return res.status(409).json({ ok: false, message: 'Já existe um utilizador registado com este e-mail.' });
       }
-
-      const newUser = {
-        id: `usr_${Date.now()}`,
-        firstName: firstName.trim(),
-        lastName: lastName ? lastName.trim() : '',
-        email: cleanEmail,
-        phone: phone ? phone.trim() : '',
-        nif: nif ? nif.trim() : '',
-        role: 'CUSTOMER',
-        password: password,
-        createdAt: new Date().toISOString()
-      };
-
-      MOCK_USERS.push(newUser);
-      const { password: _, ...userData } = newUser;
-      return res.status(201).json({ ok: true, user: userData });
-    }
-  } catch (err) {
-    next(err);
-  }
-});
-
-// Login de utilizador
-authRouter.post('/login', async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ ok: false, message: 'E-mail e palavra-passe são obrigatórios.' });
-    }
-
-    const cleanEmail = email.trim().toLowerCase();
-
-    try {
-      const user = await prisma.user.findUnique({
-        where: { email: cleanEmail },
-        include: { customer: true }
-      });
-
-      if (!user || user.passwordHash !== password) {
-        // Testa utilizador demo se não estiver na DB
-        const mock = MOCK_USERS.find(u => u.email === cleanEmail && u.password === password);
-        if (mock) {
-          const { password: _, ...userData } = mock;
-          return res.json({ ok: true, user: userData, token: `tradex_jwt_token_${mock.id}` });
-        }
-        return res.status(401).json({ ok: false, message: 'Credenciais inválidas.' });
-      }
-
-      return res.json({
-        ok: true,
-        user: {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-          firstName: user.customer?.firstName || 'Utilizador',
-          lastName: user.customer?.lastName || '',
-          phone: user.customer?.phone || ''
-        },
-        token: `tradex_jwt_token_${user.id}`
-      });
-    } catch (dbErr) {
-      // Fallback em memória
-      const mock = MOCK_USERS.find(u => u.email === cleanEmail && u.password === password);
-      if (!mock) {
-        return res.status(401).json({ ok: false, message: 'Credenciais inválidas.' });
-      }
-
-      const { password: _, ...userData } = mock;
-      return res.json({ ok: true, user: userData, token: `tradex_jwt_token_${mock.id}` });
-    }
-  } catch (err) {
-    next(err);
-  }
-});
-
-// Recuperação de palavra-passe
-authRouter.post('/recover-password', (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    return res.status(400).json({ ok: false, message: 'E-mail é obrigatório.' });
-  }
-
-  return res.json({
-    ok: true,
-    message: `Instruções de recuperação e código de segurança enviados para ${email}.`
+    },
+    include: { customer: true }
   });
+
+  // Associa encomendas feitas como convidado com o mesmo e-mail
+  await prisma.order.updateMany({
+    where: { customerId: null, customerEmail: data.email },
+    data: { customerId: user.customer.id }
+  });
+
+  return res.status(201).json(sessionResponse(user));
 });
 
+// Início de sessão
+authRouter.post('/login', authLimiter, async (req, res) => {
+  const { email, password } = loginSchema.parse(req.body);
+
+  const user = await prisma.user.findUnique({ where: { email }, include: { customer: true } });
+  const valid = user && user.active && (await verifyPassword(password, user.passwordHash));
+  if (!valid) {
+    return res.status(401).json({ ok: false, message: 'E-mail ou palavra-passe incorretos.' });
+  }
+
+  await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
+  return res.json(sessionResponse(user));
+});
+
+// Sessão actual
+authRouter.get('/me', requireAuth, (req, res) => {
+  return res.json({ ok: true, user: serializeUser(req.user) });
+});
+
+// Actualização do perfil (e, opcionalmente, da palavra-passe)
+const profileSchema = z.object({
+  firstName: z.string().trim().min(1).optional(),
+  lastName: z.string().trim().optional(),
+  phone: z.string().trim().optional(),
+  nif: z.string().trim().optional(),
+  currentPassword: z.string().optional(),
+  newPassword: z.string().min(8, 'A nova palavra-passe deve ter pelo menos 8 caracteres.').optional()
+});
+
+authRouter.patch('/me', requireAuth, async (req, res) => {
+  const data = profileSchema.parse(req.body);
+  const userUpdate = {};
+
+  if (data.newPassword) {
+    const ok = await verifyPassword(data.currentPassword || '', req.user.passwordHash);
+    if (!ok) {
+      return res.status(400).json({ ok: false, message: 'A palavra-passe actual está incorreta.' });
+    }
+    userUpdate.passwordHash = await hashPassword(data.newPassword);
+    userUpdate.passwordChangedAt = new Date();
+  }
+
+  const customerData = {
+    ...(data.firstName !== undefined && { firstName: data.firstName }),
+    ...(data.lastName !== undefined && { lastName: data.lastName }),
+    ...(data.phone !== undefined && { phone: data.phone || null }),
+    ...(data.nif !== undefined && { nif: data.nif || null })
+  };
+
+  const user = await prisma.user.update({
+    where: { id: req.user.id },
+    data: {
+      ...userUpdate,
+      customer: req.user.customer
+        ? { update: customerData }
+        : { create: { firstName: data.firstName || '', lastName: data.lastName || '', phone: data.phone || null, nif: data.nif || null } }
+    },
+    include: { customer: true }
+  });
+
+  return res.json({ ok: true, user: serializeUser(user), ...(data.newPassword ? { token: signAccessToken(user) } : {}) });
+});
+
+// Pedido de recuperação de palavra-passe.
+// Responde sempre da mesma forma para não revelar se o e-mail existe.
+authRouter.post('/recover-password', recoveryLimiter, async (req, res) => {
+  const { email } = z.object({ email: z.string().trim().toLowerCase().email('E-mail inválido.') }).parse(req.body);
+  const genericMessage = `Se existir uma conta com ${email}, enviámos instruções de recuperação.`;
+
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (user && user.active) {
+    const { token, tokenHash } = createResetToken();
+    await prisma.passwordResetToken.create({
+      data: { userId: user.id, tokenHash, expiresAt: new Date(Date.now() + RESET_TOKEN_TTL_MS) }
+    });
+    const link = `${(env.PUBLIC_SITE_URL || env.CORS_ORIGIN).replace(/\/$/, '')}/redefinir-password.html?token=${token}`;
+    await sendPasswordResetEmail(email, link);
+    // Sem SMTP configurado (desenvolvimento), o link aparece no log do servidor
+    if (!emailConfigured() && process.env.NODE_ENV !== 'production') {
+      console.info(`[TradeX] Link de recuperação para ${email}: ${link}`);
+    }
+  }
+
+  return res.json({ ok: true, message: genericMessage });
+});
+
+// Redefinição com o token recebido
+authRouter.post('/reset-password', authLimiter, async (req, res) => {
+  const { token, password } = z.object({
+    token: z.string().min(1),
+    password: z.string().min(8, 'A palavra-passe deve ter pelo menos 8 caracteres.')
+  }).parse(req.body);
+
+  const record = await prisma.passwordResetToken.findUnique({ where: { tokenHash: hashResetToken(token) } });
+  if (!record || record.usedAt || record.expiresAt < new Date()) {
+    return res.status(400).json({ ok: false, message: 'Link de recuperação inválido ou expirado.' });
+  }
+
+  await prisma.$transaction([
+    prisma.user.update({ where: { id: record.userId }, data: { passwordHash: await hashPassword(password), passwordChangedAt: new Date() } }),
+    prisma.passwordResetToken.update({ where: { id: record.id }, data: { usedAt: new Date() } })
+  ]);
+
+  return res.json({ ok: true, message: 'Palavra-passe redefinida com sucesso. Já pode iniciar sessão.' });
+});

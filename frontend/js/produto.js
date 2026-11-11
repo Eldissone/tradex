@@ -1,4 +1,4 @@
-import { PRODUCTS_DATA } from './products-data.js';
+import { PRODUCTS_DATA, loadProducts } from './product-store.js';
 import { cartStore } from './cart.js';
 import { api } from './api.js';
 
@@ -20,8 +20,20 @@ function initProductPage() {
   setupAddToCart();
   setupCartDrawer();
   updateCartUi();
+  window.addEventListener('tradex:cart-changed', (e) => { if (e.detail?.source === 'server') updateCartUi(); });
 
-  void api.health();
+  // Actualiza com os dados da base de dados (preço, fotos, descrição)
+  window.addEventListener('tradex:products-changed', () => {
+    const fresh = PRODUCTS_DATA.find(p => p.id === productId);
+    if (!fresh) return;
+    currentProduct = fresh;
+    renderProductDetails(currentProduct);
+    renderThumbnails(currentProduct);
+    renderTechSpecs(currentProduct);
+    renderLogistics(currentProduct);
+    renderRelatedProducts(currentProduct);
+  });
+  loadProducts();
 }
 
 // 1. Renderiza os Detalhes Principais
@@ -115,12 +127,12 @@ function renderLogistics(product) {
     <div class="logistics-card">
       <h4>Origem & Embarque</h4>
       <p><strong>Porto:</strong> ${log.originPort}</p>
-      <p>Inspeção física pré-embarque e conferência de contentor.</p>
+      <p>Inspeção de qualidade e embalagem antes do envio.</p>
     </div>
     <div class="logistics-card">
-      <h4>Destino & Alfândega</h4>
+      <h4>Destino & Entrega</h4>
       <p><strong>Desembarque:</strong> ${log.destinationPort}</p>
-      <p>Emissão de DU e desembaraço alfandegário com parceiro oficial.</p>
+      <p>Entrega porta a porta ou levantamento gratuito no Terminal TradeX.</p>
     </div>
     <div class="logistics-card">
       <h4>Prazos de Trânsito</h4>
@@ -211,9 +223,7 @@ function setupAddToCart() {
   btn?.addEventListener('click', () => {
     if (!currentProduct) return;
 
-    for (let i = 0; i < currentQuantity; i++) {
-      cartStore.addItem(currentProduct);
-    }
+    cartStore.addItem(currentProduct, currentQuantity);
     updateCartUi();
     openCart();
   });

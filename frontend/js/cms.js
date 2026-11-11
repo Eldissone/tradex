@@ -1,6 +1,10 @@
 // Gestor de Conteúdos Públicos (CMS) - TradeX Global
 // Sincroniza Catálogo em Destaque (index.html), Hero Slider (catalogo.html), Banners, Promoções e FAQs.
 
+import { api } from './api.js';
+import { authStore } from './auth.js';
+
+// Cópia local (cache) da versão publicada no servidor
 export const CMS_STORAGE_KEY = 'tradex_cms_data_v2';
 
 export const DEFAULT_CMS_DATA = {
@@ -17,7 +21,7 @@ export const DEFAULT_CMS_DATA = {
     {
       id: 'slide-cat-1',
       title: 'Produtos industriais e comerciais com preços em Kwanza.',
-      lead: 'Fornecedores validados nas principais províncias industriais da China (Guangdong, Zhejiang, Jiangsu, Shandong). Despacho aduaneiro e entrega integrada em Luanda.',
+      lead: 'Fornecedores validados nas principais províncias industriais da China (Guangdong, Zhejiang, Jiangsu, Shandong). Entrega porta a porta em Angola.',
       image: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1600&auto=format&fit=crop&q=80',
       order: 1,
       active: true
@@ -45,7 +49,7 @@ export const DEFAULT_CMS_DATA = {
     {
       id: 'banner-1',
       title: 'Importação Direta China–Angola sem Intermediários',
-      subtitle: 'Compre a preços de fábrica com liquidação em Kwanzas e desembaraço aduaneiro completo.',
+      subtitle: 'Compre a preços de fábrica com liquidação em Kwanzas e entrega porta a porta.',
       badge: 'Cotação Oficial em Kwanzas (AOA)',
       ctaText: 'Explorar Catálogo',
       ctaLink: 'catalogo.html',
@@ -99,11 +103,11 @@ export const DEFAULT_CMS_DATA = {
     },
     {
       id: 'news-2',
-      title: 'Guia Aduaneiro 2026: Desembaraço Simplificado para Equipamentos Industriais e Agrícolas',
-      category: 'Alfândega & AGT',
-      summary: 'Procedimentos necessários para a emissão do DU (Documento Único) e recolha de taxas portuárias.',
+      title: 'Guia 2026: Como Importar Equipamentos Industriais e Agrícolas com a TradeX',
+      category: 'Guias',
+      summary: 'Passo a passo desde a escolha do produto até à entrega porta a porta em Angola.',
       date: '28 Out 2026',
-      author: 'Gabinete Aduaneiro TradeX',
+      author: 'Equipa TradeX',
       status: 'Publicado'
     }
   ],
@@ -137,16 +141,16 @@ export const DEFAULT_CMS_DATA = {
     {
       id: 'faq-4',
       question: 'Quanto tempo demora para receber as mercadorias da China?',
-      answer: 'Para frete marítimo consolidado (contentores FCL ou grupagem LCL), o tempo médio de trânsito é de 32 a 38 dias até ao Porto de Luanda. Para envios aéreos prioritários, a entrega é realizada em 7 a 12 dias úteis.',
+      answer: 'Para frete marítimo consolidado (contentores FCL ou grupagem LCL), o tempo médio de trânsito é de 30 a 60 dias até ao Porto de Luanda. Para envios aéreos prioritários, a entrega é realizada em 5 a 15 dias.',
       category: 'Logística',
       order: 4,
       active: true
     },
     {
       id: 'faq-5',
-      question: 'A TradeX trata de todo o desembaraço aduaneiro no Porto de Luanda?',
-      answer: 'Sim, a nossa equipa de despachantes oficiais em Luanda cuida de todas as formalidades fiscais, DU (Documento Único) e taxas portuárias até à libertação e entrega da mercadoria.',
-      category: 'Alfândega',
+      question: 'Preciso de tratar de alguma burocracia para receber a encomenda?',
+      answer: 'Não. O nosso agente parceiro trata de todo o transporte da China até Angola. Só tem de levantar a encomenda no Terminal TradeX ou recebê-la na morada indicada.',
+      category: 'Entregas',
       order: 5,
       active: true
     },
@@ -171,8 +175,8 @@ export const DEFAULT_CMS_DATA = {
     },
     {
       id: 'page-2',
-      title: 'Política Aduaneira e Garantia de Carga Internacional',
-      slug: '/politica-aduaneira',
+      title: 'Política de Entregas e Garantia de Carga',
+      slug: '/politica-entregas',
       lastUpdated: '01 Nov 2026',
       status: 'Publicado'
     },
@@ -204,11 +208,19 @@ export const cmsStore = {
     }
   },
 
+  // Grava a cache e, para a equipa, publica no servidor (visível para todos os visitantes)
   saveData(data) {
     try {
       localStorage.setItem(CMS_STORAGE_KEY, JSON.stringify(data));
-      window.dispatchEvent(new CustomEvent('tradex:cms-changed', { detail: data }));
     } catch {}
+    window.dispatchEvent(new CustomEvent('tradex:cms-changed', { detail: data }));
+    if (authStore.isStaff()) {
+      return api.admin.saveSetting('cms', data).then(res => {
+        if (!res.ok) alert(`Os conteúdos não foram publicados: ${res.message}`);
+        return res;
+      });
+    }
+    return Promise.resolve({ ok: false });
   },
 
   getFeaturedCatalog() {
@@ -249,3 +261,29 @@ export const cmsStore = {
   }
 };
 
+
+// Carrega a versão publicada no servidor
+let cmsLoad = null;
+export function loadCms() {
+  if (cmsLoad) return cmsLoad;
+  cmsLoad = api.config.cms().then(res => {
+    if (!res.ok) return null;
+    const published = res.data.data;
+    let local = null;
+    try { local = JSON.parse(localStorage.getItem(CMS_STORAGE_KEY) || 'null'); } catch {}
+
+    if (published) {
+      try { localStorage.setItem(CMS_STORAGE_KEY, JSON.stringify(published)); } catch {}
+      window.dispatchEvent(new CustomEvent('tradex:cms-changed', { detail: published }));
+    } else if (local && authStore.isStaff()) {
+      // Primeira publicação: a equipa tinha alterações só neste browser
+      cmsStore.saveData(local);
+    } else if (local) {
+      // Visitante com uma cópia antiga: volta aos conteúdos por defeito
+      try { localStorage.removeItem(CMS_STORAGE_KEY); } catch {}
+      window.dispatchEvent(new CustomEvent('tradex:cms-changed', { detail: DEFAULT_CMS_DATA }));
+    }
+    return published;
+  }).finally(() => { setTimeout(() => { cmsLoad = null; }, 0); });
+  return cmsLoad;
+}

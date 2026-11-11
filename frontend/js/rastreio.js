@@ -1,284 +1,7 @@
 import { cartStore } from './cart.js';
 import { authStore } from './auth.js';
-
-// Base de dados rica de encomendas para demonstração
-const TRACKING_DATABASE = {
-  'TDX-AO-2026-001': {
-    code: 'TDX-AO-2026-001',
-    mode: 'Marítimo LCL (Carga Consolidada)',
-    modeType: 'sea',
-    status: 'Em Trânsito Marítimo Internacional',
-    statusClass: 'status-transit',
-    progress: 68,
-    carrier: 'MSC Mediterranean Shipping Co. (Navio MSC Luanda)',
-    voyage: 'CN-AO 4402',
-    container: 'TGHU-984210-4 (Palete 03/08)',
-    blNumber: 'MSCLU-8839201-AO',
-    origin: 'Porto de Nansha, Guangzhou (China)',
-    destination: 'Porto de Luanda, Terminal Multiusos (Angola)',
-    finalDelivery: 'Armazém TradeX Bairro Azul, Luanda',
-    departureDate: '05 de Novembro de 2026',
-    estimatedArrival: '18 de Novembro de 2026',
-    volumeWeight: '3.8 m³ • 1.250 kg (4 paletes)',
-    declaredValue: '8.450.000 Kz',
-    lastUpdate: 'Há 2 horas • 07 Nov 2026, 09:40',
-    currentLocation: 'Oceano Índico • Rumo a Cabo da Boa Esperança',
-    milestones: [
-      { step: 1, label: 'Ordem & Coleta', done: true },
-      { step: 2, label: 'Despacho China', done: true },
-      { step: 3, label: 'Em Trânsito Marítimo', active: true },
-      { step: 4, label: 'Desalfandegamento Luanda', pending: true },
-      { step: 5, label: 'Pronto p/ Entrega', pending: true }
-    ],
-    timeline: [
-      {
-        date: '07 Nov 2026 • 09:30',
-        title: 'Em Trânsito Marítimo Internacional',
-        location: 'Coordenadas: 24°18\'S 39°45\'E (Oceano Índico)',
-        detail: 'Embarcação MSC Luanda em navegação contínua com velocidade de cruzeiro de 18.5 nós. Condições de tempo estáveis.',
-        badge: 'Em Curso',
-        badgeClass: 'badge-transit'
-      },
-      {
-        date: '05 Nov 2026 • 18:45',
-        title: 'Embarque Concluído e Saída do Porto de Nansha',
-        location: 'Porto de Nansha, Guangzhou, China',
-        detail: 'Contentor TGHU-984210-4 estivado a bordo no porão 4B. Conhecimento de Embarque Marítimo (Bill of Lading) emitido e liberado.',
-        badge: 'Concluído',
-        badgeClass: 'badge-done'
-      },
-      {
-        date: '04 Nov 2026 • 14:10',
-        title: 'Desembaraço Aduaneiro de Exportação',
-        location: 'Alfândega de Huangpu / Guangzhou, China',
-        detail: 'Declaração aduaneira de exportação Nº 51002026110408 desembaraçada com vistoria documental e selo fiscal emitido.',
-        badge: 'Aprovado',
-        badgeClass: 'badge-done'
-      },
-      {
-        date: '03 Nov 2026 • 11:20',
-        title: 'Inspeção Técnica de Qualidade & Paletização',
-        location: 'Hub Central TradeX, Guangzhou, China',
-        detail: 'Verificação física dos produtos, pesagem de precisão, empacotamento com cantoneiras de proteção e lacre inviolável TradeX TDX-SEC-882.',
-        badge: 'Inspecionado',
-        badgeClass: 'badge-done'
-      },
-      {
-        date: '02 Nov 2026 • 15:00',
-        title: 'Recepção de Mercadorias dos Fornecedores',
-        location: 'Hub Logístico TradeX, Guangdong, China',
-        detail: 'Lotes de equipamentos entregues pelo fabricante e conferidos conforme a fatura pró-forma da encomenda.',
-        badge: 'Recebido',
-        badgeClass: 'badge-done'
-      }
-    ],
-    documents: [
-      { name: 'Bill of Lading (B/L Internacional)', code: 'MSCLU-8839201-AO', status: 'Emitido & Autenticado' },
-      { name: 'DU (Documento Único Provisório AGT)', code: 'DU-AO-2026-99321', status: 'Submetido Eletronicamente' },
-      { name: 'Certificado de Conformidade (ARSEG/CRF)', code: 'CRF-CN-2026-0441', status: 'Aprovado' },
-      { name: 'Seguro de Carga Marítima All Risks', code: 'POL-TDX-SEG-9912', status: 'Ativo (110% CIF Cobertura)' }
-    ]
-  },
-  'TDX-AO-2026-002': {
-    code: 'TDX-AO-2026-002',
-    mode: 'Aéreo Expresso Internacional',
-    modeType: 'air',
-    status: 'Desalfandegamento Concluído em Luanda',
-    statusClass: 'status-cleared',
-    progress: 88,
-    carrier: 'Ethiopian Cargo / TAAG (Voo ET-3752 / DT-581)',
-    voyage: 'ET-DT-2026-AIR',
-    container: 'ULD Palete Aérea AKE-4491-ET',
-    blNumber: 'AWB 071-88492013',
-    origin: 'Aeroporto Internacional Shenzhen Bao\'an (SZX), China',
-    destination: 'Aeroporto Internacional 4 de Fevereiro (LAD), Luanda',
-    finalDelivery: 'Entrega Corporativa Direta (Luanda)',
-    departureDate: '03 de Novembro de 2026',
-    estimatedArrival: '09 de Novembro de 2026',
-    volumeWeight: '0.85 m³ • 240 kg (12 volumes)',
-    declaredValue: '4.980.000 Kz',
-    lastUpdate: 'Há 45 minutos • 07 Nov 2026, 10:30',
-    currentLocation: 'Terminal de Carga Alfandegária, Luanda, Angola',
-    milestones: [
-      { step: 1, label: 'Ordem & Coleta', done: true },
-      { step: 2, label: 'Despacho China', done: true },
-      { step: 3, label: 'Voo Internacional', done: true },
-      { step: 4, label: 'Desalfandegamento AGT', active: true },
-      { step: 5, label: 'Pronto p/ Entrega', pending: true }
-    ],
-    timeline: [
-      {
-        date: '07 Nov 2026 • 10:15',
-        title: 'Desalfandegamento Concluído pela AGT',
-        location: 'Terminal de Cargas Aéreas, Luanda, Angola',
-        detail: 'Pagamento de direitos e taxas alfandegárias liquidado. Nota de liquidação aduaneira Nº AGT-2026-44109 emitida.',
-        badge: 'Liberado',
-        badgeClass: 'badge-done'
-      },
-      {
-        date: '06 Nov 2026 • 21:40',
-        title: 'Aterragem e Descarregamento no Aeroporto 4 de Fevereiro',
-        location: 'Aeroporto de Luanda (LAD), Angola',
-        detail: 'Aeronave cargueira pousou sem ocorrências. Carga encaminhada para a zona de conferência aduaneira primária.',
-        badge: 'Atracado',
-        badgeClass: 'badge-done'
-      },
-      {
-        date: '04 Nov 2026 • 08:30',
-        title: 'Voo Internacional com Conexão Addis Ababa',
-        location: 'Em Trânsito Aéreo (SZX ➔ ADD ➔ LAD)',
-        detail: 'Conexão concluída com manifesto de carga aérea AWB 071-88492013.',
-        badge: 'Concluído',
-        badgeClass: 'badge-done'
-      },
-      {
-        date: '03 Nov 2026 • 19:00',
-        title: 'Despacho Expresso e Embarque Aéreo em Shenzhen',
-        location: 'Aeroporto Internacional Shenzhen Bao\'an, China',
-        detail: 'Inspeção de segurança de aviação civil concluída com selagem ULD.',
-        badge: 'Concluído',
-        badgeClass: 'badge-done'
-      }
-    ],
-    documents: [
-      { name: 'Air Waybill (AWB Internacional)', code: 'AWB 071-88492013', status: 'Emitido & Validado' },
-      { name: 'Documento Único Definitivo AGT', code: 'DU-AGT-2026-0881', status: 'Liquidado & Desembaraçado' },
-      { name: 'Certificado de Conformidade Técnica', code: 'CCT-SHZ-2026', status: 'Aprovado' },
-      { name: 'Seguro Aéreo Expresso', code: 'AIR-TDX-SEG-4411', status: 'Ativo' }
-    ]
-  },
-  'TDX-AO-2026-003': {
-    code: 'TDX-AO-2026-003',
-    mode: 'Marítimo FCL (Contentor Completo 40ft High Cube)',
-    modeType: 'sea',
-    status: 'Disponível para Levantamento no Terminal',
-    statusClass: 'status-ready',
-    progress: 100,
-    carrier: 'Maersk Line (Navio Maersk Cotonou)',
-    voyage: 'MSK-AO-2026-09',
-    container: 'MSKU-741982-9 (Contentor Fechado 40ft HC)',
-    blNumber: 'MAEU-992014-AO',
-    origin: 'Porto de Ningbo-Zhoushan, Zhejiang (China)',
-    destination: 'Porto de Luanda, Terminal de Contentores (Angola)',
-    finalDelivery: 'Armazém Central TradeX, Bairro Azul, Luanda',
-    departureDate: '15 de Outubro de 2026',
-    estimatedArrival: '04 de Novembro de 2026',
-    volumeWeight: '68 m³ • 22.800 kg (Contentor FCL)',
-    declaredValue: '38.900.000 Kz',
-    lastUpdate: 'Hoje • 07 Nov 2026, 08:00',
-    currentLocation: 'Terminal TradeX, Bairro Azul, Luanda, Angola',
-    milestones: [
-      { step: 1, label: 'Ordem & Coleta', done: true },
-      { step: 2, label: 'Despacho China', done: true },
-      { step: 3, label: 'Em Trânsito Marítimo', done: true },
-      { step: 4, label: 'Desalfandegamento Luanda', done: true },
-      { step: 5, label: 'Pronto p/ Levantamento', active: true, done: true }
-    ],
-    timeline: [
-      {
-        date: '06 Nov 2026 • 16:30',
-        title: 'Carga Descarregada e Pronta no Terminal TradeX',
-        location: 'Armazém Central TradeX, Bairro Azul, Luanda',
-        detail: 'Contentor conferido e desovado. Mercadoria pronta para levantamento pelo cliente ou despacho com frota local.',
-        badge: 'Disponível',
-        badgeClass: 'badge-ready'
-      },
-      {
-        date: '05 Nov 2026 • 11:00',
-        title: 'Desembaraço Concluído e Saída do Porto de Luanda',
-        location: 'Porto de Luanda, Terminal de Contentores',
-        detail: 'Liberação aduaneira definitiva pela AGT e Capitania do Porto. Transporte rodoviário em camião porta-contentor executado.',
-        badge: 'Concluído',
-        badgeClass: 'badge-done'
-      },
-      {
-        date: '04 Nov 2026 • 09:15',
-        title: 'Atracação e Desembarque no Cais de Luanda',
-        location: 'Porto Comercial de Luanda, Cais 3',
-        detail: 'Navio Maersk atracado. Descarga efetuada via pórtico STS sem avarias registadas.',
-        badge: 'Concluído',
-        badgeClass: 'badge-done'
-      },
-      {
-        date: '15 Out 2026 • 14:00',
-        title: 'Partida do Porto de Ningbo-Zhoushan',
-        location: 'Ningbo, Zhejiang, China',
-        detail: 'Contentor lacrado com selo de alta segurança ISO 17712 nº 992819.',
-        badge: 'Concluído',
-        badgeClass: 'badge-done'
-      }
-    ],
-    documents: [
-      { name: 'Original Bill of Lading (FCL)', code: 'MAEU-992014-AO', status: 'Quitado & Resgatado' },
-      { name: 'Guia de Desembaraço AGT', code: 'AGT-DES-2026-9921', status: 'Totalmente Liquidada' },
-      { name: 'Termo de Entrega de Contentor', code: 'TEC-TRADEX-AO-003', status: 'Emitido' },
-      { name: 'Certificado de Vistoria de Selagem', code: 'CERT-ISO-17712', status: 'Conforme' }
-    ]
-  }
-};
-
-// Gerador dinâmico de detalhes plausíveis para qualquer outro código inserido
-function generateDynamicShipment(code) {
-  return {
-    code: code,
-    mode: 'Marítimo LCL (Carga Consolidada China ➔ Luanda)',
-    modeType: 'sea',
-    status: 'Em Processamento Logístico e Trânsito',
-    statusClass: 'status-transit',
-    progress: 55,
-    carrier: 'TradeX Global Freight Partner (Embarcação Marítima Internacional)',
-    voyage: 'TDX-VOY-2026',
-    container: 'TDXU-882194-0',
-    blNumber: `BL-${code.replace(/[^A-Z0-9]/g, '')}`,
-    origin: 'Hub Consolidado Yiwu / Guangzhou (China)',
-    destination: 'Porto de Luanda (Angola)',
-    finalDelivery: 'Terminal TradeX, Luanda',
-    departureDate: '01 de Novembro de 2026',
-    estimatedArrival: '20 de Novembro de 2026',
-    volumeWeight: '2.5 m³ • 820 kg',
-    declaredValue: 'Sob Cotação',
-    lastUpdate: 'Atualizado hoje às 10:15',
-    currentLocation: 'Rota Internacional Sul • Rumo a Luanda',
-    milestones: [
-      { step: 1, label: 'Ordem & Coleta', done: true },
-      { step: 2, label: 'Despacho China', done: true },
-      { step: 3, label: 'Em Trânsito Internacional', active: true },
-      { step: 4, label: 'Desalfandegamento Luanda', pending: true },
-      { step: 5, label: 'Pronto p/ Entrega', pending: true }
-    ],
-    timeline: [
-      {
-        date: '07 Nov 2026 • 10:15',
-        title: 'Em Trânsito Internacional com Monitorização Ativa',
-        location: 'Rota Oceânica Internacional',
-        detail: `Remessa com código ${code} em navegação normal. Todos os parâmetros de rastreamento confirmados.`,
-        badge: 'Em Curso',
-        badgeClass: 'badge-transit'
-      },
-      {
-        date: '04 Nov 2026 • 16:30',
-        title: 'Despacho e Liberação Aduaneira no Porto de Origem',
-        location: 'Guangzhou Hub, China',
-        detail: 'Documentos fiscais e packing list chancelados com selo de trânsito internacional.',
-        badge: 'Concluído',
-        badgeClass: 'badge-done'
-      },
-      {
-        date: '01 Nov 2026 • 10:00',
-        title: 'Recepção, Triagem e Paletização no Armazém TradeX',
-        location: 'Armazém Central China',
-        detail: 'Carga recebida do fornecedor, verificada e etiquetada com identificador TradeX.',
-        badge: 'Concluído',
-        badgeClass: 'badge-done'
-      }
-    ],
-    documents: [
-      { name: 'Conhecimento de Embarque Internacional', code: `BL-${code}`, status: 'Emitido' },
-      { name: 'Documento Único Provisório AGT', code: `DU-AO-${code}`, status: 'Em Processamento' },
-      { name: 'Seguro de Transporte Internacional', code: 'POL-TDX-ALLRISKS', status: 'Ativo' }
-    ]
-  };
-}
+import { api } from './api.js';
+import { renderProofUploader } from './proof-upload.js';
 
 // Renderização Completa dos Detalhes de Rastreio
 function renderShipmentDetails(shipment) {
@@ -357,23 +80,15 @@ function renderShipmentDetails(shipment) {
         <strong class="meta-card-value">${modeSvg} <span>${shipment.mode}</span></strong>
       </div>
       <div class="track-meta-card">
-        <span class="meta-card-label">Transportador & Embarcação/Voo</span>
-        <strong class="meta-card-value">${shipment.carrier}</strong>
+        <span class="meta-card-label">Local de Entrega</span>
+        <strong class="meta-card-value">${shipment.finalDelivery}</strong>
       </div>
       <div class="track-meta-card">
-        <span class="meta-card-label">Nº de Contentor / ULD</span>
-        <strong class="meta-card-value">${shipment.container}</strong>
-      </div>
-      <div class="track-meta-card">
-        <span class="meta-card-label">Conhecimento de Embarque (B/L ou AWB)</span>
-        <strong class="meta-card-value">${shipment.blNumber}</strong>
-      </div>
-      <div class="track-meta-card">
-        <span class="meta-card-label">Data de Embarque (ETD)</span>
+        <span class="meta-card-label">Data de Envio</span>
         <strong class="meta-card-value">${shipment.departureDate}</strong>
       </div>
       <div class="track-meta-card">
-        <span class="meta-card-label">Previsão de Chegada (ETA)</span>
+        <span class="meta-card-label">Previsão de Entrega</span>
         <strong class="meta-card-value meta-highlight">${shipment.estimatedArrival}</strong>
       </div>
       <div class="track-meta-card">
@@ -420,10 +135,10 @@ function renderShipmentDetails(shipment) {
 
       <!-- Coluna de Documentos e Suporte -->
       <div class="track-column-sidebar">
-        <!-- Caixa de Documentos Aduaneiros -->
+        <!-- Caixa de Documentos da Encomenda -->
         <div class="track-sidebar-card">
-          <h3 class="track-card-title">Documentos & Alfândega AGT</h3>
-          <p class="sidebar-subtext">Processamento alfandegário e documentação oficial da carga emitida pela TradeX.</p>
+          <h3 class="track-card-title">Documentos da Encomenda</h3>
+          <p class="sidebar-subtext">Fatura e comprovativos associados a esta encomenda.</p>
           <div class="doc-list-group">
             ${shipment.documents.map(doc => `
               <div class="doc-item-row">
@@ -443,7 +158,7 @@ function renderShipmentDetails(shipment) {
         <!-- Caixa de Ações Rápidas -->
         <div class="track-sidebar-card card-support-action">
           <h3 class="track-card-title">Precisa de Ajuda ou Agendamento?</h3>
-          <p class="sidebar-subtext">Acompanhe a sua carga pelo WhatsApp ou fale com o despachante oficial responsável por esta remessa.</p>
+          <p class="sidebar-subtext">Acompanhe a sua carga pelo WhatsApp ou fale com a equipa TradeX responsável pela sua encomenda.</p>
           <div class="support-action-buttons">
             <button type="button" class="btn-sidebar-action btn-print-tracking" id="btnPrintReport">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -483,106 +198,120 @@ function renderShipmentDetails(shipment) {
   });
 }
 
-// Conversor de encomendas geradas pelo checkout para a visualização de rastreio
-function convertOrderToShipment(order) {
-  const isAir = order.logistics && order.logistics.shippingMode && order.logistics.shippingMode.includes('Aéreo');
-  const isPending = order.payment && order.payment.status === 'PENDING';
-  
-  return {
-    code: order.number,
-    mode: order.logistics?.shippingMode || 'Marítimo LCL Consolidado',
-    modeType: isAir ? 'air' : 'sea',
-    status: isPending ? 'Aguardando Liquidação de Pagamento' : 'Em Processamento Logístico',
-    statusClass: isPending ? 'status-pending' : 'status-transit',
-    progress: isPending ? 18 : 45,
-    carrier: isAir ? 'TAAG Linhas Aéreas / Ethiopian Cargo' : 'MSC Mediterranean Shipping Co. (Navio MSC Luanda)',
-    voyage: isAir ? 'ET-AO-AIR-2026' : 'MSC-LUANDA-2026',
-    container: 'TDX-CON-99214',
-    blNumber: order.payment?.reference ? `REF-${order.payment.reference}` : `BL-${order.id}`,
-    origin: order.logistics?.origin || 'Hub Consolidado Yiwu / Guangzhou (China)',
-    destination: order.logistics?.destination || 'Luanda, Angola',
-    finalDelivery: order.logistics?.address ? `${order.logistics.address.street}, ${order.logistics.address.municipality}` : 'Terminal TradeX, Luanda',
-    departureDate: 'A ser agendado após confirmação de pagamento',
-    estimatedArrival: order.logistics?.estimatedDeliveryDays || '35 a 45 dias',
-    volumeWeight: `${order.items ? order.items.length : 1} produto(s) • Carga Segurada`,
-    declaredValue: cartStore.formatAoa(order.financial?.totalAoa || 0),
-    lastUpdate: 'Atualizado em tempo real pelo sistema TradeX',
-    currentLocation: isPending ? 'Terminal de Origem • Aguardando Validação Financeira' : 'Hub Central TradeX, Guangzhou, China',
-    milestones: [
-      { step: 1, label: 'Ordem Registada', done: true },
-      { step: 2, label: 'Confirmação Pagamento', active: isPending, done: !isPending },
-      { step: 3, label: 'Compra & Recepção China', pending: isPending },
-      { step: 4, label: 'Trânsito Internacional', pending: true },
-      { step: 5, label: 'Entrega em Luanda', pending: true }
-    ],
-    timeline: (order.history && order.history.length > 0) ? order.history.map(h => ({
-      date: new Date(h.date).toLocaleDateString('pt-AO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
-      title: h.label || 'Registo de Encomenda',
-      location: order.logistics?.origin || 'Guangzhou Hub, China',
-      detail: h.note || `Encomenda submetida com sucesso por ${order.customer?.name || 'Cliente'}.`,
-      badge: h.status === 'AWAITING_PAYMENT' ? 'Aguardando' : 'Concluído',
-      badgeClass: h.status === 'AWAITING_PAYMENT' ? 'badge-transit' : 'badge-done'
-    })) : [
-      {
-        date: new Date(order.createdAt).toLocaleDateString('pt-AO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
-        title: 'Encomenda Registada no Sistema',
-        location: 'Luanda, Angola',
-        detail: `Registo oficial efetuado. Aguardando confirmação do pagamento via ${order.payment?.methodName || 'Kwanza'}.`,
-        badge: 'Registado',
-        badgeClass: 'badge-transit'
-      }
-    ],
-    documents: [
-      { name: 'Fatura Pró-forma da Encomenda', code: order.number, status: 'Emitida em Kwanzas' },
-      { name: 'Apólice de Seguro de Carga (110% CIF)', code: `POL-${order.number}`, status: 'Cobertura Integral Ativa' }
-    ]
-  };
+// Cartão de pagamento: instruções + envio do comprovativo quando ainda falta pagar
+async function renderPaymentProofCard(shipment, onDone, knownEmail) {
+  const status = shipment.payment?.status;
+  const sidebar = document.querySelector('#trackingDashboard .track-column-sidebar');
+  if (!sidebar || !status) return;
+
+  const card = document.createElement('div');
+  card.className = 'track-sidebar-card tracking-proof-card';
+
+  if (status === 'REVIEW_PENDING') {
+    card.innerHTML = `
+      <h3 class="track-card-title">Pagamento em validação</h3>
+      <p class="sidebar-subtext">Recebemos o seu comprovativo. A tesouraria valida normalmente em até 2 horas úteis.</p>`;
+    sidebar.prepend(card);
+    return;
+  }
+  if (status !== 'PENDING' && status !== 'DECLINED') return;
+
+  const isMine = authStore.getOrders().some(o => o.number === shipment.code);
+  card.innerHTML = `
+    <h3 class="track-card-title">${status === 'DECLINED' ? 'Comprovativo rejeitado' : 'Pagamento pendente'}</h3>
+    <p class="sidebar-subtext">Transfira <strong>${cartStore.formatAoa(shipment.payment.totalAoa || 0)}</strong> indicando <strong>${shipment.code}</strong> no descritivo e envie o comprovativo.</p>
+    <div class="modal-bank-accounts" data-bank></div>
+    <div data-uploader></div>`;
+  sidebar.prepend(card);
+
+  const cfg = await api.config.payments();
+  const accounts = cfg.ok ? cfg.data.data.bank?.accounts || [] : [];
+  card.querySelector('[data-bank]').innerHTML = accounts.map(a => `<p><strong>${a.bank}:</strong> ${a.iban}</p>`).join('');
+
+  renderProofUploader(card.querySelector('[data-uploader]'), {
+    orderNumber: shipment.code,
+    askEmail: !isMine && !knownEmail,
+    email: knownEmail,
+    rejectionReason: status === 'DECLINED' ? shipment.payment.rejectionReason : null,
+    onSuccess: (updated) => {
+      if (isMine) authStore.cacheOrder(updated);
+      setTimeout(onDone, 900);
+    }
+  });
 }
 
 // Inicialização da Página
 function initTrackingPage() {
   const form = document.getElementById('trackingPageForm');
   const input = document.getElementById('trackingCodeInput');
-  const chips = document.querySelectorAll('.tracking-quick-chip');
 
-  function executeSearch(rawCode) {
+  async function executeSearch(rawCode) {
     const code = rawCode.trim().toUpperCase();
     if (!code) return;
 
     if (input) input.value = code;
 
-    // Atualiza a URL sem recarregar a página
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.set('codigo', code);
     window.history.replaceState({}, '', newUrl.toString());
 
-    // Procura na base pré-definida, depois nas encomendas locais salvas pelo checkout, ou gera dinâmico
-    let shipment = TRACKING_DATABASE[code];
-    if (!shipment) {
-      const savedOrder = authStore.getOrderById(code);
-      if (savedOrder) {
-        shipment = convertOrderToShipment(savedOrder);
-      } else {
-        shipment = generateDynamicShipment(code);
-      }
+    const dashboard = document.getElementById('trackingDashboard');
+    if (dashboard) {
+      dashboard.innerHTML = '<p class="tracking-status-message">A consultar a encomenda…</p>';
+      dashboard.classList.add('visible');
     }
 
-    renderShipmentDetails(shipment);
+    // E-mail: campo do formulário, ou o da última compra feita neste browser
+    const emailInput = document.getElementById('trackingEmailInput');
+    let email = emailInput?.value.trim();
+    if (!email) {
+      const known = authStore.getOrderById(code);
+      if (known?.customer?.email) email = known.customer.email;
+    }
 
-    // Scroll suave até ao dashboard
-    document.getElementById('trackingDashboard')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const res = await api.tracking.lookup(code, email);
+    if (res.ok) {
+      renderShipmentDetails(res.data.data);
+      renderPaymentProofCard(res.data.data, () => executeSearch(code), email);
+    } else if (dashboard) {
+      if (!email) emailInput?.focus();
+      dashboard.innerHTML = `
+        <div class="tracking-status-message">
+          <h3>${!email && !authStore.isLoggedIn() ? 'Indique o e-mail da compra' : 'Encomenda não encontrada'}</h3>
+          <p>${res.status === 404
+            ? (!email && !authStore.isLoggedIn()
+                ? 'Por segurança, para consultar uma encomenda sem sessão iniciada indique também o e-mail usado na compra.'
+                : 'Confirme o código da encomenda e o e-mail usado na compra.')
+            : res.message}</p>
+        </div>`;
+    }
+
+    dashboard?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+
+  // Atalhos para as encomendas do cliente com sessão iniciada
+  function renderMyOrderChips() {
+    const wrap = document.getElementById('trackingMyOrders');
+    const group = document.getElementById('trackingMyOrdersChips');
+    if (!wrap || !group) return;
+    const orders = authStore.getOrders().slice(0, 4);
+    wrap.hidden = orders.length === 0;
+    group.innerHTML = orders.map(o => `
+      <button type="button" class="tracking-quick-chip" data-code="${o.number}">
+        <span>${o.number}</span>
+        <span class="chip-status-text">${o.statusLabel || ''}</span>
+      </button>`).join('');
+    group.querySelectorAll('.tracking-quick-chip').forEach(chip => {
+      chip.addEventListener('click', () => executeSearch(chip.getAttribute('data-code')));
+    });
+  }
+  renderMyOrderChips();
+  window.addEventListener('tradex:orders-changed', renderMyOrderChips);
+  window.addEventListener('tradex:auth-changed', renderMyOrderChips);
 
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
     if (input) executeSearch(input.value);
-  });
-
-  chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      const code = chip.getAttribute('data-code');
-      if (code) executeSearch(code);
-    });
   });
 
   // Verifica se há parâmetro ?codigo= na URL
@@ -591,9 +320,6 @@ function initTrackingPage() {
 
   if (codeParam) {
     executeSearch(codeParam);
-  } else {
-    // Carrega a primeira carga de demonstração por defeito
-    executeSearch('TDX-AO-2026-001');
   }
 
   // Header sticky past-hero
@@ -611,6 +337,7 @@ function initTrackingPage() {
   // Drawer do Carrinho
   setupCartDrawer();
   updateCartUi();
+  window.addEventListener('tradex:cart-changed', (e) => { if (e.detail?.source === 'server') updateCartUi(); });
 }
 
 function updateCartUi() {

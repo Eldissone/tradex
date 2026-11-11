@@ -1,114 +1,28 @@
 // TradeX Global Trading - Dashboard Administrativo Backoffice
 import { authStore } from './auth.js';
 import { cartStore } from './cart.js';
-import { PRODUCTS_DATA } from './products-data.js';
+import { PRODUCTS_DATA, loadProducts } from './product-store.js';
 import { api } from './api.js';
-import { cmsStore } from './cms.js';
+import { cmsStore, loadCms } from './cms.js';
+import { initAdminExtras, refreshAdminExtras, supplierStore } from './admin-extra.js';
+import { initConversations, refreshConversations, refreshNotificationLogs, fillNotificationOrders } from './admin-conversations.js';
 
-// Base de Fornecedores Homologados na China
-const SUPPLIERS_DATA = [
-  {
-    id: 'sup_001',
-    name: 'Guangdong SolarTech Industrial Co.',
-    province: 'Guangdong (Foshan / Guangzhou)',
-    categories: ['Energia Solar', 'Baterias Lítio', 'Inversores'],
-    contactPerson: 'Mr. Zhang Wei (Director Comercial)',
-    wechat: 'SolarTech_Export_CN',
-    whatsapp: '+86 138 2910 4421',
-    terms: 'FOB Nansha / CIF Luanda',
-    rating: '5.0 ★ (Homologado Tier 1)',
-    ordersCount: 42
-  },
-  {
-    id: 'sup_002',
-    name: 'Foshan Ceramic & Building Materials Co.',
-    province: 'Guangdong (Foshan)',
-    categories: ['Porcelanato', 'Revestimentos', 'Louças Sanitárias'],
-    contactPerson: 'Ms. Lin Chen (Export Manager)',
-    wechat: 'FoshanCeramics_Lin',
-    whatsapp: '+86 139 4482 1190',
-    terms: 'FOB Huangpu / LCL Consolidado',
-    rating: '4.9 ★ (Homologado)',
-    ordersCount: 38
-  },
-  {
-    id: 'sup_003',
-    name: 'Zhejiang Precision Machinery & Tools',
-    province: 'Zhejiang (Ningbo / Yiwu)',
-    categories: ['Geradores a Diesel', 'Motores', 'Ferramentas'],
-    contactPerson: 'Mr. Liu Kang (Engenheiro de Vendas)',
-    wechat: 'NingboPower_Liu',
-    whatsapp: '+86 150 8821 0032',
-    terms: 'FOB Ningbo-Zhoushan',
-    rating: '4.8 ★ (Homologado)',
-    ordersCount: 29
-  },
-  {
-    id: 'sup_004',
-    name: 'Jiangsu Structural Steel & Profiles Corp',
-    province: 'Jiangsu (Wuxi / Nanjing)',
-    categories: ['Vigas de Aço', 'Estruturas Metálicas', 'Painéis Sandwich'],
-    contactPerson: 'Mr. Wang Jun (Logística Internacional)',
-    wechat: 'JiangsuSteel_Trade',
-    whatsapp: '+86 135 9912 3340',
-    terms: 'FOB Shanghai / Contentores FCL',
-    rating: '4.9 ★ (Homologado)',
-    ordersCount: 19
-  }
-];
+// Dados carregados da API (backoffice)
 
-// Base de Remessas Logísticas Internacionais
-const SHIPMENTS_DATA = [
-  {
-    id: 'SHP-2026-MAR-01',
-    mode: 'Marítimo LCL Consolidado',
-    carrier: 'MSC Mediterranean Shipping Co.',
-    vessel: 'Navio MSC Luanda (Viagem CN-AO 4402)',
-    blNumber: 'MSCLU-8839201-AO',
-    origin: 'Porto de Nansha, Guangzhou (China)',
-    destination: 'Porto de Luanda, Terminal Multiusos (Angola)',
-    status: 'Em Trânsito Marítimo',
-    etd: '05 Nov 2026',
-    eta: '18 Nov 2026',
-    containers: '4 Contentores (TGHU-984210-4, MSCU-119284-0)',
-    volumeWeight: '184 m³ • 42.500 kg',
-    ordersLinked: ['TDX-AO-2026-001', 'TDX-AO-2026-004']
-  },
-  {
-    id: 'SHP-2026-AIR-02',
-    mode: 'Aéreo Expresso Internacional',
-    carrier: 'TAAG Linhas Aéreas / Ethiopian Cargo',
-    vessel: 'Voo ET-3752 / Conexão DT-581',
-    blNumber: 'AWB 071-88492013',
-    origin: 'Aeroporto Shenzhen Bao\'an (SZX)',
-    destination: 'Aeroporto 4 de Fevereiro (LAD), Luanda',
-    status: 'Desalfandegamento AGT Concluído',
-    etd: '03 Nov 2026',
-    eta: '09 Nov 2026',
-    containers: 'ULD Palete Aérea AKE-4491-ET',
-    volumeWeight: '2.8 m³ • 640 kg',
-    ordersLinked: ['TDX-AO-2026-002']
-  },
-  {
-    id: 'SHP-2026-MAR-03',
-    mode: 'Contentor Completo (FCL)',
-    carrier: 'Maersk Line',
-    vessel: 'Maersk Camden (Viagem MA-AO 881)',
-    blNumber: 'MAEU-992014-AO',
-    origin: 'Porto de Ningbo-Zhoushan, Zhejiang',
-    destination: 'Porto de Luanda (Angola)',
-    status: 'Entregue no Armazém Viana',
-    etd: '15 Out 2026',
-    eta: '28 Out 2026',
-    containers: 'Contentor 40ft High Cube (MSKU-772194-9)',
-    volumeWeight: '68 m³ • 24.800 kg',
-    ordersLinked: ['TDX-AO-2026-003']
-  }
-];
+const ORDER_STATUS_LABELS = {
+  AWAITING_PAYMENT: 'Aguardando Pagamento',
+  PAYMENT_CONFIRMED: 'Pagamento Confirmado',
+  PROCESSING_SUPPLIER: 'Em Processamento (China)',
+  IN_INTERNATIONAL_TRANSIT: 'Enviado',
+  ARRIVED_IN_ANGOLA: 'Chegou a Angola',
+  READY_FOR_PICKUP: 'Pronto p/ Levantamento',
+  OUT_FOR_DELIVERY: 'Em Entrega',
+  DELIVERED: 'Entregue',
+  CANCELLED: 'Cancelada',
+  RETURNED: 'Devolvida'
+};
 
 // Registo Inicial de Notificações Multicanal
-const NOTIFICATIONS_LOG_STORAGE_KEY = 'tradex_admin_notifications_log_v1';
-const ADMIN_SESSION_KEY = 'tradex_admin_logged';
 
 document.addEventListener('DOMContentLoaded', () => {
   initAdminDashboard();
@@ -117,6 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function initAdminDashboard() {
   checkAdminAuth();
   setupAdminNavigation();
+  bindOrdersModule();
+  initAdminExtras();
+  initConversations();
+  setupOrderStatusModal();
+  setupProductModal();
   renderAnalyticsModule();
   renderOrdersModule();
   renderProductsModule();
@@ -126,6 +45,8 @@ function initAdminDashboard() {
   renderNotificationsModule();
   renderCmsModule();
 
+  if (authStore.isStaff()) loadAdminData();
+
   // Ouve eventos de encomendas para manter tudo sincronizado
   window.addEventListener('tradex:orders-changed', () => {
     renderAnalyticsModule();
@@ -134,10 +55,42 @@ function initAdminDashboard() {
     updateOrderSelectInNotifications();
   });
 
+  window.addEventListener('tradex:products-changed', () => {
+    renderProductsModule();
+  });
+
   window.addEventListener('tradex:payments-changed', () => {
     renderAnalyticsModule();
     renderFinanceModule();
   });
+}
+
+// Carrega encomendas, pagamentos, produtos, fornecedores e lotes a partir da API
+async function loadAdminData() {
+  renderOperatorHeader();
+  await authStore.sync();
+  await loadCms();
+  const products = await api.products.list({ includeInactive: 1 });
+  if (products.ok) {
+    PRODUCTS_DATA.splice(0, PRODUCTS_DATA.length, ...products.data.data);
+    renderProductsModule();
+    renderCmsModule();
+  }
+  refreshAdminExtras();
+  refreshConversations();
+}
+
+function renderOperatorHeader() {
+  const me = authStore.getUser();
+  if (!me) return;
+  const name = `${me.firstName || ''} ${me.lastName || ''}`.trim() || me.email;
+  const initials = name.split(/\s+/).map(p => p[0]).slice(0, 2).join('').toUpperCase();
+  const elName = document.getElementById('adminNameHeader');
+  const elAvatar = document.getElementById('adminAvatarHeader');
+  const elRole = document.querySelector('.operator-role');
+  if (elName) elName.textContent = name;
+  if (elAvatar) elAvatar.textContent = initials;
+  if (elRole) elRole.textContent = me.role === 'ADMIN' ? 'Administrador' : 'Equipa TradeX';
 }
 
 // 0. Controlo de Acesso e Autenticação de Administrador
@@ -149,45 +102,52 @@ function checkAdminAuth() {
   const passInput = document.getElementById('adminLoginPassword');
   const logoutBtn = document.getElementById('btnAdminLogout');
 
-  const isLogged = sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true';
-
-  if (isLogged) {
+  if (authStore.isStaff()) {
     overlay?.classList.remove('visible');
   } else {
     overlay?.classList.add('visible');
   }
 
   logoutBtn?.addEventListener('click', () => {
-    sessionStorage.removeItem(ADMIN_SESSION_KEY);
-    overlay?.classList.add('visible');
+    authStore.clearSession();
+    authStore.notifyAuthChange();
+    window.location.reload();
   });
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = emailInput?.value.trim().toLowerCase();
     const pass = passInput?.value;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
 
-    // Tenta autenticar via API backend
-    const apiRes = await api.auth.login(email, pass);
-    if (apiRes.ok && (apiRes.data?.user?.role === 'ADMIN' || email.includes('admin'))) {
-      sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
+    const result = await authStore.login(email, pass);
+    if (submitBtn) submitBtn.disabled = false;
+
+    if (result.ok && authStore.isStaff()) {
       overlay?.classList.remove('visible');
-      renderAnalyticsModule();
+      if (passInput) passInput.value = '';
+      loadAdminData();
       return;
     }
 
-    // Validação local com as credenciais do .env
-    if (email === 'admin@tradex.ao' && pass === 'tradexadmin2026') {
-      sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
-      overlay?.classList.remove('visible');
-      renderAnalyticsModule();
-      return;
+    if (result.ok) {
+      // Conta válida mas sem permissões de backoffice
+      authStore.clearSession();
+      authStore.notifyAuthChange();
     }
 
     if (feedback) {
       feedback.className = 'auth-feedback error visible';
-      feedback.textContent = 'Acesso recusado: E-mail ou palavra-passe de administrador incorretos.';
+      feedback.textContent = result.ok
+        ? 'Esta conta não tem acesso ao backoffice.'
+        : (result.message || 'E-mail ou palavra-passe incorretos.');
     }
+  });
+
+  // Sessão expirada durante o uso
+  window.addEventListener('tradex:auth-changed', () => {
+    if (!authStore.isStaff()) overlay?.classList.add('visible');
   });
 }
 
@@ -230,8 +190,10 @@ function renderAnalyticsModule() {
   const orders = authStore.getOrders();
   const payments = authStore.getPayments();
 
-  const totalRevenue = orders.reduce((acc, o) => acc + (o.financial?.totalAoa || 0), 0);
-  const transitCount = orders.filter(o => o.status === 'IN_TRANSIT' || o.status === 'PROCESSING_SUPPLIER').length;
+  const totalRevenue = orders
+    .filter(o => !['CANCELLED', 'RETURNED'].includes(o.status))
+    .reduce((acc, o) => acc + (o.financial?.totalAoa || 0), 0);
+  const transitCount = orders.filter(o => ['PROCESSING_SUPPLIER', 'IN_INTERNATIONAL_TRANSIT', 'ARRIVED_IN_ANGOLA'].includes(o.status)).length;
 
   const elRevenue = document.getElementById('kpiAdminRevenue');
   const elOrders = document.getElementById('kpiAdminOrders');
@@ -240,8 +202,13 @@ function renderAnalyticsModule() {
 
   if (elRevenue) elRevenue.textContent = cartStore.formatAoa(totalRevenue);
   if (elOrders) elOrders.textContent = orders.length;
-  if (elTransit) elTransit.textContent = transitCount || 2;
+  if (elTransit) elTransit.textContent = transitCount;
   if (elBadge) elBadge.textContent = orders.length;
+
+  const elPendingPayments = document.getElementById('kpiAdminPendingPayments');
+  if (elPendingPayments) {
+    elPendingPayments.textContent = payments.filter(p => p.status === 'REVIEW_PENDING' || p.status === 'PENDING').length;
+  }
 
   // Lista de Atividades Recentes
   const activityList = document.getElementById('adminRecentActivityList');
@@ -282,110 +249,112 @@ function renderAnalyticsModule() {
 }
 
 // 3. Módulo de Gestão de Encomendas & Estados
-function renderOrdersModule() {
-  const tbody = document.getElementById('adminOrdersTableBody');
+const ordersView = { filter: 'all', search: '', mode: 'all', delivery: 'all', period: 'all' };
+
+function bindOrdersModule() {
   const searchInput = document.getElementById('adminOrderSearchInput');
   const filterPills = document.querySelectorAll('#adminOrderStateFilters .admin-filter-pill');
-
-  let currentFilter = 'all';
-  let searchTerm = '';
-
-  function refreshTable() {
-    if (!tbody) return;
-    let orders = authStore.getOrders();
-
-    if (currentFilter !== 'all') {
-      orders = orders.filter(o => o.status === currentFilter || o.payment?.status === currentFilter);
-    }
-
-    if (searchTerm) {
-      orders = orders.filter(o => 
-        o.number.toLowerCase().includes(searchTerm) || 
-        (o.customer?.name && o.customer.name.toLowerCase().includes(searchTerm)) ||
-        (o.customer?.email && o.customer.email.toLowerCase().includes(searchTerm))
-      );
-    }
-
-    if (orders.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" class="table-empty-message">Nenhuma encomenda encontrada com os filtros selecionados.</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = orders.map(order => {
-      const isDelivered = order.status === 'DELIVERED';
-      const isInTransit = order.status === 'IN_TRANSIT';
-      const isSupplier = order.status === 'PROCESSING_SUPPLIER';
-      const isPending = order.payment?.status === 'PENDING' || order.status === 'AWAITING_PAYMENT';
-
-      let statusBadge = 'status-badge-pending';
-      let statusLabel = 'Aguardando Pagamento';
-
-      if (isDelivered) {
-        statusBadge = 'status-badge-delivered';
-        statusLabel = 'Entregue em Luanda';
-      } else if (isInTransit) {
-        statusBadge = 'status-badge-transit';
-        statusLabel = 'Trânsito Internacional';
-      } else if (isSupplier) {
-        statusBadge = 'status-badge-transit';
-        statusLabel = 'Compra no Fornecedor';
-      } else if (order.payment?.status === 'APPROVED') {
-        statusBadge = 'status-badge-paid';
-        statusLabel = 'Pagamento Confirmado';
-      }
-
-      return `
-        <tr>
-          <td>
-            <strong class="pay-tx-code">${order.number}</strong>
-          </td>
-          <td>
-            <strong>${order.customer?.name || 'Cliente'}</strong>
-            <span class="table-sub-detail">${order.logistics?.destination || 'Luanda, Angola'}</span>
-          </td>
-          <td>${order.logistics?.shippingMode || 'Marítimo LCL'}</td>
-          <td>${new Date(order.createdAt).toLocaleDateString('pt-AO', { day: '2-digit', month: 'short' })}</td>
-          <td>
-            <strong class="pay-amount">${cartStore.formatAoa(order.financial?.totalAoa || 0)}</strong>
-          </td>
-          <td>
-            <span class="client-order-badge ${statusBadge}">${statusLabel}</span>
-          </td>
-          <td>
-            <button type="button" class="btn-dark btn-xs btn-open-status-modal" data-order-number="${order.number}">
-              Alterar Estado &rarr;
-            </button>
-          </td>
-        </tr>
-      `;
-    }).join('');
-
-    // Adiciona listener para os botões de alterar estado
-    tbody.querySelectorAll('.btn-open-status-modal').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const num = btn.getAttribute('data-order-number');
-        const order = authStore.getOrderById(num);
-        if (order) openStatusModal(order);
-      });
-    });
-  }
+  const tbody = document.getElementById('adminOrdersTableBody');
 
   filterPills.forEach(pill => {
     pill.addEventListener('click', () => {
       filterPills.forEach(p => p.classList.remove('active'));
       pill.classList.add('active');
-      currentFilter = pill.getAttribute('data-filter') || 'all';
-      refreshTable();
+      ordersView.filter = pill.getAttribute('data-filter') || 'all';
+      renderOrdersModule();
     });
   });
 
   searchInput?.addEventListener('input', (e) => {
-    searchTerm = e.target.value.trim().toLowerCase();
-    refreshTable();
+    ordersView.search = e.target.value.trim().toLowerCase();
+    renderOrdersModule();
   });
 
-  refreshTable();
-  setupOrderStatusModal();
+  [['adminOrderModeFilter', 'mode'], ['adminOrderDeliveryFilter', 'delivery'], ['adminOrderPeriodFilter', 'period']].forEach(([id, key]) => {
+    document.getElementById(id)?.addEventListener('change', (e) => {
+      ordersView[key] = e.target.value;
+      renderOrdersModule();
+    });
+  });
+
+  tbody?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-open-status-modal');
+    if (!btn) return;
+    const order = authStore.getOrderById(btn.getAttribute('data-order-number'));
+    if (order) openStatusModal(order);
+  });
+}
+
+function renderOrdersModule() {
+  const tbody = document.getElementById('adminOrdersTableBody');
+  if (!tbody) return;
+  let orders = authStore.getOrders();
+
+  if (ordersView.mode !== 'all') orders = orders.filter(o => o.logistics?.shippingModeKey === ordersView.mode);
+  if (ordersView.delivery !== 'all') orders = orders.filter(o => o.logistics?.deliveryMethod === ordersView.delivery);
+  if (ordersView.period !== 'all') {
+    const since = Date.now() - Number(ordersView.period) * 86400000;
+    orders = orders.filter(o => new Date(o.createdAt).getTime() >= since);
+  }
+
+  if (ordersView.filter !== 'all') {
+    orders = orders.filter(o => o.status === ordersView.filter || o.payment?.status === ordersView.filter);
+  }
+
+  if (ordersView.search) {
+    const q = ordersView.search;
+    orders = orders.filter(o =>
+      o.number.toLowerCase().includes(q) ||
+      (o.customer?.name && o.customer.name.toLowerCase().includes(q)) ||
+      (o.customer?.email && o.customer.email.toLowerCase().includes(q))
+    );
+  }
+
+  if (orders.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" class="table-empty-message">Nenhuma encomenda encontrada com os filtros selecionados.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = orders.map(order => {
+    let statusBadge = 'status-badge-transit';
+    if (order.status === 'DELIVERED') statusBadge = 'status-badge-delivered';
+    else if (order.status === 'AWAITING_PAYMENT' || order.status === 'CANCELLED') statusBadge = 'status-badge-pending';
+    else if (order.status === 'PAYMENT_CONFIRMED') statusBadge = 'status-badge-paid';
+
+    const statusLabel = order.status === 'AWAITING_PAYMENT' && order.payment?.status === 'REVIEW_PENDING'
+      ? 'Comprovativo por Validar'
+      : (ORDER_STATUS_LABELS[order.status] || order.status);
+
+    return `
+      <tr>
+        <td>
+          <strong class="pay-tx-code">${order.number}</strong>
+          ${order.isGuest ? '<span class="table-sub-detail">Convidado</span>' : ''}
+        </td>
+        <td>
+          <strong>${escapeHtml(order.customer?.name || 'Cliente')}</strong>
+          <span class="table-sub-detail">${escapeHtml(order.customer?.email || '')}</span>
+        </td>
+        <td>${order.logistics?.shippingMode || 'Marítimo'}</td>
+        <td>${new Date(order.createdAt).toLocaleDateString('pt-AO', { day: '2-digit', month: 'short' })}</td>
+        <td>
+          <strong class="pay-amount">${cartStore.formatAoa(order.financial?.totalAoa || 0)}</strong>
+        </td>
+        <td>
+          <span class="client-order-badge ${statusBadge}">${statusLabel}</span>
+        </td>
+        <td>
+          <button type="button" class="btn-dark btn-xs btn-open-status-modal" data-order-number="${order.number}">
+            Alterar Estado &rarr;
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
 // Modal da Máquina de Estados da Encomenda
@@ -399,66 +368,30 @@ function setupOrderStatusModal() {
     if (e.target === modal) modal.classList.remove('visible');
   });
 
-  form?.addEventListener('submit', (e) => {
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const orderNum = document.getElementById('statusModalOrderId')?.value;
     const newStatus = document.getElementById('selectNewOrderStatus')?.value;
     const responsible = document.getElementById('statusModalResponsible')?.value;
     const notes = document.getElementById('statusModalNotes')?.value;
     const notifyClient = document.getElementById('checkNotifyClient')?.checked;
+    const submitBtn = form.querySelector('button[type="submit"]');
 
-    const order = authStore.getOrderById(orderNum);
-    if (!order) return;
+    if (submitBtn) submitBtn.disabled = true;
+    const res = await api.orders.updateStatus(orderNum, { status: newStatus, note: notes, responsible, notify: notifyClient });
+    if (submitBtn) submitBtn.disabled = false;
 
-    order.status = newStatus;
-    if (newStatus === 'PAYMENT_CONFIRMED' || newStatus === 'PROCESSING_SUPPLIER') {
-      order.payment.status = 'APPROVED';
+    if (!res.ok) {
+      alert(res.message || 'Não foi possível actualizar o estado.');
+      return;
     }
 
-    // Mapa de rótulos amigáveis
-    const statusLabelsMap = {
-      AWAITING_PAYMENT: 'Aguardando Pagamento em Kwanzas',
-      PAYMENT_CONFIRMED: 'Pagamento Confirmado em Kwanzas',
-      PROCESSING_SUPPLIER: 'Compra no Fornecedor na China',
-      AWAITING_WAREHOUSE: 'Aguardando Recepção no Armazém',
-      WAREHOUSE_RECEIVED: 'Mercadoria Recebida no Armazém China',
-      READY_TO_SHIP: 'Preparada para Expedição & Lacre',
-      IN_INTERNATIONAL_TRANSIT: 'Em Trânsito Marítimo/Aéreo Internacional',
-      ARRIVED_IN_ANGOLA: 'Chegada a Angola (Porto/Aeroporto Luanda)',
-      CUSTOMS_CLEARANCE: 'Em Desembaraço Aduaneiro AGT',
-      OUT_FOR_DELIVERY: 'Em Distribuição / Pronto p/ Levantamento',
-      DELIVERED: 'Carga Entregue com Sucesso',
-      CANCELLED: 'Encomenda Cancelada'
-    };
+    const order = authStore.cacheOrder(res.data.data);
+    if (newStatus === 'PAYMENT_CONFIRMED') authStore.refreshPayments();
 
-    const statusLabel = statusLabelsMap[newStatus] || newStatus;
-
-    if (!order.history) order.history = [];
-    order.history.unshift({
-      status: newStatus,
-      label: statusLabel,
-      date: new Date().toISOString(),
-      note: notes,
-      responsible: responsible
-    });
-
-    authStore.saveOrder(order);
-
-    if (notifyClient) {
-      logDispatchedNotification({
-        orderNumber: order.number,
-        customerName: order.customer?.name || 'Cliente',
-        customerPhone: order.customer?.phone || '+244 923 456 789',
-        channel: 'WhatsApp Business API',
-        event: statusLabel,
-        preview: `Olá ${order.customer?.name || ''}, a sua encomenda ${order.number} foi atualizada para: "${statusLabel}". ${notes}`,
-        status: 'Entregue (Lido ✓✓)'
-      });
-    }
+    if (notifyClient) setTimeout(refreshNotificationLogs, 1500);
 
     modal?.classList.remove('visible');
-    renderOrdersModule();
-    renderAnalyticsModule();
   });
 }
 
@@ -473,7 +406,10 @@ function openStatusModal(order) {
   if (title) title.textContent = `Atualizar Estado: ${order.number}`;
   if (inpId) inpId.value = order.number;
   if (select) select.value = order.status || 'AWAITING_PAYMENT';
-  if (txtNotes) txtNotes.value = `Atualização de rotina: encomenda em conformidade no hub operacional.`;
+  if (txtNotes) txtNotes.value = '';
+  const inpResp = document.getElementById('statusModalResponsible');
+  const me = authStore.getUser();
+  if (inpResp && me) inpResp.value = `${me.firstName} ${me.lastName}`.trim() || me.email;
 
   modal.classList.add('visible');
 }
@@ -496,6 +432,7 @@ function renderProductsModule() {
       </td>
       <td>
         <span class="admin-cat-pill">${prod.categoryLabel || prod.category.toUpperCase()}</span>
+        ${prod.active === false ? '<span class="table-sub-detail">Inactivo</span>' : ''}
       </td>
       <td>${prod.origin || 'Guangdong, China'}</td>
       <td>${prod.moq || '1 Unidade'}</td>
@@ -510,12 +447,30 @@ function renderProductsModule() {
           </svg>
           <span>Editar Produto</span>
         </button>
+        <button type="button" class="btn-outline-dark btn-xs btn-toggle-product" data-product-id="${prod.id}" data-active="${prod.active === false ? '0' : '1'}">
+          ${prod.active === false ? 'Activar' : 'Desactivar'}
+        </button>
       </td>
     </tr>
   `).join('');
-
-  setupProductModal();
 }
+
+// Activar / desactivar produto (desactivado deixa de aparecer na loja; encomendas antigas mantêm-se)
+document.getElementById('adminProductsTableBody')?.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.btn-toggle-product');
+  if (!btn) return;
+  const id = btn.getAttribute('data-product-id');
+  const activate = btn.getAttribute('data-active') === '0';
+  if (!activate && !confirm('Desactivar este produto? Deixa de aparecer na loja.')) return;
+  btn.disabled = true;
+  const res = activate ? await api.products.update(id, { active: true }) : await api.products.deactivate(id);
+  btn.disabled = false;
+  if (!res.ok) return alert(res.message || 'Não foi possível actualizar o produto.');
+  const idx = PRODUCTS_DATA.findIndex(p => p.id === id);
+  if (idx >= 0) PRODUCTS_DATA[idx] = res.data.data;
+  renderProductsModule();
+  renderCmsModule();
+});
 
 // Modal de Criação e Edição Completa de Produtos com Galeria Dinâmica Local
 function setupProductModal() {
@@ -756,8 +711,10 @@ function setupProductModal() {
   });
 
   // Abre para EDITAR produto existente
-  document.querySelectorAll('.btn-edit-product').forEach(btn => {
-    btn.addEventListener('click', () => {
+  document.getElementById('adminProductsTableBody')?.addEventListener('click', (ev) => {
+    const btn = ev.target.closest('.btn-edit-product');
+    if (!btn) return;
+    {
       const prodId = btn.getAttribute('data-product-id');
       const prod = PRODUCTS_DATA.find(p => p.id === prodId);
       if (!prod) return;
@@ -779,6 +736,8 @@ function setupProductModal() {
       if (inpPacking) inpPacking.value = prod.logistics?.packing || '';
       if (inpSpecs) inpSpecs.value = prod.specs || '';
       if (inpDesc) inpDesc.value = prod.description || '';
+      const supSel = document.getElementById('prodFormSupplier');
+      if (supSel) supSel.value = prod.supplierId || '';
 
       // Carrega fotos existentes do produto
       modalPhotosState = [];
@@ -801,7 +760,7 @@ function setupProductModal() {
 
       renderModalPhotoCards();
       modal?.classList.add('visible');
-    });
+    }
   });
 
   btnClose?.addEventListener('click', () => modal?.classList.remove('visible'));
@@ -810,7 +769,7 @@ function setupProductModal() {
   });
 
   // Submissão do formulário (Criação ou Edição com fotos dinâmicas)
-  form?.addEventListener('submit', (e) => {
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const prodId = inpId?.value;
     const cat = inpCategory?.value || 'solar';
@@ -828,6 +787,24 @@ function setupProductModal() {
       alert('Por favor carregue pelo menos o ficheiro local da Imagem Principal / Ângulo 1.');
       return;
     }
+
+    // Fotografias carregadas localmente: envia para o servidor e usa o URL público
+    if (btnSubmit) btnSubmit.disabled = true;
+    try {
+      for (const photo of modalPhotosState) {
+        if (!photo.url?.startsWith('data:')) continue;
+        const blob = await (await fetch(photo.url)).blob();
+        const file = new File([blob], photo.fileName || 'foto.jpg', { type: blob.type || 'image/jpeg' });
+        const up = await api.admin.uploadImage(file);
+        if (!up.ok) throw new Error(up.message || 'Falha no envio da fotografia.');
+        photo.url = up.data.data.url;
+      }
+    } catch (err) {
+      if (btnSubmit) btnSubmit.disabled = false;
+      alert(err.message);
+      return;
+    }
+    if (btnSubmit) btnSubmit.disabled = false;
 
     const primaryUrl = modalPhotosState[0].url;
     const imagesArray = validPhotos.map((p, idx) => ({
@@ -859,27 +836,30 @@ function setupProductModal() {
       logistics: {
         originPort: inpOriginPort?.value.trim() || 'Porto de Nansha / Shenzhen (China)',
         destinationPort: 'Porto de Luanda (Angola)',
-        transitTimeSea: inpTransit?.value.trim() || '32 a 38 dias',
+        transitTimeSea: inpTransit?.value.trim() || '30 a 60 dias',
         packing: inpPacking?.value.trim() || 'Palete reforçada com filme retrátil'
       }
     };
 
-    if (prodId) {
-      // EDITAR produto existente
-      const idx = PRODUCTS_DATA.findIndex(p => p.id === prodId);
-      if (idx >= 0) {
-        PRODUCTS_DATA[idx] = { ...PRODUCTS_DATA[idx], ...updatedData };
-      }
-    } else {
-      // CRIAR novo produto
-      const newProd = {
-        id: `prod-custom-${Date.now()}`,
-        ...updatedData
-      };
-      PRODUCTS_DATA.unshift(newProd);
+    const { categoryLabel, ...payload } = updatedData;
+    payload.logistics = { ...payload.logistics, transitTimeAir: '5 a 15 dias' };
+    payload.supplierId = document.getElementById('prodFormSupplier')?.value || null;
+
+    if (btnSubmit) btnSubmit.disabled = true;
+    const res = prodId ? await api.products.update(prodId, payload) : await api.products.create(payload);
+    if (btnSubmit) btnSubmit.disabled = false;
+
+    if (!res.ok) {
+      alert(res.message || 'Não foi possível guardar o produto.');
+      return;
     }
 
+    const saved = res.data.data;
+    const idx = PRODUCTS_DATA.findIndex(p => p.id === saved.id);
+    if (idx >= 0) PRODUCTS_DATA[idx] = saved; else PRODUCTS_DATA.unshift(saved);
+
     renderProductsModule();
+    renderCmsModule();
     modal?.classList.remove('visible');
     form.reset();
   });
@@ -887,97 +867,15 @@ function setupProductModal() {
 
 // 5. Módulo de Fornecedores na China
 function renderSuppliersModule() {
-  const container = document.getElementById('adminSuppliersGrid');
-  if (!container) return;
-
-  container.innerHTML = SUPPLIERS_DATA.map(sup => `
-    <div class="admin-supplier-card">
-      <div class="supplier-card-head">
-        <div>
-          <h3 class="supplier-name">${sup.name}</h3>
-          <span class="supplier-prov">${sup.province}</span>
-        </div>
-        <span class="supplier-rating">${sup.rating}</span>
-      </div>
-
-      <div class="supplier-tags">
-        ${sup.categories.map(c => `<span class="supplier-cat-tag">${c}</span>`).join('')}
-      </div>
-
-      <div class="supplier-meta-list">
-        <div>
-          <span>Contacto Responsável:</span>
-          <strong>${sup.contactPerson}</strong>
-        </div>
-        <div>
-          <span>WeChat / WhatsApp:</span>
-          <strong>${sup.wechat} • ${sup.whatsapp}</strong>
-        </div>
-        <div>
-          <span>Termos de Fornecimento:</span>
-          <strong>${sup.terms}</strong>
-        </div>
-        <div>
-          <span>Histórico TradeX:</span>
-          <strong>${sup.ordersCount} remessas importadas</strong>
-        </div>
-      </div>
-    </div>
-  `).join('');
+  return; // ver admin-extra.js
 }
 
 // 6. Módulo de Logística & Remessas Internacionais
 function renderLogisticsModule() {
-  const container = document.getElementById('adminShipmentsGrid');
-  if (!container) return;
-
-  container.innerHTML = SHIPMENTS_DATA.map(shp => `
-    <div class="admin-shipment-card">
-      <div class="shipment-head-row">
-        <div>
-          <span class="shipment-id-badge">${shp.id}</span>
-          <h3 class="shipment-vessel-title">${shp.vessel}</h3>
-        </div>
-        <span class="client-status-pill">${shp.status}</span>
-      </div>
-
-      <div class="shipment-route-bar">
-        <span>Origem: <strong>${shp.origin}</strong></span>
-        <span>&rarr;</span>
-        <span>Destino: <strong>${shp.destination}</strong></span>
-      </div>
-
-      <div class="shipment-meta-grid">
-        <div>
-          <span>B/L / Conhecimento:</span>
-          <strong>${shp.blNumber}</strong>
-        </div>
-        <div>
-          <span>Embarque (ETD):</span>
-          <strong>${shp.etd}</strong>
-        </div>
-        <div>
-          <span>Previsão Luanda (ETA):</span>
-          <strong>${shp.eta}</strong>
-        </div>
-        <div>
-          <span>Contentores / Volumes:</span>
-          <strong>${shp.containers}</strong>
-        </div>
-        <div>
-          <span>Carga Total:</span>
-          <strong>${shp.volumeWeight}</strong>
-        </div>
-        <div>
-          <span>Encomendas Vinculadas:</span>
-          <strong>${shp.ordersLinked.join(', ')}</strong>
-        </div>
-      </div>
-    </div>
-  `).join('');
+  return; // ver admin-extra.js
 }
 
-// 7. Módulo Financeiro & Conciliação Multicaixa
+// 7. Módulo Financeiro & Validação de Comprovativos
 function renderFinanceModule() {
   const tbody = document.getElementById('adminFinanceTableBody');
   if (!tbody) return;
@@ -997,201 +895,101 @@ function renderFinanceModule() {
 
     if (isApproved) {
       badgeClass = 'table-badge-approved';
-      badgeLabel = 'Liquidado & Conciliado';
+      badgeLabel = 'Validado';
     } else if (isReview) {
       badgeClass = 'table-badge-pending';
-      badgeLabel = 'Comprovativo sob Análise';
+      badgeLabel = 'Comprovativo por Validar';
+    } else if (pay.status === 'DECLINED') {
+      badgeLabel = 'Rejeitado';
+    } else {
+      badgeLabel = 'Aguarda Transferência';
     }
 
     return `
       <tr>
         <td>
-          <strong class="pay-tx-code">${pay.transactionId || pay.id}</strong>
+          <strong class="pay-tx-code">${pay.reference || pay.transactionId || '—'}</strong>
         </td>
         <td>
           <strong>${pay.orderNumber}</strong>
+          ${pay.customerName ? `<span class="table-sub-detail">${escapeHtml(pay.customerName)}</span>` : ''}
         </td>
-        <td>${pay.methodName || 'Multicaixa'}</td>
+        <td>${pay.methodName || 'Transferência Bancária'}</td>
         <td>${new Date(pay.date).toLocaleDateString('pt-AO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
         <td>
           <strong class="pay-amount">${cartStore.formatAoa(pay.amountAoa)}</strong>
         </td>
         <td>
           <span class="table-pay-badge ${badgeClass}">${badgeLabel}</span>
+          ${pay.status === 'DECLINED' && pay.rejectionReason ? `<span class="table-sub-detail">Motivo: ${escapeHtml(pay.rejectionReason)}</span>` : ''}
+          ${pay.proofUploadedAt ? `<span class="table-sub-detail">Enviado ${new Date(pay.proofUploadedAt).toLocaleString('pt-AO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>` : ''}
         </td>
         <td>
-          ${!isApproved ? `
-            <button type="button" class="btn-primary-action btn-xs btn-conciliate-pay" data-pay-id="${pay.id}">
-              Aprovar Conciliação
+          ${pay.hasProof ? `
+            <button type="button" class="btn-outline-dark btn-xs btn-view-proof" data-pay-id="${pay.id}" title="${escapeHtml(pay.proofFileName || 'Comprovativo')}">
+              Ver comprovativo
             </button>
+          ` : ''}
+          ${isReview ? `
+            <button type="button" class="btn-primary-action btn-xs btn-conciliate-pay" data-pay-id="${pay.id}" data-approve="1">
+              Aprovar
+            </button>
+            <button type="button" class="btn-outline-dark btn-xs btn-conciliate-pay" data-pay-id="${pay.id}" data-approve="0">
+              Rejeitar
+            </button>
+          ` : isApproved ? `
+            <span class="table-sub-detail">${pay.reviewedBy ? `Validado por ${escapeHtml(pay.reviewedBy)}` : 'Validado'}</span>
           ` : `
-            <span class="table-sub-detail">Auditado BNA / AGT</span>
+            <span class="table-sub-detail">Aguarda comprovativo do cliente</span>
           `}
         </td>
       </tr>
     `;
   }).join('');
 
+  tbody.querySelectorAll('.btn-view-proof').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      // Abre a janela já no clique para não ser bloqueada como pop-up
+      const win = window.open('', '_blank');
+      btn.disabled = true;
+      const res = await api.payments.proofBlob(btn.getAttribute('data-pay-id'));
+      btn.disabled = false;
+      if (!res.ok) {
+        win?.close();
+        alert(res.message);
+        return;
+      }
+      const url = URL.createObjectURL(res.blob);
+      if (win) win.location.href = url; else window.open(url, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    });
+  });
+
   tbody.querySelectorAll('.btn-conciliate-pay').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const payId = btn.getAttribute('data-pay-id');
-      const paymentsList = authStore.getPayments();
-      const p = paymentsList.find(item => item.id === payId);
-      if (p) {
-        p.status = 'APPROVED';
-        p.transactionId = `MCX-REC-${Date.now().toString().slice(-6)}`;
-        authStore.savePayment(p);
-
-        // Atualiza a encomenda associada
-        const order = authStore.getOrderById(p.orderNumber);
-        if (order) {
-          order.payment.status = 'APPROVED';
-          order.status = 'PROCESSING_SUPPLIER';
-          order.history.unshift({
-            status: 'PAYMENT_CONFIRMED',
-            label: 'Pagamento Conciliado pela Tesouraria',
-            date: new Date().toISOString(),
-            note: 'Liquidação aprovada e auditada pelo setor financeiro da TradeX.',
-            responsible: 'Tesouraria TradeX Luanda'
-          });
-          authStore.saveOrder(order);
-        }
-
-        renderFinanceModule();
-        renderAnalyticsModule();
+      const approved = btn.getAttribute('data-approve') === '1';
+      let note;
+      if (!approved) {
+        note = prompt('Motivo da rejeição (visível para o cliente):', 'Transferência não encontrada no extracto bancário.');
+        if (note === null) return;
       }
+      btn.disabled = true;
+      const res = await api.payments.review(payId, approved, note || undefined);
+      btn.disabled = false;
+      if (!res.ok) {
+        alert(res.message || 'Não foi possível validar o pagamento.');
+        return;
+      }
+      await authStore.sync();
     });
   });
 }
 
-// 8. Módulo de Notificações Multicanal (WhatsApp API, SMS, Email)
-function renderNotificationsModule() {
-  updateOrderSelectInNotifications();
-  renderNotificationLogs();
+// 8. Notificações: ver admin-conversations.js
+function renderNotificationsModule() {}
+function updateOrderSelectInNotifications() { fillNotificationOrders(); }
 
-  document.getElementById('btnSendTestNotification')?.addEventListener('click', () => {
-    const orderNum = document.getElementById('notifTargetOrder')?.value;
-    const channel = document.getElementById('notifChannelSelect')?.value;
-    const template = document.getElementById('notifTemplateSelect')?.value;
-    const feedback = document.getElementById('notifFeedback');
-
-    const order = authStore.getOrderById(orderNum);
-    const clientName = order?.customer?.name || 'Cliente';
-    const clientPhone = order?.customer?.phone || '+244 923 456 789';
-
-    const templatesMap = {
-      payment_confirmed: `Confirmação de Pagamento: A sua encomenda ${orderNum} teve a liquidação de ${cartStore.formatAoa(order?.financial?.totalAoa || 0)} validada com sucesso via Multicaixa.`,
-      supplier_purchased: `Aquisição na Fábrica: O pedido de compra referente a ${orderNum} foi emitido ao fabricante parceiro na China.`,
-      shipment_departed: `Embarque Internacional: A sua carga (${orderNum}) zarpou rumo ao Porto de Luanda a bordo do Navio MSC Luanda.`,
-      customs_cleared: `Desembaraço Aduaneiro: A declaração de importação da encomenda ${orderNum} foi desembaraçada pela Alfândega AGT Luanda.`,
-      ready_delivery: `Carga Pronta: A sua encomenda ${orderNum} está pronta para levantamento no Terminal TradeX Bairro Azul ou entrega dedicada.`
-    };
-
-    const channelNames = {
-      whatsapp: 'WhatsApp Business API (+244)',
-      sms: 'SMS Tradex Express',
-      email: 'E-mail Transacional'
-    };
-
-    logDispatchedNotification({
-      orderNumber: orderNum,
-      customerName: clientName,
-      customerPhone: clientPhone,
-      channel: channelNames[channel] || channel,
-      event: template.replace('_', ' ').toUpperCase(),
-      preview: templatesMap[template] || 'Notificação operacional TradeX.',
-      status: 'Entregue com Sucesso (✓✓)'
-    });
-
-    if (feedback) {
-      feedback.textContent = `Mensagem enviada com sucesso para ${clientName} (${clientPhone}) via ${channelNames[channel]}!`;
-      feedback.className = 'admin-notify-feedback success visible';
-      setTimeout(() => { feedback.className = 'admin-notify-feedback'; }, 3000);
-    }
-
-    renderNotificationLogs();
-  });
-}
-
-function updateOrderSelectInNotifications() {
-  const select = document.getElementById('notifTargetOrder');
-  if (!select) return;
-
-  const orders = authStore.getOrders();
-  select.innerHTML = orders.map(o => `
-    <option value="${o.number}">${o.number} — ${o.customer?.name || 'Cliente'} (${cartStore.formatAoa(o.financial?.totalAoa || 0)})</option>
-  `).join('');
-}
-
-function getNotificationLogs() {
-  try {
-    const stored = localStorage.getItem(NOTIFICATIONS_LOG_STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
-    return [
-      {
-        id: 'notif_001',
-        orderNumber: 'TDX-AO-2026-001',
-        customerName: 'Manuel Dos Santos',
-        customerPhone: '+244 923 456 789',
-        channel: 'WhatsApp Business API (+244)',
-        event: 'EMBARQUE CONCLUÍDO',
-        preview: 'Olá Manuel, a sua remessa TDX-AO-2026-001 foi estivada a bordo no Porto de Nansha. Previsão de chegada a Luanda: 18 de Novembro.',
-        date: 'Hoje, 09:40',
-        status: 'Entregue & Lido (✓✓)'
-      },
-      {
-        id: 'notif_002',
-        orderNumber: 'TDX-AO-2026-002',
-        customerName: 'Manuel Dos Santos',
-        customerPhone: '+244 923 456 789',
-        channel: 'SMS Tradex Express',
-        event: 'DESALFANDEGAMENTO AGT',
-        preview: 'TradeX: A sua encomenda TDX-AO-2026-002 foi desembaraçada pela AGT no Terminal de Cargas de Luanda.',
-        date: 'Ontem, 16:15',
-        status: 'Entregue (✓)'
-      }
-    ];
-  } catch {
-    return [];
-  }
-}
-
-function logDispatchedNotification(logItem) {
-  const logs = getNotificationLogs();
-  logs.unshift({
-    id: `notif_${Date.now()}`,
-    date: 'Agora mesmo',
-    ...logItem
-  });
-  try {
-    localStorage.setItem(NOTIFICATIONS_LOG_STORAGE_KEY, JSON.stringify(logs));
-  } catch {}
-}
-
-function renderNotificationLogs() {
-  const list = document.getElementById('adminNotifLogList');
-  if (!list) return;
-
-  const logs = getNotificationLogs();
-  list.innerHTML = logs.map(log => `
-    <li class="admin-notif-log-item">
-      <div class="notif-log-head">
-        <div>
-          <strong class="notif-order-ref">${log.orderNumber}</strong> &bull; 
-          <span class="notif-channel-tag">${log.channel}</span>
-        </div>
-        <span class="notif-status-stamp">${log.status}</span>
-      </div>
-      <p class="notif-preview-text">"${log.preview}"</p>
-      <div class="notif-log-foot">
-        <span>Destinatário: <strong>${log.customerName} (${log.customerPhone})</strong></span>
-        <span>${log.date}</span>
-      </div>
-    </li>
-  `).join('');
-}
-
-// ==========================================================================
 // 8. Módulo de CMS & Gestão de Conteúdos Públicos
 // ==========================================================================
 
@@ -1621,7 +1419,7 @@ function openCmsModal(sectionKey, editId) {
       </div>
       <div class="checkout-form-group">
         <label for="cmsFieldBannerSub">Subtítulo / Descrição de Apoio</label>
-        <input type="text" id="cmsFieldBannerSub" class="checkout-input" value="${existing?.subtitle || ''}" placeholder="Ex: Cotação em Kwanzas e desembaraço aduaneiro completo" />
+        <input type="text" id="cmsFieldBannerSub" class="checkout-input" value="${existing?.subtitle || ''}" placeholder="Ex: Cotação em Kwanzas e entrega porta a porta" />
       </div>
       <div class="checkout-form-row">
         <div class="checkout-form-group">
@@ -1702,7 +1500,7 @@ function openCmsModal(sectionKey, editId) {
     `;
   } else if (sectionKey === 'faqs') {
     title.textContent = existing ? 'Editar Pergunta Frequente' : 'Nova Pergunta Frequente (FAQ)';
-    sub.textContent = 'Esclareça dúvidas comuns sobre pagamentos Multicaixa, prazos e alfândega.';
+    sub.textContent = 'Esclareça dúvidas comuns sobre pagamentos, prazos e entregas.';
     fieldsContainer.innerHTML = `
       <div class="checkout-form-group">
         <label for="cmsFieldFaqQuestion">Pergunta Frequente *</label>
@@ -1714,7 +1512,7 @@ function openCmsModal(sectionKey, editId) {
           <select id="cmsFieldFaqCat" class="checkout-select">
             <option value="Pagamentos" ${existing?.category === 'Pagamentos' ? 'selected' : ''}>Pagamentos & Kwanzas</option>
             <option value="Logística & Prazos" ${existing?.category === 'Logística & Prazos' ? 'selected' : ''}>Logística & Prazos</option>
-            <option value="Alfândega" ${existing?.category === 'Alfândega' ? 'selected' : ''}>Alfândega & AGT</option>
+            <option value="Entregas" ${existing?.category === 'Entregas' ? 'selected' : ''}>Entregas</option>
             <option value="Garantias" ${existing?.category === 'Garantias' ? 'selected' : ''}>Garantias & Devoluções</option>
           </select>
         </div>
@@ -1888,3 +1686,13 @@ function saveCmsModalForm() {
   modal?.classList.remove('visible');
 }
 
+
+// Opções do selector de fornecedor no modal de produto
+window.addEventListener('tradex:suppliers-changed', () => {
+  const sel = document.getElementById('prodFormSupplier');
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— Sem fornecedor associado —</option>' +
+    supplierStore.list().filter(s => s.active).map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+  sel.value = current;
+});

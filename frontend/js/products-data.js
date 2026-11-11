@@ -42,8 +42,8 @@ export const PRODUCTS_DATA = [
     logistics: {
       originPort: 'Porto de Nansha / Shenzhen (China)',
       destinationPort: 'Porto de Luanda (Angola)',
-      transitTimeSea: '32 a 38 dias',
-      transitTimeAir: 'Não recomendado (Carga pesada)',
+      transitTimeSea: '30 a 60 dias',
+      transitTimeAir: '5 a 15 dias',
       packing: 'Palete vertical reforçada com cantoneiras plásticas e filme retrátil'
     }
   },
@@ -87,8 +87,8 @@ export const PRODUCTS_DATA = [
     logistics: {
       originPort: 'Shenzhen / Guangzhou',
       destinationPort: 'Luanda (Angola)',
-      transitTimeSea: '30 a 35 dias',
-      transitTimeAir: '7 a 10 dias (Aéreo expresso disponível)',
+      transitTimeSea: '30 a 60 dias',
+      transitTimeAir: '5 a 15 dias',
       packing: 'Caixa de cartão triplo ondulado com espuma moldada à medida'
     }
   },
@@ -131,8 +131,8 @@ export const PRODUCTS_DATA = [
     logistics: {
       originPort: 'Dongguan / Yantian, Shenzhen',
       destinationPort: 'Porto de Luanda',
-      transitTimeSea: '32 a 36 dias (Carga perigosa classe 9 regularizada)',
-      transitTimeAir: 'Não recomendado',
+      transitTimeSea: '30 a 60 dias',
+      transitTimeAir: '5 a 15 dias',
       packing: 'Embalagem certificada UN para transporte internacional de lítio'
     }
   },
@@ -174,8 +174,8 @@ export const PRODUCTS_DATA = [
     logistics: {
       originPort: 'Guangzhou Port',
       destinationPort: 'Luanda',
-      transitTimeSea: '35 dias',
-      transitTimeAir: 'Não aplicável',
+      transitTimeSea: '30 a 60 dias',
+      transitTimeAir: '5 a 15 dias',
       packing: 'Grade de aço protetora com plástico bolha e caixa de papelão kraft'
     }
   },
@@ -216,8 +216,8 @@ export const PRODUCTS_DATA = [
     logistics: {
       originPort: 'Porto de Tianjin (China)',
       destinationPort: 'Porto de Luanda',
-      transitTimeSea: '38 a 42 dias',
-      transitTimeAir: 'Não aplicável',
+      transitTimeSea: '30 a 60 dias',
+      transitTimeAir: '5 a 15 dias',
       packing: 'Carga amarrada em fardos de aço para carregamento direto em contentor'
     }
   },
@@ -258,8 +258,8 @@ export const PRODUCTS_DATA = [
     logistics: {
       originPort: 'Ningbo / Yiwu',
       destinationPort: 'Luanda',
-      transitTimeSea: '35 dias',
-      transitTimeAir: 'Possível via carga aérea geral',
+      transitTimeSea: '30 a 60 dias',
+      transitTimeAir: '5 a 15 dias',
       packing: 'Caixa de madeira compensada compensada de exportação (Fumigada)'
     }
   },
@@ -300,8 +300,8 @@ export const PRODUCTS_DATA = [
     logistics: {
       originPort: 'Porto de Qingdao (Shandong)',
       destinationPort: 'Porto de Luanda',
-      transitTimeSea: '38 dias',
-      transitTimeAir: 'Não aplicável',
+      transitTimeSea: '30 a 60 dias',
+      transitTimeAir: '5 a 15 dias',
       packing: 'Contentor 20ft consolidado FCL'
     }
   },
@@ -343,8 +343,8 @@ export const PRODUCTS_DATA = [
     logistics: {
       originPort: 'Zhongshan / Guangzhou',
       destinationPort: 'Luanda',
-      transitTimeSea: '32 dias',
-      transitTimeAir: '7 a 9 dias disponível',
+      transitTimeSea: '30 a 60 dias',
+      transitTimeAir: '5 a 15 dias',
       packing: 'Caixa mestra reforçada com divisórias de espuma para cada campânula'
     }
   },
@@ -386,8 +386,8 @@ export const PRODUCTS_DATA = [
     logistics: {
       originPort: 'Zhongshan / Guangzhou',
       destinationPort: 'Luanda',
-      transitTimeSea: '30 a 35 dias',
-      transitTimeAir: 'Disponível',
+      transitTimeSea: '30 a 60 dias',
+      transitTimeAir: '5 a 15 dias',
       packing: 'Caixa coletiva paletizada com 20 caixas individuais coloridas'
     }
   },
@@ -429,8 +429,8 @@ export const PRODUCTS_DATA = [
     logistics: {
       originPort: 'Porto de Shanghai / Wuxi',
       destinationPort: 'Porto de Luanda',
-      transitTimeSea: '35 a 40 dias',
-      transitTimeAir: 'Não aplicável',
+      transitTimeSea: '30 a 60 dias',
+      transitTimeAir: '5 a 15 dias',
       packing: 'Caixa de madeira tratada com proteção contra salinidade marítima'
     }
   },
@@ -472,8 +472,8 @@ export const PRODUCTS_DATA = [
     logistics: {
       originPort: 'Porto de Qingdao',
       destinationPort: 'Porto de Luanda',
-      transitTimeSea: '38 dias',
-      transitTimeAir: 'Não aplicável',
+      transitTimeSea: '30 a 60 dias',
+      transitTimeAir: '5 a 15 dias',
       packing: 'Estrutura de armação de aço desmontável para transporte marítimo'
     }
   },
@@ -514,8 +514,8 @@ export const PRODUCTS_DATA = [
     logistics: {
       originPort: 'Foshan / Nansha, Guangzhou',
       destinationPort: 'Porto de Luanda',
-      transitTimeSea: '32 a 36 dias',
-      transitTimeAir: 'Não aplicável',
+      transitTimeSea: '30 a 60 dias',
+      transitTimeAir: '5 a 15 dias',
       packing: 'Embalagem marítima com papel impermeável, chapa de aço de proteção e cintas'
     }
   }

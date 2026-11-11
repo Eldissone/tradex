@@ -1,20 +1,57 @@
 // TradeX Global Trading - Dashboard do Cliente
-import { authStore } from './auth.js';
+import { authStore, openAuthModal } from './auth.js';
+import { api } from './api.js';
+import { renderProofUploader } from './proof-upload.js';
 import { cartStore } from './cart.js';
-import { PRODUCTS_DATA } from './products-data.js';
+import { PRODUCTS_DATA, loadProducts } from './product-store.js';
 
+// A área do cliente exige sessão iniciada
 document.addEventListener('DOMContentLoaded', () => {
-  // Se o utilizador não estiver autenticado, autentica a conta demo por defeito
-  if (!authStore.isLoggedIn()) {
-    authStore.login('cliente@tradex.ao', 'tradex2026');
+  if (authStore.isLoggedIn()) {
+    initClientDashboard();
+  } else {
+    showLoginRequired();
   }
 
-  initClientDashboard();
+  window.addEventListener('tradex:auth-changed', () => {
+    if (authStore.isLoggedIn() && !dashboardStarted) {
+      document.getElementById('clientLoginRequired')?.remove();
+      initClientDashboard();
+    } else if (!authStore.isLoggedIn() && dashboardStarted) {
+      window.location.reload();
+    }
+  });
 });
+
+function showLoginRequired() {
+  const main = document.querySelector('main') || document.body;
+  main.querySelectorAll(':scope > *').forEach(el => { el.dataset.authHidden = '1'; el.style.display = 'none'; });
+  const box = document.createElement('section');
+  box.id = 'clientLoginRequired';
+  box.className = 'client-login-required';
+  box.innerHTML = `
+    <h1>Área do Cliente</h1>
+    <p>Inicie sessão para consultar as suas encomendas, pagamentos e moradas.</p>
+    <div class="client-login-actions">
+      <button type="button" class="btn-dark" data-auth="login">Iniciar Sessão</button>
+      <button type="button" class="btn-outline-dark" data-auth="register">Criar Conta</button>
+    </div>
+    <p class="client-login-hint">Fez uma compra sem conta? Pode <a href="rastreio.html">acompanhar a encomenda pelo código</a>.</p>
+  `;
+  main.appendChild(box);
+  box.querySelectorAll('[data-auth]').forEach(btn => {
+    btn.addEventListener('click', () => openAuthModal(btn.getAttribute('data-auth')));
+  });
+  openAuthModal('login');
+}
+
+let dashboardStarted = false;
 
 function initClientDashboard() {
   const user = authStore.getUser();
   if (!user) return;
+  dashboardStarted = true;
+  document.querySelectorAll('[data-auth-hidden]').forEach(el => { el.style.display = ''; delete el.dataset.authHidden; });
 
   renderProfileHeader(user);
   renderKpiMetrics();
@@ -39,6 +76,19 @@ function initClientDashboard() {
     renderPaymentsTable();
     renderOrdersList();
   });
+
+  window.addEventListener('tradex:account-synced', () => {
+    const fresh = authStore.getUser();
+    if (fresh) renderProfileHeader(fresh);
+    renderKpiMetrics();
+    renderOrdersList();
+    renderPaymentsTable();
+    renderAddressesGrid();
+    renderFavoritesGrid();
+  });
+
+  window.addEventListener('tradex:products-changed', renderFavoritesGrid);
+  loadProducts();
 }
 
 // 1. Cabeçalho de Perfil
@@ -53,8 +103,8 @@ function renderProfileHeader(user) {
   if (elAvatar) elAvatar.textContent = initials;
   if (elName) elName.textContent = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Cliente TradeX';
   if (elEmail) elEmail.textContent = user.email || '';
-  if (elPhone) elPhone.textContent = user.phone || '+244 923 456 789';
-  if (elNif) elNif.textContent = user.nif || '004928172LA041';
+  if (elPhone) elPhone.textContent = user.phone || '—';
+  if (elNif) elNif.textContent = user.nif || '—';
 }
 
 // 2. Indicadores & KPIs
@@ -67,7 +117,7 @@ function renderKpiMetrics() {
 
   const total = orders.length;
   const pending = orders.filter(o => o.payment?.status === 'PENDING' || o.status === 'AWAITING_PAYMENT').length;
-  const inTransit = orders.filter(o => o.status === 'IN_TRANSIT' || o.status === 'PROCESSING_SUPPLIER').length;
+  const inTransit = orders.filter(o => IN_PROGRESS_STATUSES.includes(o.status)).length;
   const delivered = orders.filter(o => o.status === 'DELIVERED').length;
 
   if (elTotal) elTotal.textContent = total;
@@ -75,6 +125,8 @@ function renderKpiMetrics() {
   if (elInTransit) elInTransit.textContent = inTransit;
   if (elDelivered) elDelivered.textContent = delivered;
 }
+
+const IN_PROGRESS_STATUSES = ['PROCESSING_SUPPLIER', 'IN_INTERNATIONAL_TRANSIT', 'ARRIVED_IN_ANGOLA', 'READY_FOR_PICKUP', 'OUT_FOR_DELIVERY'];
 
 // 3. Sistema de Abas do Painel
 function setupDashboardTabs() {
@@ -122,7 +174,8 @@ function renderOrdersList() {
   container.innerHTML = orders.map(order => {
     const isPending = order.payment?.status === 'PENDING' || order.status === 'AWAITING_PAYMENT';
     const isDelivered = order.status === 'DELIVERED';
-    const isInTransit = order.status === 'IN_TRANSIT' || order.status === 'PROCESSING_SUPPLIER';
+    const isInTransit = IN_PROGRESS_STATUSES.includes(order.status);
+    const awaitingProof = order.payment?.status === 'PENDING' || order.payment?.status === 'DECLINED';
 
     let badgeClass = 'status-badge-pending';
     let badgeText = 'Aguardando Pagamento';
@@ -132,7 +185,10 @@ function renderOrdersList() {
       badgeText = 'Entregue em Angola';
     } else if (isInTransit) {
       badgeClass = 'status-badge-transit';
-      badgeText = order.status === 'PROCESSING_SUPPLIER' ? 'Em Preparação na China' : 'Em Trânsito Internacional';
+      badgeText = order.statusLabel || 'Em Curso';
+    } else if (order.payment?.status === 'REVIEW_PENDING') {
+      badgeClass = 'status-badge-transit';
+      badgeText = 'Comprovativo em Validação';
     } else if (order.payment?.status === 'APPROVED') {
       badgeClass = 'status-badge-paid';
       badgeText = 'Pagamento Confirmado';
@@ -168,11 +224,11 @@ function renderOrdersList() {
           <div class="order-meta-info-grid">
             <div class="order-info-col">
               <span class="order-info-label">Modalidade de Envio:</span>
-              <strong class="order-info-val">${order.logistics?.shippingMode || 'Marítimo LCL'}</strong>
+              <strong class="order-info-val">${order.logistics?.shippingMode || 'Marítimo'}</strong>
             </div>
             <div class="order-info-col">
               <span class="order-info-label">Destino em Angola:</span>
-              <strong class="order-info-val">${order.logistics?.address?.municipality || 'Luanda'}, ${order.logistics?.address?.province || 'Luanda'}</strong>
+              <strong class="order-info-val">${order.logistics?.deliveryMethod === 'pickup' ? 'Levantamento no Terminal TradeX' : `${order.logistics?.address?.municipality || 'Luanda'}, ${order.logistics?.address?.province || 'Luanda'}`}</strong>
             </div>
             <div class="order-info-col">
               <span class="order-info-label">Total a Liquidar:</span>
@@ -188,9 +244,9 @@ function renderOrdersList() {
           <button type="button" class="btn-outline-dark btn-sm btn-view-order-details" data-order-number="${order.number}">
             <span>Ver Fatura / Detalhes</span>
           </button>
-          ${isPending ? `
+          ${awaitingProof ? `
             <button type="button" class="btn-primary-action btn-sm btn-pay-now-action" data-order-number="${order.number}">
-              <span>Pagar via Multicaixa</span>
+              <span>Pagar por Transferência</span>
             </button>
           ` : ''}
         </div>
@@ -216,6 +272,14 @@ function renderOrdersList() {
   });
 }
 
+const PAYMENT_STATUS_LABELS = {
+  PENDING: 'Aguarda Transferência',
+  REVIEW_PENDING: 'Em Validação',
+  APPROVED: 'Liquidado',
+  DECLINED: 'Rejeitado',
+  REFUNDED: 'Reembolsado'
+};
+
 // 5. Tabela de Pagamentos e Transações
 function renderPaymentsTable() {
   const tbody = document.getElementById('clientPaymentsTableBody');
@@ -234,17 +298,17 @@ function renderPaymentsTable() {
   tbody.innerHTML = payments.map(pay => {
     const isApproved = pay.status === 'APPROVED';
     const badgeClass = isApproved ? 'table-badge-approved' : 'table-badge-pending';
-    const badgeLabel = isApproved ? 'Liquidado' : 'Pendente';
+    const badgeLabel = PAYMENT_STATUS_LABELS[pay.status] || 'Pendente';
 
     return `
       <tr>
         <td>
-          <strong class="pay-tx-code">${pay.transactionId || pay.id}</strong>
+          <strong class="pay-tx-code">${pay.reference || pay.transactionId || '—'}</strong>
         </td>
         <td>
           <a href="rastreio.html?codigo=${encodeURIComponent(pay.orderNumber)}" class="table-order-link">${pay.orderNumber}</a>
         </td>
-        <td>${pay.methodName || 'Multicaixa Express'}</td>
+        <td>${pay.methodName || 'Transferência Bancária'}</td>
         <td>${new Date(pay.date).toLocaleDateString('pt-AO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
         <td>
           <strong class="pay-amount">${cartStore.formatAoa(pay.amountAoa)}</strong>
@@ -302,10 +366,10 @@ function renderFavoritesGrid() {
   container.innerHTML = favoriteProducts.map(p => `
     <div class="client-fav-card">
       <div class="fav-card-image">
-        <img src="${p.images && p.images[0] ? p.images[0] : 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300'}" alt="${p.title}" />
+        <img src="${p.image || p.images?.[0]?.url || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300'}" alt="${p.title}" />
       </div>
       <div class="fav-card-content">
-        <span class="fav-card-cat">${p.category.toUpperCase()}</span>
+        <span class="fav-card-cat">${(p.categoryLabel || p.category || '').toUpperCase()}</span>
         <h4 class="fav-card-title">${p.title}</h4>
         <strong class="fav-card-price">${cartStore.formatAoa(p.priceAoa)}</strong>
         <div class="fav-card-actions">
@@ -346,27 +410,32 @@ function setupProfileForm(user) {
   if (inpPhone) inpPhone.value = user.phone || '';
   if (inpNif) inpNif.value = user.nif || '';
 
-  form?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const updated = {
-      ...user,
-      firstName: inpFirst?.value.trim() || user.firstName,
-      lastName: inpLast?.value.trim() || user.lastName,
-      phone: inpPhone?.value.trim() || user.phone,
-      nif: inpNif?.value.trim() || user.nif
-    };
+  const inpCurrentPass = document.getElementById('profCurrentPassword');
 
-    if (inpPass && inpPass.value.trim().length >= 6) {
-      updated.password = inpPass.value.trim();
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+      firstName: inpFirst?.value.trim(),
+      lastName: inpLast?.value.trim(),
+      phone: inpPhone?.value.trim(),
+      nif: inpNif?.value.trim()
+    };
+    const newPass = inpPass?.value || '';
+    if (newPass) {
+      payload.newPassword = newPass;
+      payload.currentPassword = inpCurrentPass?.value || '';
     }
 
-    authStore.setUser(updated);
-    renderProfileHeader(updated);
-
+    const result = await authStore.updateProfile(payload);
     if (feedback) {
-      feedback.textContent = 'Dados guardados com sucesso!';
-      feedback.className = 'profile-feedback success visible';
-      setTimeout(() => { feedback.className = 'profile-feedback'; }, 2500);
+      feedback.textContent = result.ok ? 'Dados guardados com sucesso!' : result.message;
+      feedback.className = `profile-feedback ${result.ok ? 'success' : 'error'} visible`;
+      setTimeout(() => { feedback.className = 'profile-feedback'; }, 3500);
+    }
+    if (result.ok) {
+      renderProfileHeader(result.user);
+      if (inpPass) inpPass.value = '';
+      if (inpCurrentPass) inpCurrentPass.value = '';
     }
   });
 }
@@ -384,14 +453,13 @@ function setupAddressModal() {
     if (e.target === modal) modal.classList.remove('visible');
   });
 
-  form?.addEventListener('submit', (e) => {
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const user = authStore.getUser();
     const newAddr = {
-      id: `addr_${Date.now()}`,
       label: document.getElementById('mAddrLabel')?.value || 'Morada Adicional',
       recipientName: `${user.firstName} ${user.lastName}`,
-      phone: user.phone || '+244 923 456 789',
+      phone: user.phone || '',
       province: document.getElementById('mAddrProvince')?.value || 'Luanda',
       municipality: document.getElementById('mAddrMunicipality')?.value || '',
       street: document.getElementById('mAddrStreet')?.value || '',
@@ -399,7 +467,11 @@ function setupAddressModal() {
       isDefault: false
     };
 
-    authStore.saveAddress(newAddr);
+    const result = await authStore.saveAddress(newAddr);
+    if (!result.ok) {
+      alert(result.message);
+      return;
+    }
     renderAddressesGrid();
     modal?.classList.remove('visible');
     form.reset();
@@ -430,7 +502,8 @@ function openOrderModal(order, autoTriggerPayment = false) {
     subtitle.textContent = `Data: ${new Date(order.createdAt).toLocaleDateString('pt-AO', { day: '2-digit', month: 'long', year: 'numeric' })} • Destino: ${order.logistics?.destination || 'Luanda, Angola'}`;
   }
 
-  const isPending = order.payment?.status === 'PENDING' || order.status === 'AWAITING_PAYMENT';
+  const paymentStatus = order.payment?.status;
+  const isPending = paymentStatus === 'PENDING' || paymentStatus === 'DECLINED';
 
   body.innerHTML = `
     <!-- Discriminativo Financeiro -->
@@ -444,7 +517,7 @@ function openOrderModal(order, autoTriggerPayment = false) {
         <strong>${cartStore.formatAoa(order.financial?.internationalFreightAoa || 0)}</strong>
       </div>
       <div class="modal-summary-box">
-        <span class="box-label">Despacho AGT & Seguro</span>
+        <span class="box-label">Seguro de Carga</span>
         <strong>${cartStore.formatAoa(order.financial?.customsInsuranceAoa || 0)}</strong>
       </div>
       <div class="modal-summary-box highlight">
@@ -472,22 +545,20 @@ function openOrderModal(order, autoTriggerPayment = false) {
     <h4 class="modal-subheading">Método de Liquidação</h4>
     <div class="modal-payment-card">
       <div class="modal-pm-head">
-        <strong>${order.payment?.methodName || 'Multicaixa Express'}</strong>
-        <span class="modal-status-badge ${order.payment?.status === 'APPROVED' ? 'paid' : 'pending'}">
-          ${order.payment?.status === 'APPROVED' ? 'PAGAMENTO APROVADO' : 'AGUARDANDO PAGAMENTO'}
+        <strong>${order.payment?.methodName || 'Transferência Bancária'}</strong>
+        <span class="modal-status-badge ${paymentStatus === 'APPROVED' ? 'paid' : 'pending'}">
+          ${(PAYMENT_STATUS_LABELS[paymentStatus] || 'Aguarda Transferência').toUpperCase()}
         </span>
       </div>
-      ${order.payment?.transactionId ? `<p class="modal-tx-code">Transação ID: <strong>${order.payment.transactionId}</strong></p>` : ''}
-      ${order.payment?.reference ? `<p class="modal-tx-code">Entidade: <strong>00142</strong> &bull; Referência: <strong>${order.payment.reference}</strong></p>` : ''}
+      ${order.payment?.reference ? `<p class="modal-tx-code">Referência: <strong>${order.payment.reference}</strong></p>` : ''}
     </div>
 
     ${isPending ? `
       <!-- Ação Imediata de Pagamento se Pendente -->
       <div class="modal-pending-action-box">
-        <p>Esta encomenda aguarda pagamento para iniciar a aquisição na China.</p>
-        <button type="button" class="btn-dark btn-full" id="btnModalPayMcx">
-          Simular Aprovação no Multicaixa Express (Webhook)
-        </button>
+        <p>Esta encomenda aguarda pagamento para iniciar a compra na China. Transfira ${cartStore.formatAoa(order.financial?.totalAoa || 0)} indicando <strong>${order.number}</strong> no descritivo e depois confirme abaixo.</p>
+        <div id="modalBankAccounts" class="modal-bank-accounts"></div>
+        <div id="modalProofUploader"></div>
       </div>
     ` : ''}
 
@@ -503,32 +574,25 @@ function openOrderModal(order, autoTriggerPayment = false) {
 
   modal.classList.add('visible');
 
-  document.getElementById('btnModalPayMcx')?.addEventListener('click', () => {
-    order.payment.status = 'APPROVED';
-    order.payment.transactionId = `MCX-TXN-${Date.now().toString().slice(-6)}`;
-    order.status = 'PROCESSING_SUPPLIER';
-    order.history.unshift({
-      status: 'PAYMENT_CONFIRMED',
-      label: 'Pagamento Confirmado em Kwanzas',
-      date: new Date().toISOString(),
-      note: 'Transação aprovada via Multicaixa Express.',
-      responsible: 'Gateway Multicaixa'
+  if (isPending) {
+    api.config.payments().then(res => {
+      const box = document.getElementById('modalBankAccounts');
+      const accounts = res.ok ? res.data.data.bank?.accounts || [] : [];
+      if (box) box.innerHTML = accounts.map(a => `<p><strong>${a.bank}:</strong> ${a.iban}</p>`).join('');
     });
+  }
 
-    authStore.saveOrder(order);
-    authStore.savePayment({
-      id: `pay_${Date.now()}`,
+  if (isPending) {
+    renderProofUploader(document.getElementById('modalProofUploader'), {
       orderNumber: order.number,
-      amountAoa: order.financial?.totalAoa || 0,
-      method: 'mcx_express',
-      methodName: 'Multicaixa Express',
-      status: 'APPROVED',
-      transactionId: order.payment.transactionId,
-      date: new Date().toISOString()
+      rejectionReason: paymentStatus === 'DECLINED' ? order.payment?.rejectionReason : null,
+      onSuccess: (updated) => {
+        authStore.cacheOrder(updated);
+        authStore.refreshPayments();
+        setTimeout(() => openOrderModal(updated), 900);
+      }
     });
-
-    openOrderModal(order);
-  });
+  }
 
   document.getElementById('btnModalPrintInvoice')?.addEventListener('click', () => {
     window.print();

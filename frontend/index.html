@@ -37,22 +37,7 @@
         <div class="brand-wrap">
           <a class="brand" href="index.html#inicio">TRADEX<span>GLOBAL</span></a>
         </div>
-        <div class="nav-links">
-          <a href="index.html#inicio" class="nav-link-active">Início</a>
-          <a href="index.html#servicos">Serviços</a>
-          <a href="index.html#importacao-encomendas">Importação</a>
-          <a href="index.html#como-funciona">Como funciona</a>
-          <a href="index.html#contacto">Contacto</a>
-          <a href="index.html#faq">FAQ</a>
-          <a href="catalogo.html" class="nav-btn-store mode-tab" title="Loja Online e Catálogo de Produtos com Cotação em Kwanzas">
-              <svg class="mode-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="21" r="1"></circle>
-                <circle cx="20" cy="21" r="1"></circle>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-              </svg>
-              <span>Loja Online &rarr;</span>
-            </a>
-        </div>
+        <div class="nav-links" data-shared-nav></div>
         <div class="nav-actions">
           <a href="catalogo.html" class="nav-icon-btn" id="headerSearchBtn" aria-label="Pesquisar Produtos" title="Pesquisar">
             <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -133,11 +118,11 @@
         </article>
         <article>
           <h2>Logística visível</h2>
-          <p>Acompanhe cada etapa da sua remessa, do porto de embarque na China até ao desalfandegamento em Luanda.</p>
+          <p>Acompanhe cada etapa da sua remessa, desde a compra na China até à entrega em Angola.</p>
         </article>
         <article>
           <h2>Gestão integrada</h2>
-          <p>Compras com fornecedores validados, frete marítimo/aéreo e documentação alfandegária num só lugar.</p>
+          <p>Compras com fornecedores validados, frete marítimo/aéreo e entrega porta a porta num só lugar.</p>
         </article>
       </section>
 
@@ -300,7 +285,7 @@
           </li>
           <li>
             <strong>3. Acompanhe a sua encomenda</strong>
-            <p class="process-step-desc">Notificações a cada marco: saída do porto na China, desembaraço e levantamento em Luanda.</p>
+            <p class="process-step-desc">Notificações a cada marco: envio da China, chegada a Angola e entrega ou levantamento.</p>
           </li>
         </ol>
       </section>
@@ -311,7 +296,7 @@
         <div class="section-head">
           <p class="eyebrow eyebrow-dark">SIMULADOR LOGÍSTICO</p>
           <h2>Calcule o custo estimado da sua remessa</h2>
-          <p>Obtenha uma previsão imediata de frete, seguro e encargos alfandegários da China até ao porto ou aeroporto de Luanda.</p>
+          <p>Obtenha uma previsão imediata do custo porta a porta da China até Angola.</p>
         </div>
 
         <div class="calculator-box">
@@ -321,7 +306,7 @@
               <select id="transportMode" class="calc-select">
                 <option value="sea_lcl">Marítimo LCL (Carga Consolidada por m³)</option>
                 <option value="sea_fcl">Marítimo FCL (Contentor Completo 20ft)</option>
-                <option value="air_exp">Aéreo Expresso (Por kg - 7 a 12 dias)</option>
+                <option value="air_exp">Aéreo Expresso (Por kg - 5 a 15 dias)</option>
               </select>
             </div>
 
@@ -351,7 +336,7 @@
                 <li><span>Valor da Carga (AOA)</span> <strong id="valMercadoriaAoa">2.375.000 Kz</strong></li>
                 <li><span>Frete Internacional</span> <strong id="valFreteAoa">480.000 Kz</strong></li>
                 <li><span>Seguro de Trânsito</span> <strong id="valSeguroAoa">47.500 Kz</strong></li>
-                <li><span>Taxas & Despacho Aduaneiro</span> <strong id="valDespachoAoa">380.000 Kz</strong></li>
+                <li><span>Serviço Porta a Porta (agente parceiro)</span> <strong id="valDespachoAoa">380.000 Kz</strong></li>
               </ul>
             </div>
             <div class="calc-total">
@@ -496,7 +481,7 @@
         <div class="section-head">
           <p class="eyebrow eyebrow-dark">HUB OPERACIONAL & CONTACTOS</p>
           <h2>Fale diretamente com os nossos especialistas em Luanda e Guangzhou</h2>
-          <p>Apoio comercial, cotações alfandegárias e acompanhamento de importações corporativas.</p>
+          <p>Apoio comercial, cotações e acompanhamento de importações corporativas.</p>
         </div>
 
         <div class="contact-cards-grid">
@@ -548,12 +533,21 @@
             Luanda - Angola | China Hub: Yuexiu District, Guangzhou
           </p>
         </div>
+        <nav class="footer-links" aria-label="Ligações institucionais">
+          <a href="#servicos">Serviços</a>
+          <a href="#importacao-encomendas">Importação</a>
+          <a href="#como-funciona">Como funciona</a>
+          <a href="#faq">FAQ</a>
+          <a href="#contacto">Contacto</a>
+        </nav>
         <div class="footer-meta-right">
           <span>Your Gateway to Global Commerce.</span>
           <p class="footer-copyright">&copy; 2026 TradeX Global Trading. Todos os direitos reservados.</p>
         </div>
       </footer>
     </main>
+
+    <script type="module" src="js/nav.js"></script>
 
     <script type="module" src="js/auth.js"></script>
     <script type="module" src="js/app.js"></script>

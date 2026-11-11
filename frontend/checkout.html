@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finalização Segura de Encomenda | TradeX Global Angola</title>
-    <meta name="description" content="Finalize a sua importação com segurança. Pagamento facilitado em Kwanzas via Multicaixa Express e Referência, desembaraço alfandegário e entrega em Luanda." />
+    <meta name="description" content="Finalize a sua importação com segurança. Pagamento facilitado em Kwanzas e entrega porta a porta em Angola." />
     
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -51,11 +51,7 @@
           <a class="brand" href="index.html#inicio">TRADEX<span>GLOBAL</span></a>
           <span class="brand-badge store-badge">Checkout Seguro</span>
         </div>
-        <div class="nav-links">
-          <a href="catalogo.html">&larr; Voltar ao Catálogo</a>
-          <a href="rastreio.html">Consultar Rastreio</a>
-          <a href="index.html#contacto">Apoio ao Cliente</a>
-        </div>
+        <div class="nav-links" data-shared-nav></div>
         <div class="nav-actions">
           <a href="catalogo.html" class="nav-icon-btn" id="headerSearchBtn" aria-label="Pesquisar Produtos" title="Pesquisar">
             <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -120,7 +116,7 @@
                 </div>
                 <div class="logged-user-details">
                   <strong id="loggedUserName">Manuel Dos Santos</strong>
-                  <span id="loggedUserEmail">cliente@tradex.ao</span>
+                  <span id="loggedUserEmail"></span>
                 </div>
                 <button type="button" class="btn-text-link" id="btnSwitchGuest">Alterar dados</button>
               </div>
@@ -233,7 +229,7 @@
                       <strong>Entrega Porta a Porta em Luanda</strong>
                       <p>Transporte com frota dedicada e descarga direta na sua empresa ou residência.</p>
                     </div>
-                    <span class="delivery-price-tag">15.000 Kz</span>
+                    <span class="delivery-price-tag" data-delivery-fee="delivery_luanda">15.000 Kz</span>
                   </div>
                 </label>
 
@@ -244,7 +240,7 @@
                       <strong>Expedição Interprovincial</strong>
                       <p>Despacho rodoviário consolidado para Benguela, Huambo, Lubango ou outras províncias.</p>
                     </div>
-                    <span class="delivery-price-tag">35.000 Kz</span>
+                    <span class="delivery-price-tag" data-delivery-fee="delivery_interprovincial">35.000 Kz</span>
                   </div>
                 </label>
               </div>
@@ -265,10 +261,10 @@
                   <input type="radio" name="shippingMode" value="sea_lcl" checked />
                   <div class="shipping-mode-content">
                     <div class="mode-header">
-                      <span class="mode-icon-tag">🚢 MARÍTIMO LCL</span>
-                      <span class="mode-time-tag">35 a 45 dias</span>
+                      <span class="mode-icon-tag">🚢 MARÍTIMO</span>
+                      <span class="mode-time-tag" data-transit="sea_lcl">30 a 60 dias</span>
                     </div>
-                    <h4>Carga Consolidada em Contentor Marítimo</h4>
+                    <h4>Envio Marítimo Porta a Porta</h4>
                     <p>Ideal para cargas industriais, painéis solares e mercadorias de grande volume. Frete otimizado.</p>
                   </div>
                 </label>
@@ -278,7 +274,7 @@
                   <div class="shipping-mode-content">
                     <div class="mode-header">
                       <span class="mode-icon-tag">✈ AÉREO EXPRESS</span>
-                      <span class="mode-time-tag">7 a 12 dias</span>
+                      <span class="mode-time-tag" data-transit="air_exp">5 a 15 dias</span>
                     </div>
                     <h4>Transporte Aéreo Expresso Prioritário</h4>
                     <p>Despacho expresso prioritário para entregas urgentes e equipamentos de alta rotação.</p>
@@ -298,22 +294,22 @@
               </div>
 
               <div class="payment-methods-selector">
-                <label class="payment-method-item">
-                  <input type="radio" name="paymentMethod" value="mcx_express" checked />
+                <label class="payment-method-item" data-pm="mcx_express" hidden>
+                  <input type="radio" name="paymentMethod" value="mcx_express" />
                   <div class="payment-method-box">
                     <div class="pm-title-row">
                       <span class="pm-name">Multicaixa Express (MCX)</span>
                       <span class="pm-badge">Instantâneo</span>
                     </div>
                     <p class="pm-desc">Receba uma notificação imediata no seu aplicativo Multicaixa Express para aprovar o pagamento no telemóvel.</p>
-                    <div class="pm-subfields visible" id="paymentMcxExpressFields">
+                    <div class="pm-subfields" id="paymentMcxExpressFields">
                       <label for="mcxPhoneInput">Número de Telemóvel do Multicaixa Express:</label>
                       <input type="tel" id="mcxPhoneInput" class="checkout-input" placeholder="+244 9xx xxx xxx" />
                     </div>
                   </div>
                 </label>
 
-                <label class="payment-method-item">
+                <label class="payment-method-item" data-pm="mcx_reference" hidden>
                   <input type="radio" name="paymentMethod" value="mcx_reference" />
                   <div class="payment-method-box">
                     <div class="pm-title-row">
@@ -327,16 +323,16 @@
                   </div>
                 </label>
 
-                <label class="payment-method-item">
-                  <input type="radio" name="paymentMethod" value="bank_transfer" />
+                <label class="payment-method-item" data-pm="bank_transfer">
+                  <input type="radio" name="paymentMethod" value="bank_transfer" checked />
                   <div class="payment-method-box">
                     <div class="pm-title-row">
                       <span class="pm-name">Transferência Bancária Direta</span>
-                      <span class="pm-badge">BFA / BAI</span>
+                      <span class="pm-badge">Disponível</span>
                     </div>
                     <p class="pm-desc">Transfira diretamente para as contas da TradeX Global Trading Lda e anexe o comprovativo.</p>
-                    <div class="pm-subfields" id="paymentBankTransferFields">
-                      <p class="pm-hint-text">Os dados bancários (IBAN BFA e BAI) serão exibidos no recibo final da encomenda.</p>
+                    <div class="pm-subfields visible" id="paymentBankTransferFields">
+                      <p class="pm-hint-text">Os dados bancários serão exibidos após confirmar a encomenda. Depois de transferir, envie o comprovativo para validação.</p>
                     </div>
                   </div>
                 </label>
@@ -349,7 +345,7 @@
                 <span>Confirmar e Gerar Encomenda Oficial TradeX &rarr;</span>
               </button>
               <p class="checkout-terms-note">
-                Ao confirmar, concorda com os Termos de Serviço de Importação e Despacho Aduaneiro TradeX Global Lda.
+                Ao confirmar, concorda com os Termos de Serviço de Importação TradeX Global Lda.
               </p>
             </div>
           </form>
@@ -372,11 +368,11 @@
                 <strong id="summarySubtotal">0 Kz</strong>
               </div>
               <div class="summary-line">
-                <span>Frete Internacional (China ➔ Luanda):</span>
+                <span>Frete Internacional Porta a Porta (China ➔ Angola):</span>
                 <strong id="summaryFreight">0 Kz</strong>
               </div>
               <div class="summary-line">
-                <span>Despacho Aduaneiro & Seguro (110% CIF):</span>
+                <span>Seguro de Carga:</span>
                 <strong id="summaryCustoms">0 Kz</strong>
               </div>
               <div class="summary-line">
@@ -420,7 +416,7 @@
           <span class="success-pretitle">ENCOMENDA REGISTADA COM SUCESSO</span>
           <h2 class="success-order-code" id="successOrderNumber">#TDX-AO-2026-9842</h2>
           <p class="success-desc">
-            A sua encomenda de importação foi gerada no sistema TradeX Global. Abaixo encontram-se as instruções de liquidação em Kwanzas e os dados para acompanhamento aduaneiro.
+            A sua encomenda de importação foi gerada no sistema TradeX Global. Abaixo encontram-se as instruções de liquidação em Kwanzas e os dados para acompanhar a sua encomenda.
           </p>
 
           <div class="receipt-meta-box">
@@ -434,7 +430,7 @@
             </div>
             <div class="receipt-col">
               <span class="meta-label">Método de Pagamento:</span>
-              <strong id="successPaymentMethod">Multicaixa Express</strong>
+              <strong id="successPaymentMethod">Transferência Bancária</strong>
             </div>
             <div class="receipt-col">
               <span class="meta-label">Total a Liquidar:</span>
@@ -446,6 +442,9 @@
           <div id="successPaymentDetails">
             <!-- Injetado dinamicamente via checkout.js -->
           </div>
+
+          <!-- Convidado: criar conta com os dados da compra -->
+          <div id="successCreateAccount" class="success-create-account" hidden></div>
 
           <div class="success-actions-bar">
             <a href="rastreio.html" class="btn-dark" id="btnTrackSuccessOrder">
@@ -481,6 +480,8 @@
         </div>
       </div>
     </footer>
+
+    <script type="module" src="js/nav.js"></script>
 
     <script type="module" src="js/auth.js"></script>
     <script type="module" src="js/checkout.js"></script>

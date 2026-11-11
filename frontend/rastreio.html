@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rastreio Detalhado de Encomendas & Cargas | TradeX Global Angola</title>
-    <meta name="description" content="Acompanhe a sua remessa marítima ou aérea da China até Luanda em tempo real. Consulte status aduaneiro, posição de navios, contentores e previsão de entrega." />
+    <meta name="description" content="Acompanhe a sua remessa marítima ou aérea da China até Luanda em tempo real. Consulte o estado e a previsão de entrega." />
     
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -43,10 +43,7 @@
         <div class="brand-wrap">
           <a class="brand" href="index.html#inicio">TRADEX<span>GLOBAL</span></a>
         </div>
-        <div class="nav-links">
-          <a href="catalogo.html">Produtos</a>
-          <a href="rastreio.html" class="nav-link-active">Rastreio</a>
-        </div>
+        <div class="nav-links" data-shared-nav></div>
         <div class="nav-actions">
           <a href="catalogo.html" class="nav-icon-btn" id="headerSearchBtn" aria-label="Pesquisar Produtos" title="Pesquisar">
             <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -88,7 +85,7 @@
           <p class="eyebrow tracking-eyebrow">MONITORIZAÇÃO INTERNACIONAL EM TEMPO REAL</p>
           <h1 class="tracking-hero-title">Acompanhe a sua carga da China a Angola.</h1>
           <p class="tracking-hero-lead">
-            Insira o código da sua encomenda, conhecimento de embarque (B/L) ou número de contentor para consultar o posicionamento, manifesto de carga e previsão de entrega em Luanda.
+            Insira o código da encomenda e o e-mail usado na compra. Com sessão iniciada basta o código.
           </p>
 
           <!-- Barra de Pesquisa Avançada -->
@@ -102,8 +99,19 @@
                 type="text" 
                 id="trackingCodeInput" 
                 class="tracking-hero-input" 
-                placeholder="Insira o seu código (ex: TDX-AO-2026-001)" 
+                placeholder="Código (ex: TDX-AO-2026-0001)" 
+                aria-label="Código da encomenda"
                 required 
+              />
+            </div>
+            <div class="tracking-input-wrapper tracking-input-email" id="trackingEmailWrap">
+              <input
+                type="email"
+                id="trackingEmailInput"
+                class="tracking-hero-input"
+                placeholder="E-mail usado na compra"
+                aria-label="E-mail usado na compra"
+                autocomplete="email"
               />
             </div>
             <button type="submit" class="tracking-submit-btn">
@@ -115,38 +123,10 @@
             </button>
           </form>
 
-          <!-- Exemplos Rápidos de Demonstração -->
-          <div class="tracking-quick-examples">
-            <span class="quick-examples-label">Cargas de demonstração para teste:</span>
-            <div class="quick-chips-group">
-              <button type="button" class="tracking-quick-chip" data-code="TDX-AO-2026-001">
-                <svg class="chip-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
-                  <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"></path>
-                  <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"></path>
-                  <path d="M12 10v4"></path>
-                  <path d="M12 2v3"></path>
-                </svg>
-                <span>TDX-AO-2026-001</span>
-                <span class="chip-status-text">Marítimo LCL (Em Trânsito)</span>
-              </button>
-              <button type="button" class="tracking-quick-chip" data-code="TDX-AO-2026-002">
-                <svg class="chip-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"></path>
-                </svg>
-                <span>TDX-AO-2026-002</span>
-                <span class="chip-status-text">Aéreo Express (Desalfandegado)</span>
-              </button>
-              <button type="button" class="tracking-quick-chip" data-code="TDX-AO-2026-003">
-                <svg class="chip-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                  <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                </svg>
-                <span>TDX-AO-2026-003</span>
-                <span class="chip-status-text">Contentor 40ft (Disponível)</span>
-              </button>
-            </div>
+          <!-- Encomendas do cliente com sessão iniciada -->
+          <div class="tracking-quick-examples" id="trackingMyOrders" hidden>
+            <span class="quick-examples-label">As suas encomendas:</span>
+            <div class="quick-chips-group" id="trackingMyOrdersChips"></div>
           </div>
         </div>
       </section>
@@ -158,11 +138,11 @@
         </div>
       </section>
 
-      <!-- Secção Informativa: Procedimentos Aduaneiros e Suporte -->
+      <!-- Secção Informativa: Entrega e Suporte -->
       <section class="tracking-faq-section">
         <div class="tracking-faq-container">
           <div class="faq-head">
-            <p class="eyebrow eyebrow-dark">SUPORTE ADUANEIRO & LOGÍSTICO</p>
+            <p class="eyebrow eyebrow-dark">SUPORTE LOGÍSTICO</p>
             <h2>Como funciona o processo de entrega em Luanda?</h2>
             <p>Conheça os prazos médios, documentação necessária e locais de levantamento para garantir a receção rápida da sua mercadoria.</p>
           </div>
@@ -176,8 +156,8 @@
                   <path d="M9 15l2 2 4-4"></path>
                 </svg>
               </div>
-              <h4>Desembaraço Aduaneiro AGT</h4>
-              <p>Toda a carga consignada pela TradeX é acompanhada por despachante oficial credenciado pela AGT. Os impostos alfandegários são liquidados diretamente em Kwanza sem custos ocultos.</p>
+              <h4>Entrega Porta a Porta</h4>
+              <p>O transporte da China até Angola é tratado pelo nosso agente parceiro. Paga um único valor em Kwanzas, sem custos ocultos, e recebe a encomenda pronta a entregar ou levantar.</p>
             </div>
 
             <div class="faq-card">
@@ -211,7 +191,7 @@
                 </svg>
               </div>
               <h4>Prazos Médios de Trânsito</h4>
-              <p>Envios Aéreos Expresso levam entre <strong>7 a 12 dias</strong>. Cargas Marítimas consolidadas (LCL) e contentores completos (FCL) levam entre <strong>35 a 45 dias</strong> a partir do porto de Guangzhou/Ningbo.</p>
+              <p>Envios Aéreos Expresso levam entre <strong>5 a 15 dias</strong>. Cargas Marítimas consolidadas (LCL) e contentores completos (FCL) levam entre <strong>30 a 60 dias</strong> a partir do porto de Guangzhou/Ningbo.</p>
             </div>
           </div>
         </div>
@@ -234,6 +214,8 @@
         </div>
       </div>
     </footer>
+
+    <script type="module" src="js/nav.js"></script>
 
     <script type="module" src="js/auth.js"></script>
     <script type="module" src="js/rastreio.js"></script>

@@ -1,429 +1,255 @@
-// TradeX Global Trading - Gestão de Autenticação e Clientes
+// TradeX Global Trading - Sessão do utilizador e dados da conta
+// A API é a fonte de verdade. O localStorage guarda apenas uma cópia em cache
+// para que as páginas possam ler os dados de forma síncrona enquanto sincronizam.
+import { api, tokenStore } from './api.js';
 import { cartStore } from './cart.js';
 
-const AUTH_STORAGE_KEY = 'tradex_auth_user_v1';
-const USERS_STORAGE_KEY = 'tradex_registered_users_v1';
-const ADDRESSES_STORAGE_KEY = 'tradex_user_addresses_v1';
-const ORDERS_STORAGE_KEY = 'tradex_orders_history_v1';
-const FAVORITES_STORAGE_KEY = 'tradex_user_favorites_v1';
-const PAYMENTS_STORAGE_KEY = 'tradex_payments_history_v1';
-
-// Encomendas de demonstração associadas à conta cliente@tradex.ao
-const DEMO_ORDERS = [
-  {
-    id: 'ord_demo_001',
-    number: 'TDX-AO-2026-001',
-    createdAt: '2026-11-02T14:30:00Z',
-    status: 'IN_TRANSIT',
-    statusLabel: 'Em Trânsito Marítimo',
-    customer: {
-      id: 'usr_demo_001',
-      name: 'Manuel Dos Santos',
-      email: 'cliente@tradex.ao',
-      phone: '+244 923 456 789',
-      nif: '004928172LA041'
-    },
-    items: [
-      {
-        id: 'p-solar-550',
-        title: 'Painel Solar Fotovoltaico Monocristalino 550W Tier 1',
-        priceAoa: 85000,
-        quantity: 20,
-        subtotal: 1700000,
-        image: 'https://images.unsplash.com/photo-1509391365360-2e959784a276?w=300'
-      },
-      {
-        id: 'p-inversor-10kw',
-        title: 'Inversor Solar Híbrido Trifásico Deye 10kW 48V',
-        priceAoa: 1450000,
-        quantity: 1,
-        subtotal: 1450000,
-        image: 'https://images.unsplash.com/photo-1620714223084-8fcacc6dfd8d?w=300'
-      }
-    ],
-    financial: {
-      subtotalAoa: 3150000,
-      internationalFreightAoa: 252000,
-      customsInsuranceAoa: 136080,
-      deliveryCostAoa: 15000,
-      totalAoa: 3553080
-    },
-    logistics: {
-      shippingMode: 'Marítimo LCL Consolidado',
-      deliveryMethod: 'delivery_luanda',
-      origin: 'Porto de Nansha, Guangzhou (China)',
-      destination: 'Luanda, Angola (Talatona)',
-      address: {
-        province: 'Luanda',
-        municipality: 'Talatona',
-        street: 'Via S8, Edifício Sky One, 4º Andar, Sala 402'
-      },
-      estimatedDeliveryDays: '18 de Novembro de 2026'
-    },
-    payment: {
-      method: 'mcx_express',
-      methodName: 'Multicaixa Express',
-      status: 'APPROVED',
-      transactionId: 'MCX-TXN-2026-981024',
-      phone: '+244 923 456 789'
-    },
-    history: [
-      {
-        status: 'AWAITING_PAYMENT',
-        label: 'Encomenda Registada',
-        date: '2026-11-02T14:30:00Z',
-        note: 'Encomenda submetida com sucesso.',
-        responsible: 'Sistema TradeX'
-      },
-      {
-        status: 'PAYMENT_CONFIRMED',
-        label: 'Pagamento Confirmado',
-        date: '2026-11-02T14:38:12Z',
-        note: 'Transação Multicaixa Express aprovada com sucesso.',
-        responsible: 'Gateway EMIS / Multicaixa'
-      },
-      {
-        status: 'IN_TRANSIT',
-        label: 'Em Trânsito Internacional',
-        date: '2026-11-05T18:45:00Z',
-        note: 'Embarque efetuado no Porto de Nansha rumo a Luanda.',
-        responsible: 'MSC Luanda'
-      }
-    ]
-  },
-  {
-    id: 'ord_demo_003',
-    number: 'TDX-AO-2026-003',
-    createdAt: '2026-10-12T09:15:00Z',
-    status: 'DELIVERED',
-    statusLabel: 'Entregue com Sucesso',
-    customer: {
-      id: 'usr_demo_001',
-      name: 'Manuel Dos Santos',
-      email: 'cliente@tradex.ao',
-      phone: '+244 923 456 789',
-      nif: '004928172LA041'
-    },
-    items: [
-      {
-        id: 'p-piso-porcelanato',
-        title: 'Porcelanato Polido Retificado 80x80cm Carrara Grey',
-        priceAoa: 12500,
-        quantity: 120,
-        subtotal: 1500000,
-        image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300'
-      }
-    ],
-    financial: {
-      subtotalAoa: 1500000,
-      internationalFreightAoa: 120000,
-      customsInsuranceAoa: 64800,
-      deliveryCostAoa: 0,
-      totalAoa: 1684800
-    },
-    logistics: {
-      shippingMode: 'Marítimo LCL Consolidado',
-      deliveryMethod: 'pickup',
-      origin: 'Porto de Ningbo-Zhoushan, Zhejiang (China)',
-      destination: 'Porto de Luanda (Angola)',
-      address: {
-        province: 'Luanda',
-        municipality: 'Viana',
-        street: 'Polo Industrial de Viana, Lote 14'
-      },
-      estimatedDeliveryDays: 'Entregue em 28 Out 2026'
-    },
-    payment: {
-      method: 'mcx_reference',
-      methodName: 'Referência Multicaixa',
-      status: 'APPROVED',
-      transactionId: 'ATM-GPO-2026-449102',
-      reference: '928 440 102'
-    },
-    history: [
-      {
-        status: 'DELIVERED',
-        label: 'Carga Entregue ao Cliente',
-        date: '2026-10-28T16:00:00Z',
-        note: 'Mercadoria levantada e conferida no Armazém TradeX Viana.',
-        responsible: 'Armazém TradeX Luanda'
-      }
-    ]
-  }
-];
-
-// Contas e endereços padrão para demonstração
-const DEMO_USER = {
-  id: 'usr_demo_001',
-  firstName: 'Manuel',
-  lastName: 'Dos Santos',
-  email: 'cliente@tradex.ao',
-  phone: '+244 923 456 789',
-  nif: '004928172LA041',
-  createdAt: '2026-01-15'
+const AUTH_STORAGE_KEY = 'tradex_auth_user_v2';
+const CACHE_KEYS = {
+  orders: 'tradex_cache_orders_v2',
+  payments: 'tradex_cache_payments_v2',
+  addresses: 'tradex_cache_addresses_v2',
+  favorites: 'tradex_cache_favorites_v2'
 };
+const LAST_ORDER_KEY = 'tradex_last_order_v2';
 
-const DEFAULT_ADDRESSES = [
-  {
-    id: 'addr_001',
-    label: 'Escritório / Empresa',
-    recipientName: 'Manuel Dos Santos',
-    phone: '+244 923 456 789',
-    province: 'Luanda',
-    municipality: 'Talatona',
-    street: 'Via S8, Edifício Sky One, 4º Andar, Sala 402',
-    reference: 'Próximo ao Belas Shopping',
-    isDefault: true
-  },
-  {
-    id: 'addr_002',
-    label: 'Armazém / Obra',
-    recipientName: 'Manuel Dos Santos',
-    phone: '+244 912 345 678',
-    province: 'Luanda',
-    municipality: 'Viana',
-    street: 'Polo Industrial de Viana, Estrada Principal, Lote 14',
-    reference: 'Junto à Moagem Aliança',
-    isDefault: false
-  }
+// Remove dados antigos guardados localmente pela versão sem backend
+const LEGACY_KEYS = [
+  'tradex_auth_user_v1', 'tradex_registered_users_v1', 'tradex_user_addresses_v1',
+  'tradex_orders_history_v1', 'tradex_user_favorites_v1', 'tradex_payments_history_v1'
 ];
+try { LEGACY_KEYS.forEach(k => localStorage.removeItem(k)); } catch {}
+
+function readJson(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeJson(key, value) {
+  try {
+    if (value == null) localStorage.removeItem(key);
+    else localStorage.setItem(key, JSON.stringify(value));
+  } catch {}
+}
+
+const emit = (name, detail) => window.dispatchEvent(new CustomEvent(name, { detail }));
+
+let syncPromise = null;
 
 export const authStore = {
+  // ---- Sessão ----
   getUser() {
-    try {
-      const stored = localStorage.getItem(AUTH_STORAGE_KEY);
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  },
-
-  setUser(user) {
-    try {
-      if (user) {
-        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-      } else {
-        localStorage.removeItem(AUTH_STORAGE_KEY);
-      }
-      this.notifyAuthChange();
-    } catch {}
+    return tokenStore.get() ? readJson(AUTH_STORAGE_KEY, null) : null;
   },
 
   isLoggedIn() {
     return this.getUser() !== null;
   },
 
+  isStaff() {
+    const role = this.getUser()?.role;
+    return role === 'ADMIN' || role === 'STAFF';
+  },
+
+  setSession(user, token) {
+    if (token) tokenStore.set(token);
+    writeJson(AUTH_STORAGE_KEY, user);
+    this.notifyAuthChange();
+  },
+
+  clearSession({ keepCart = false } = {}) {
+    const hadSession = Boolean(tokenStore.get());
+    tokenStore.set(null);
+    writeJson(AUTH_STORAGE_KEY, null);
+    Object.values(CACHE_KEYS).forEach(k => writeJson(k, null));
+    // O carrinho fica guardado na conta; neste browser volta a ficar vazio
+    if (hadSession && !keepCart) cartStore.clearLocal();
+  },
+
+  async login(email, password) {
+    const res = await api.auth.login(email, password);
+    if (!res.ok) return { ok: false, message: res.message };
+    this.setSession(res.data.user, res.data.token);
+    await this.sync();
+    return { ok: true, user: res.data.user };
+  },
+
+  async register({ firstName, lastName, email, phone, password }) {
+    const res = await api.auth.register({ firstName, lastName, email, phone, password });
+    if (!res.ok) return { ok: false, message: res.message };
+    this.setSession(res.data.user, res.data.token);
+    await this.sync();
+    return { ok: true, user: res.data.user };
+  },
+
+  async recoverPassword(email) {
+    const res = await api.auth.recoverPassword(email);
+    return { ok: res.ok, message: res.message };
+  },
+
+  async updateProfile(data) {
+    const res = await api.auth.updateProfile(data);
+    if (!res.ok) return { ok: false, message: res.message };
+    // Ao mudar a palavra-passe, as sessões antigas são revogadas e chega um token novo
+    if (res.data.token) tokenStore.set(res.data.token);
+    writeJson(AUTH_STORAGE_KEY, res.data.user);
+    this.notifyAuthChange();
+    return { ok: true, user: res.data.user };
+  },
+
   logout() {
-    this.setUser(null);
+    this.clearSession();
+    this.notifyAuthChange();
     window.location.reload();
   },
 
-  getRegisteredUsers() {
-    try {
-      const stored = localStorage.getItem(USERS_STORAGE_KEY);
-      const list = stored ? JSON.parse(stored) : [];
-      if (!list.some(u => u.email === DEMO_USER.email)) {
-        list.push({ ...DEMO_USER, password: 'tradex2026' });
-        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(list));
+  // Confirma a sessão junto da API e actualiza as caches
+  async sync() {
+    if (!tokenStore.get()) return;
+    if (syncPromise) return syncPromise;
+
+    syncPromise = (async () => {
+      const me = await api.auth.me();
+      if (!me.ok) {
+        if (me.status === 401) {
+          this.clearSession();
+          this.notifyAuthChange();
+        }
+        return;
       }
-      return list;
-    } catch {
-      return [{ ...DEMO_USER, password: 'tradex2026' }];
-    }
+      writeJson(AUTH_STORAGE_KEY, me.data.user);
+
+      const [orders, payments, addresses, favorites, cart] = await Promise.all([
+        api.orders.list(),
+        api.payments.list(),
+        api.me.addresses(),
+        api.me.favorites(),
+        api.me.cart()
+      ]);
+      if (cart.ok) await mergeServerCart(cart.data.data.items);
+      if (orders.ok) { writeJson(CACHE_KEYS.orders, orders.data.data); emit('tradex:orders-changed'); }
+      if (payments.ok) { writeJson(CACHE_KEYS.payments, payments.data.data); emit('tradex:payments-changed'); }
+      if (addresses.ok) writeJson(CACHE_KEYS.addresses, addresses.data.data);
+      if (favorites.ok) writeJson(CACHE_KEYS.favorites, favorites.data.data);
+      emit('tradex:account-synced');
+    })().finally(() => { syncPromise = null; });
+
+    return syncPromise;
   },
 
-  login(email, password) {
-    const cleanEmail = email.trim().toLowerCase();
-    const users = this.getRegisteredUsers();
-    const found = users.find(u => u.email.toLowerCase() === cleanEmail);
-
-    if (!found) {
-      // Se for a conta demo
-      if (cleanEmail === DEMO_USER.email.toLowerCase() && password === 'tradex2026') {
-        this.setUser(DEMO_USER);
-        return { ok: true, user: DEMO_USER };
-      }
-      return { ok: false, message: 'Utilizador não encontrado com este e-mail.' };
-    }
-
-    if (found.password !== password && password !== 'tradex2026') {
-      return { ok: false, message: 'Palavra-passe incorreta.' };
-    }
-
-    const { password: _, ...userData } = found;
-    this.setUser(userData);
-    return { ok: true, user: userData };
-  },
-
-  register({ firstName, lastName, email, phone, password }) {
-    const cleanEmail = email.trim().toLowerCase();
-    const users = this.getRegisteredUsers();
-
-    if (users.some(u => u.email.toLowerCase() === cleanEmail)) {
-      return { ok: false, message: 'Já existe uma conta registada com este e-mail.' };
-    }
-
-    const newUser = {
-      id: `usr_${Date.now()}`,
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      email: cleanEmail,
-      phone: phone ? phone.trim() : '',
-      password: password,
-      createdAt: new Date().toISOString()
-    };
-
-    users.push(newUser);
-    try {
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-    } catch {}
-
-    const { password: _, ...userData } = newUser;
-    this.setUser(userData);
-    return { ok: true, user: userData };
-  },
-
-  recoverPassword(email) {
-    const cleanEmail = email.trim().toLowerCase();
-    const users = this.getRegisteredUsers();
-    const found = users.find(u => u.email.toLowerCase() === cleanEmail);
-
-    if (!found) {
-      return { ok: false, message: 'Não encontramos nenhuma conta com o e-mail informado.' };
-    }
-
-    return {
-      ok: true,
-      message: `Enviamos instruções de recuperação e código de segurança para ${cleanEmail}.`
-    };
-  },
-
+  // ---- Moradas ----
   getAddresses() {
-    try {
-      const stored = localStorage.getItem(ADDRESSES_STORAGE_KEY);
-      return stored ? JSON.parse(stored) : DEFAULT_ADDRESSES;
-    } catch {
-      return DEFAULT_ADDRESSES;
-    }
+    return this.isLoggedIn() ? readJson(CACHE_KEYS.addresses, []) : [];
   },
 
-  saveAddress(address) {
-    const addresses = this.getAddresses();
-    if (address.id) {
-      const idx = addresses.findIndex(a => a.id === address.id);
-      if (idx !== -1) addresses[idx] = address;
-    } else {
-      address.id = `addr_${Date.now()}`;
-      if (address.isDefault || addresses.length === 0) {
-        addresses.forEach(a => a.isDefault = false);
-        address.isDefault = true;
-      }
-      addresses.push(address);
-    }
-    try {
-      localStorage.setItem(ADDRESSES_STORAGE_KEY, JSON.stringify(addresses));
-    } catch {}
-    return addresses;
+  async saveAddress(address) {
+    const res = await api.me.addAddress(address);
+    if (!res.ok) return { ok: false, message: res.message };
+    const list = await api.me.addresses();
+    if (list.ok) writeJson(CACHE_KEYS.addresses, list.data.data);
+    return { ok: true, address: res.data.data };
   },
 
+  // ---- Encomendas ----
   getOrders() {
-    try {
-      const stored = localStorage.getItem(ORDERS_STORAGE_KEY);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-      // Se não houver encomendas e for o utilizador demo, inicializa com DEMO_ORDERS
-      localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(DEMO_ORDERS));
-      return [...DEMO_ORDERS];
-    } catch {
-      return [...DEMO_ORDERS];
+    return this.isLoggedIn() ? readJson(CACHE_KEYS.orders, []) : [];
+  },
+
+  getOrderById(idOrNumber) {
+    const last = readJson(LAST_ORDER_KEY, null);
+    const list = this.getOrders();
+    return list.find(o => o.id === idOrNumber || o.number === idOrNumber) ||
+      (last && (last.id === idOrNumber || last.number === idOrNumber) ? last : null);
+  },
+
+  // Guarda na cache a versão devolvida pela API
+  cacheOrder(order) {
+    if (!order) return order;
+    if (this.isLoggedIn()) {
+      const list = this.getOrders();
+      const idx = list.findIndex(o => o.id === order.id);
+      if (idx >= 0) list[idx] = order; else list.unshift(order);
+      writeJson(CACHE_KEYS.orders, list);
+    }
+    const last = readJson(LAST_ORDER_KEY, null);
+    if (!last || last.id === order.id || !this.isLoggedIn()) writeJson(LAST_ORDER_KEY, order);
+    emit('tradex:orders-changed', order);
+    return order;
+  },
+
+  async refreshPayments() {
+    const res = await api.payments.list();
+    if (res.ok) {
+      writeJson(CACHE_KEYS.payments, res.data.data);
+      emit('tradex:payments-changed');
     }
   },
 
-  saveOrder(orderData) {
-    const orders = this.getOrders();
-    const existingIndex = orders.findIndex(o => o.id === orderData.id || o.number === orderData.number);
-    if (existingIndex >= 0) {
-      orders[existingIndex] = orderData;
-    } else {
-      orders.unshift(orderData);
-    }
-    try {
-      localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
-    } catch {}
-    window.dispatchEvent(new CustomEvent('tradex:orders-changed', { detail: orderData }));
-    return orderData;
-  },
-
-  getOrderById(orderId) {
-    const orders = this.getOrders();
-    return orders.find(o => o.id === orderId || o.number === orderId) || null;
-  },
-
+  // ---- Pagamentos ----
   getPayments() {
-    try {
-      const stored = localStorage.getItem(PAYMENTS_STORAGE_KEY);
-      if (stored) return JSON.parse(stored);
-      // Gera histórico inicial a partir das encomendas existentes
-      const orders = this.getOrders();
-      const initialPayments = orders.map(o => ({
-        id: `pay_${o.id || o.number}`,
-        orderNumber: o.number,
-        amountAoa: o.financial?.totalAoa || 0,
-        method: o.payment?.method || 'mcx_express',
-        methodName: o.payment?.methodName || 'Multicaixa Express',
-        status: o.payment?.status || 'PENDING',
-        transactionId: o.payment?.transactionId || (o.payment?.reference ? `REF-${o.payment.reference}` : `MCX-${Date.now()}`),
-        date: o.createdAt || new Date().toISOString()
-      }));
-      localStorage.setItem(PAYMENTS_STORAGE_KEY, JSON.stringify(initialPayments));
-      return initialPayments;
-    } catch {
-      return [];
-    }
+    return this.isLoggedIn() ? readJson(CACHE_KEYS.payments, []) : [];
   },
 
-  savePayment(paymentData) {
-    const payments = this.getPayments();
-    const idx = payments.findIndex(p => p.id === paymentData.id || p.orderNumber === paymentData.orderNumber);
-    if (idx >= 0) {
-      payments[idx] = { ...payments[idx], ...paymentData };
-    } else {
-      payments.unshift(paymentData);
-    }
-    try {
-      localStorage.setItem(PAYMENTS_STORAGE_KEY, JSON.stringify(payments));
-    } catch {}
-    window.dispatchEvent(new CustomEvent('tradex:payments-changed', { detail: paymentData }));
-    return paymentData;
-  },
-
+  // ---- Favoritos ----
   getFavorites() {
-    try {
-      const stored = localStorage.getItem(FAVORITES_STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
+    return this.isLoggedIn() ? readJson(CACHE_KEYS.favorites, []) : [];
   },
 
-  toggleFavorite(productId) {
-    let favs = this.getFavorites();
-    if (favs.includes(productId)) {
-      favs = favs.filter(id => id !== productId);
-    } else {
-      favs.push(productId);
-    }
-    try {
-      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favs));
-    } catch {}
-    return favs;
+  async toggleFavorite(productId) {
+    if (!this.isLoggedIn()) return { ok: false, message: 'Inicie sessão para guardar favoritos.' };
+    const res = await api.me.toggleFavorite(productId);
+    if (res.ok) writeJson(CACHE_KEYS.favorites, res.data.data);
+    return { ok: res.ok, favorites: this.getFavorites(), message: res.message };
   },
 
   notifyAuthChange() {
-    window.dispatchEvent(new CustomEvent('tradex:auth-changed', { detail: this.getUser() }));
+    emit('tradex:auth-changed', this.getUser());
   }
 };
+
+// ---- Carrinho na conta ----
+// Junta o carrinho deste browser (ex.: feito antes de iniciar sessão) com o guardado na conta.
+async function mergeServerCart(serverItems) {
+  const local = cartStore.getItems();
+  const byId = new Map(serverItems.map(i => [i.id, { ...i }]));
+  let changed = false;
+  for (const item of local) {
+    const current = byId.get(item.id);
+    if (!current) {
+      byId.set(item.id, item);
+      changed = true;
+    } else if (item.quantity > current.quantity) {
+      current.quantity = item.quantity;
+      changed = true;
+    }
+  }
+  const merged = [...byId.values()];
+  cartStore.saveItems(merged, 'server');
+  if (changed) await pushCart(merged);
+}
+
+function pushCart(items) {
+  return api.me.saveCart(items.map(i => ({ id: i.id, quantity: i.quantity })));
+}
+
+let cartTimer = null;
+window.addEventListener('tradex:cart-changed', (e) => {
+  if (e.detail?.source !== 'user' || !authStore.isLoggedIn()) return;
+  clearTimeout(cartTimer);
+  cartTimer = setTimeout(() => pushCart(cartStore.getItems()), 600);
+});
+
+// Sessão expirada em qualquer pedido: limpa os dados locais
+window.addEventListener('tradex:session-expired', () => {
+  if (authStore.getUser()) {
+    authStore.clearSession();
+    authStore.notifyAuthChange();
+  }
+});
 
 // Configuração do Modal Global de Autenticação
 export function setupGlobalAuthModal() {
@@ -453,23 +279,20 @@ export function setupGlobalAuthModal() {
           <form id="loginForm" class="auth-form">
             <div class="auth-form-group">
               <label for="loginEmail">E-mail</label>
-              <input type="email" id="loginEmail" class="auth-input" placeholder="exemplo@empresa.ao" value="cliente@tradex.ao" required autocomplete="email" />
+              <input type="email" id="loginEmail" class="auth-input" placeholder="exemplo@empresa.ao" required autocomplete="email" />
             </div>
             <div class="auth-form-group">
               <div class="label-with-link">
                 <label for="loginPassword">Palavra-passe</label>
                 <button type="button" class="btn-text-link" id="btnForgotPass">Esqueceu-se?</button>
               </div>
-              <input type="password" id="loginPassword" class="auth-input" placeholder="••••••••" value="tradex2026" required autocomplete="current-password" />
+              <input type="password" id="loginPassword" class="auth-input" placeholder="••••••••" required autocomplete="current-password" />
             </div>
             <div class="auth-feedback" id="loginFeedback"></div>
             <button type="submit" class="btn-dark btn-full auth-submit-btn">
               <span>Entrar na Minha Conta</span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </button>
-            <div class="auth-demo-hint">
-              <span>Conta de teste:</span> <code>cliente@tradex.ao</code> • <code>tradex2026</code>
-            </div>
           </form>
         </div>
 
@@ -496,7 +319,7 @@ export function setupGlobalAuthModal() {
             </div>
             <div class="auth-form-group">
               <label for="regPassword">Criar Palavra-passe</label>
-              <input type="password" id="regPassword" class="auth-input" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password" />
+              <input type="password" id="regPassword" class="auth-input" placeholder="Mínimo 8 caracteres" required minlength="8" autocomplete="new-password" />
             </div>
             <div class="auth-feedback" id="registerFeedback"></div>
             <button type="submit" class="btn-dark btn-full auth-submit-btn">
@@ -541,6 +364,7 @@ export function setupGlobalAuthModal() {
     modal.classList.add('visible');
     switchTab(initialTab);
   }
+  openAuthModalImpl = openModal;
 
   function closeModal() {
     modal.classList.remove('visible');
@@ -582,15 +406,23 @@ export function setupGlobalAuthModal() {
 
   btnBackLogin?.addEventListener('click', () => switchTab('login'));
 
+
+  function setBusy(form, busy) {
+    const btn = form?.querySelector('button[type="submit"]');
+    if (btn) btn.disabled = busy;
+  }
+
   // Submissão do Formulário de Login
   const loginForm = document.getElementById('loginForm');
   const loginFeedback = document.getElementById('loginFeedback');
-  loginForm?.addEventListener('submit', (e) => {
+  loginForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('loginEmail')?.value;
     const pass = document.getElementById('loginPassword')?.value;
 
-    const result = authStore.login(email, pass);
+    setBusy(loginForm, true);
+    const result = await authStore.login(email, pass);
+    setBusy(loginForm, false);
     if (result.ok) {
       if (loginFeedback) {
         loginFeedback.className = 'auth-feedback success visible';
@@ -611,7 +443,7 @@ export function setupGlobalAuthModal() {
   // Submissão do Formulário de Registo
   const regForm = document.getElementById('registerForm');
   const regFeedback = document.getElementById('registerFeedback');
-  regForm?.addEventListener('submit', (e) => {
+  regForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const firstName = document.getElementById('regFirstName')?.value;
     const lastName = document.getElementById('regLastName')?.value;
@@ -619,7 +451,9 @@ export function setupGlobalAuthModal() {
     const phone = document.getElementById('regPhone')?.value;
     const password = document.getElementById('regPassword')?.value;
 
-    const result = authStore.register({ firstName, lastName, email, phone, password });
+    setBusy(regForm, true);
+    const result = await authStore.register({ firstName, lastName, email, phone, password });
+    setBusy(regForm, false);
     if (result.ok) {
       if (regFeedback) {
         regFeedback.className = 'auth-feedback success visible';
@@ -640,10 +474,12 @@ export function setupGlobalAuthModal() {
   // Submissão do Formulário de Recuperação
   const recoveryForm = document.getElementById('recoveryForm');
   const recoveryFeedback = document.getElementById('recoveryFeedback');
-  recoveryForm?.addEventListener('submit', (e) => {
+  recoveryForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('recoverEmail')?.value;
-    const result = authStore.recoverPassword(email);
+    setBusy(recoveryForm, true);
+    const result = await authStore.recoverPassword(email);
+    setBusy(recoveryForm, false);
 
     if (recoveryFeedback) {
       recoveryFeedback.className = `auth-feedback ${result.ok ? 'success' : 'error'} visible`;
@@ -696,10 +532,10 @@ function setupHeaderUserButton(openModalCallback) {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
           <span>Acompanhar Encomendas</span>
         </a>
-        <a href="admin.html" class="user-popover-item admin-portal-link">
+        ${authStore.isStaff() ? `<a href="admin.html" class="user-popover-item admin-portal-link">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
           <span>Acesso ao Backoffice &rarr;</span>
-        </a>
+        </a>` : ''}
       </div>
       <div class="user-popover-footer">
         <button type="button" class="btn-logout-action" id="btnLogoutUser">
@@ -748,7 +584,17 @@ export function updateHeaderUserUi() {
   }
 }
 
+// Abre o modal de autenticação a partir de outras páginas (ex.: área do cliente)
+let openAuthModalImpl = null;
+export function openAuthModal(tab = 'login') {
+  if (!openAuthModalImpl) setupGlobalAuthModal();
+  openAuthModalImpl?.(tab);
+}
+
 // Inicialização automática ao carregar o DOM
 document.addEventListener('DOMContentLoaded', () => {
   setupGlobalAuthModal();
+  authStore.sync();
 });
+
+window.addEventListener('tradex:auth-changed', updateHeaderUserUi);

@@ -1,116 +1,130 @@
 import { Router } from 'express';
+import { prisma } from '../../infrastructure/database/prisma.js';
+import { getShippingMode } from '../../config/shipping.js';
+import { z } from 'zod';
+import { ORDER_STATUS_LABELS } from '../serializers.js';
+import { optionalAuth, isStaff } from '../middlewares/auth.js';
+import { rateLimit } from '../middlewares/rate-limit.js';
+
+const lookupLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 30 });
 
 export const trackingRouter = Router();
 
-const TRACKING_DB = {
-  'TDX-AO-2026-001': {
-    code: 'TDX-AO-2026-001',
-    mode: 'Marítimo LCL (Carga Consolidada)',
-    modeType: 'sea',
-    status: 'Em Trânsito Marítimo Internacional',
-    statusClass: 'status-transit',
-    progress: 68,
-    carrier: 'MSC Mediterranean Shipping Co. (Navio MSC Luanda)',
-    voyage: 'CN-AO 4402',
-    container: 'TGHU-984210-4 (Palete 03/08)',
-    blNumber: 'MSCLU-8839201-AO',
-    origin: 'Porto de Nansha, Guangzhou (China)',
-    destination: 'Porto de Luanda, Terminal Multiusos (Angola)',
-    finalDelivery: 'Armazém TradeX Bairro Azul, Luanda',
-    departureDate: '05 de Novembro de 2026',
-    estimatedArrival: '18 de Novembro de 2026',
-    volumeWeight: '3.8 m³ • 1.250 kg (4 paletes)',
-    declaredValue: '8.450.000 Kz',
-    lastUpdate: 'Hoje, 09:40',
-    currentLocation: 'Oceano Índico • Rumo a Cabo da Boa Esperança',
-    milestones: [
-      { step: 1, label: 'Ordem & Coleta', done: true },
-      { step: 2, label: 'Despacho China', done: true },
-      { step: 3, label: 'Em Trânsito Marítimo', active: true },
-      { step: 4, label: 'Desalfandegamento Luanda', pending: true },
-      { step: 5, label: 'Pronto p/ Entrega', pending: true }
-    ],
-    timeline: [
-      {
-        date: '07 Nov 2026 • 09:30',
-        title: 'Em Trânsito Marítimo Internacional',
-        location: 'Coordenadas: 24°18\'S 39°45\'E (Oceano Índico)',
-        detail: 'Embarcação MSC Luanda em navegação contínua com velocidade de cruzeiro de 18.5 nós.',
-        badge: 'Em Curso',
-        badgeClass: 'badge-transit'
-      },
-      {
-        date: '05 Nov 2026 • 18:45',
-        title: 'Embarque Concluído e Saída do Porto de Nansha',
-        location: 'Porto de Nansha, Guangzhou, China',
-        detail: 'Contentor TGHU-984210-4 estivado a bordo no porão 4B. Conhecimento de Embarque Marítimo (Bill of Lading) emitido.',
-        badge: 'Concluído',
-        badgeClass: 'badge-done'
-      }
-    ],
-    documents: [
-      { name: 'Bill of Lading (B/L Internacional)', code: 'MSCLU-8839201-AO', status: 'Emitido & Autenticado' },
-      { name: 'DU (Documento Único Provisório AGT)', code: 'DU-AO-2026-99321', status: 'Submetido Eletronicamente' },
-      { name: 'Certificado de Conformidade (ARSEG/CRF)', code: 'CRF-CN-2026-0441', status: 'Aprovado' },
-      { name: 'Seguro de Carga Marítima All Risks', code: 'POL-TDX-SEG-9912', status: 'Ativo (110% CIF Cobertura)' }
-    ]
-  }
+// Ordem das etapas visíveis ao cliente
+const STEPS = [
+  { key: 'PAYMENT_CONFIRMED', label: 'Pagamento Confirmado' },
+  { key: 'PROCESSING_SUPPLIER', label: 'Em Processamento (China)' },
+  { key: 'IN_INTERNATIONAL_TRANSIT', label: 'Enviado' },
+  { key: 'ARRIVED_IN_ANGOLA', label: 'Chegou a Angola' },
+  { key: 'FINAL', label: 'Entregue' }
+];
+
+const STATUS_STEP_INDEX = {
+  AWAITING_PAYMENT: 0,
+  PAYMENT_CONFIRMED: 1,
+  PROCESSING_SUPPLIER: 1,
+  IN_INTERNATIONAL_TRANSIT: 2,
+  ARRIVED_IN_ANGOLA: 3,
+  READY_FOR_PICKUP: 4,
+  OUT_FOR_DELIVERY: 4,
+  DELIVERED: 5,
+  CANCELLED: 0,
+  RETURNED: 0
 };
 
-// Consulta de rastreamento de carga
-trackingRouter.get('/:code', (req, res) => {
-  const { code } = req.params;
-  const clean = code.trim().toUpperCase();
+const STATUS_CLASS = {
+  AWAITING_PAYMENT: 'status-pending',
+  READY_FOR_PICKUP: 'status-ready',
+  DELIVERED: 'status-ready',
+  OUT_FOR_DELIVERY: 'status-cleared',
+  CANCELLED: 'status-pending'
+};
 
-  const found = TRACKING_DB[clean];
-  if (found) {
-    return res.json({ ok: true, data: found });
-  }
+const fmtDate = (d) =>
+  new Date(d).toLocaleString('pt-AO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-  // Gera dados simulados caso a encomenda seja recém-criada
-  const dynamic = {
-    code: clean,
-    mode: 'Marítimo LCL Consolidado',
-    modeType: 'sea',
-    status: 'Em Processamento Logístico e Trânsito',
-    statusClass: 'status-transit',
-    progress: 45,
-    carrier: 'MSC Mediterranean Shipping Co. / TradeX Global',
-    voyage: 'CN-AO 4402',
-    container: 'TDXU-882194-0',
-    blNumber: `BL-${clean.replace(/[^A-Z0-9]/g, '')}`,
-    origin: 'Hub Consolidado Yiwu / Guangzhou (China)',
-    destination: 'Porto de Luanda (Angola)',
-    finalDelivery: 'Terminal Logístico TradeX Luanda',
-    departureDate: 'Em agendamento pós-despacho',
-    estimatedArrival: '35 a 45 dias',
-    volumeWeight: 'Carga Segurada',
-    declaredValue: 'Fatura Pró-forma Emitida',
-    lastUpdate: 'Atualizado em tempo real pelo sistema',
-    currentLocation: 'Hub Central TradeX, Guangzhou, China',
-    milestones: [
-      { step: 1, label: 'Ordem Registada', done: true },
-      { step: 2, label: 'Confirmação Pagamento', done: true },
-      { step: 3, label: 'Compra & Recepção China', active: true },
-      { step: 4, label: 'Trânsito Internacional', pending: true },
-      { step: 5, label: 'Entrega em Luanda', pending: true }
-    ],
-    timeline: [
-      {
-        date: 'Hoje',
-        title: 'Mercadoria em Processamento no Hub de Guangzhou',
-        location: 'Guangzhou, China',
-        detail: `Registo oficial da carga ${clean} em curso no terminal consolidado da TradeX.`,
-        badge: 'Em Curso',
-        badgeClass: 'badge-transit'
-      }
-    ],
-    documents: [
-      { name: 'Fatura Pró-forma da Encomenda', code: clean, status: 'Emitida em Kwanzas' },
-      { name: 'Apólice de Seguro de Carga (110% CIF)', code: `POL-${clean}`, status: 'Cobertura Integral Ativa' }
-    ]
-  };
-
-  return res.json({ ok: true, data: dynamic });
+// Rastreio por código da encomenda.
+// Os números são sequenciais, por isso exige-se um segundo factor:
+// sessão do dono, sessão de staff, ou o e-mail usado na compra (no corpo do pedido, nunca na URL).
+const lookupSchema = z.object({
+  code: z.string().trim().min(1).max(40),
+  email: z.string().trim().toLowerCase().email().optional().or(z.literal('').transform(() => undefined))
 });
 
+const NOT_FOUND = 'Não encontrámos nenhuma encomenda com este código e e-mail.';
+
+trackingRouter.post('/lookup', lookupLimiter, optionalAuth, async (req, res) => {
+  const { code: rawCode, email } = lookupSchema.parse(req.body || {});
+  const code = rawCode.toUpperCase();
+  const order = await prisma.order.findUnique({
+    where: { number: code },
+    include: { trackingEvents: { orderBy: { occurredAt: 'desc' } }, items: true, payments: { orderBy: { createdAt: 'desc' }, take: 1 } }
+  });
+
+  const user = req.user;
+  const allowed = order && (
+    (user && (isStaff(user) || (user.customer && order.customerId === user.customer.id) || order.customerEmail === user.email)) ||
+    (email && order.customerEmail === email)
+  );
+
+  // Mesma resposta para "não existe" e "e-mail errado" (não revela que o código existe)
+  if (!allowed) {
+    return res.status(404).json({ ok: false, needsEmail: !user || !email, message: NOT_FOUND });
+  }
+
+  const mode = getShippingMode(order.shippingMode);
+  const stepIdx = STATUS_STEP_INDEX[order.status] ?? 0;
+  const lastStepLabel =
+    order.status === 'READY_FOR_PICKUP' ? 'Pronto p/ Levantamento' :
+    order.status === 'OUT_FOR_DELIVERY' ? 'Em Entrega' : 'Entregue';
+
+  const milestones = STEPS.map((s, i) => ({
+    step: i + 1,
+    label: i === 4 ? lastStepLabel : s.label,
+    done: i < stepIdx,
+    active: i === stepIdx || (i === 4 && stepIdx >= 4),
+    pending: i > stepIdx
+  }));
+
+  const address = order.deliveryAddress;
+  const lastEvent = order.trackingEvents[0];
+
+  return res.json({
+    ok: true,
+    data: {
+      code: order.number,
+      mode: mode.longLabel,
+      modeType: order.shippingMode === 'air_exp' ? 'air' : 'sea',
+      status: ORDER_STATUS_LABELS[order.status],
+      statusKey: order.status,
+      // Estado do pagamento (sem dados pessoais) para o convidado poder enviar o comprovativo
+      payment: order.payments[0]
+        ? { status: order.payments[0].status, rejectionReason: order.payments[0].rejectionReason, totalAoa: Number(order.totalAoa) }
+        : null,
+      statusClass: STATUS_CLASS[order.status] || 'status-transit',
+      progress: Math.min(100, Math.round((stepIdx / 5) * 100)),
+      origin: 'Guangzhou, China',
+      destination: 'Luanda, Angola',
+      finalDelivery: order.deliveryMethod === 'pickup'
+        ? 'Terminal TradeX, Bairro Azul, Luanda'
+        : `${address?.municipality || ''}${address?.province ? `, ${address.province}` : ''}`,
+      departureDate: order.trackingEvents.find(e => e.status === 'IN_INTERNATIONAL_TRANSIT')
+        ? fmtDate(order.trackingEvents.find(e => e.status === 'IN_INTERNATIONAL_TRANSIT').occurredAt)
+        : 'A agendar',
+      estimatedArrival: order.estimatedDelivery || `${mode.minDays} a ${mode.maxDays} dias`,
+      volumeWeight: `${order.items.reduce((a, i) => a + i.quantity, 0)} unidade(s)`,
+      lastUpdate: lastEvent ? fmtDate(lastEvent.occurredAt) : fmtDate(order.updatedAt),
+      currentLocation: lastEvent?.location || ORDER_STATUS_LABELS[order.status],
+      milestones,
+      timeline: order.trackingEvents.map((e, i) => ({
+        date: fmtDate(e.occurredAt),
+        title: e.label,
+        location: e.location || '',
+        detail: e.note || '',
+        badge: i === 0 ? 'Mais recente' : 'Concluído',
+        badgeClass: i === 0 ? 'badge-transit' : 'badge-done'
+      })),
+      documents: [{ name: 'Fatura Pró-forma', code: order.number, status: 'Emitida' }]
+    }
+  });
+});

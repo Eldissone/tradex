@@ -41,7 +41,7 @@
               Portal do Cliente TradeX
             </span>
             <span class="topbar-divider">|</span>
-            <span class="topbar-currency">Pagamentos & Desalfandegamento em Kwanzas</span>
+            <span class="topbar-currency">Pagamentos em Kwanzas • Entrega Porta a Porta</span>
           </div>
         </div>
       </div>
@@ -51,12 +51,7 @@
           <a class="brand" href="index.html#inicio">TRADEX<span>GLOBAL</span></a>
           <span class="brand-badge store-badge">Área do Cliente</span>
         </div>
-        <div class="nav-links">
-          <a href="catalogo.html">Catálogo de Produtos</a>
-          <a href="rastreio.html">Consultar Rastreio</a>
-          <a href="index.html#simulador">Simulador Aduaneiro</a>
-          <a href="index.html#contacto">Apoio ao Cliente</a>
-        </div>
+        <div class="nav-links" data-shared-nav></div>
         <div class="nav-actions">
           <a href="catalogo.html" class="nav-icon-btn" id="headerSearchBtn" aria-label="Pesquisar Produtos" title="Pesquisar">
             <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -93,7 +88,7 @@
               <span class="client-status-pill">CLIENTE VERIFICADO</span>
             </div>
             <p class="client-meta-line">
-              <span id="clientDisplayEmail">cliente@tradex.ao</span> &bull; 
+              <span id="clientDisplayEmail"></span> &bull; 
               <span id="clientDisplayPhone">+244 923 456 789</span> &bull; 
               <span>NIF: <strong id="clientDisplayNif">004928172LA041</strong></span>
             </p>
@@ -123,7 +118,7 @@
           <div class="kpi-card delivered">
             <span class="kpi-label">Entregues com Sucesso</span>
             <strong class="kpi-number" id="kpiDelivered">0</strong>
-            <span class="kpi-sub">Desembaraçadas & Recebidas</span>
+            <span class="kpi-sub">Entregues & Levantadas</span>
           </div>
         </div>
       </section>
@@ -159,7 +154,7 @@
           <div class="panel-section-head">
             <div>
               <h2 class="panel-title">Histórico de Encomendas de Importação</h2>
-              <p class="panel-desc">Acompanhe todas as suas cargas desde a aquisição na China até ao despacho aduaneiro e entrega final.</p>
+              <p class="panel-desc">Acompanhe todas as suas cargas desde a compra na China até à entrega final.</p>
             </div>
             <div class="panel-actions">
               <a href="catalogo.html" class="btn-outline-dark">+ Nova Cotação</a>
@@ -233,7 +228,7 @@
           <div class="panel-section-head">
             <div>
               <h2 class="panel-title">Dados Pessoais e Fiscais</h2>
-              <p class="panel-desc">Mantenha os seus dados cadastrais atualizados para emissão correta do Documento Único (DU) da AGT.</p>
+              <p class="panel-desc">Mantenha os seus dados cadastrais atualizados para a emissão correta das suas faturas.</p>
             </div>
           </div>
 
@@ -267,7 +262,11 @@
               </div>
               <div class="checkout-form-group">
                 <label for="profNewPassword">Nova Palavra-passe (Opcional)</label>
-                <input type="password" id="profNewPassword" class="checkout-input" placeholder="Mínimo 6 caracteres" />
+                <input type="password" id="profNewPassword" class="checkout-input" placeholder="Mínimo 8 caracteres" minlength="8" autocomplete="new-password" />
+              </div>
+              <div class="checkout-form-group">
+                <label for="profCurrentPassword">Palavra-passe Actual (para alterar)</label>
+                <input type="password" id="profCurrentPassword" class="checkout-input" autocomplete="current-password" />
               </div>
             </div>
 
@@ -331,7 +330,7 @@
         <div class="auth-modal-header">
           <div class="auth-modal-title-wrap">
             <h3 class="auth-modal-title" id="modalOrderTitle">Encomenda #TDX-AO-2026-001</h3>
-            <p class="auth-modal-subtitle" id="modalOrderSubtitle">Emitida em Kwanzas &bull; Despacho Aduaneiro TradeX</p>
+            <p class="auth-modal-subtitle" id="modalOrderSubtitle">Emitida em Kwanzas &bull; Entrega Porta a Porta TradeX</p>
           </div>
           <button type="button" class="auth-modal-close" id="btnCloseOrderModal">&times;</button>
         </div>
@@ -357,6 +356,8 @@
         </div>
       </div>
     </footer>
+
+    <script type="module" src="js/nav.js"></script>
 
     <script type="module" src="js/auth.js"></script>
     <script type="module" src="js/cliente.js"></script>
