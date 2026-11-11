@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { prisma } from '../../infrastructure/database/prisma.js';
 import { getSetting, setSetting } from '../../infrastructure/settings.js';
 import { requireStaff, requireAdmin } from '../middlewares/auth.js';
+import { hashPassword } from '../../infrastructure/auth/auth.js';
 import multer from 'multer';
 import { env } from '../../config/env.js';
 import { whatsappConfigured } from '../../infrastructure/notifications/whatsapp.js';
@@ -89,6 +90,14 @@ adminRouter.put('/suppliers/:id', async (req, res) => {
     data: { ...data, ...(data.email !== undefined && { email: data.email || null }) }
   });
   return res.json({ ok: true, data: updated });
+});
+
+adminRouter.delete('/suppliers/:id', async (req, res) => {
+  const found = await prisma.supplier.findUnique({ where: { id: req.params.id }, select: { id: true } });
+  if (!found) return res.status(404).json({ ok: false, message: 'Fornecedor não encontrado.' });
+  // Os produtos associados ficam sem fornecedor
+  await prisma.supplier.delete({ where: { id: found.id } });
+  return res.json({ ok: true });
 });
 
 // Lotes de envio do agente parceiro
@@ -330,23 +339,87 @@ adminRouter.get('/users', async (req, res) => {
   return res.json({ ok: true, total: data.length, data });
 });
 
+const userFields = {
+  firstName: z.string().trim().min(1, 'O nome é obrigatório.').max(80),
+  lastName: z.string().trim().max(80).optional().default(''),
+  email: z.string().trim().toLowerCase().email('E-mail inválido.'),
+  phone: z.string().trim().max(40).optional().nullable(),
+  role: z.enum(['ADMIN', 'STAFF', 'CUSTOMER']),
+  password: z.string().min(8, 'A palavra-passe deve ter pelo menos 8 caracteres.')
+};
+
+const userCreateSchema = z.object({ ...userFields, active: z.boolean().optional().default(true) });
+
 const userUpdateSchema = z.object({
   active: z.boolean().optional(),
-  role: z.enum(['ADMIN', 'STAFF', 'CUSTOMER']).optional()
+  role: userFields.role.optional(),
+  email: userFields.email.optional(),
+  firstName: userFields.firstName.optional(),
+  lastName: z.string().trim().max(80).optional(),
+  phone: userFields.phone,
+  password: userFields.password.optional()
+});
+
+const userOut = (u) => ({
+  id: u.id, email: u.email, role: u.role, active: u.active,
+  firstName: u.customer?.firstName || '', lastName: u.customer?.lastName || '', phone: u.customer?.phone || ''
+});
+
+adminRouter.post('/users', requireAdmin, async (req, res) => {
+  const data = userCreateSchema.parse(req.body);
+  if (await prisma.user.findUnique({ where: { email: data.email }, select: { id: true } })) {
+    return res.status(409).json({ ok: false, message: 'Já existe uma conta com este e-mail.' });
+  }
+  const user = await prisma.user.create({
+    data: {
+      email: data.email,
+      passwordHash: await hashPassword(data.password),
+      role: data.role,
+      active: data.active,
+      customer: { create: { firstName: data.firstName, lastName: data.lastName, phone: data.phone || null } }
+    },
+    include: { customer: true }
+  });
+  // Liga encomendas feitas como convidado com este e-mail
+  await prisma.order.updateMany({ where: { customerId: null, customerEmail: data.email }, data: { customerId: user.customer.id } });
+  return res.status(201).json({ ok: true, data: userOut(user) });
 });
 
 adminRouter.patch('/users/:id', requireAdmin, async (req, res) => {
-  const data = userUpdateSchema.parse(req.body);
-  if (req.params.id === req.user.id && (data.active === false || (data.role && data.role !== 'ADMIN'))) {
+  const { firstName, lastName, phone, password, ...account } = userUpdateSchema.parse(req.body);
+  if (req.params.id === req.user.id && (account.active === false || (account.role && account.role !== 'ADMIN'))) {
     return res.status(400).json({ ok: false, message: 'Não pode desactivar nem retirar permissões à sua própria conta.' });
   }
+  if (account.email) {
+    const taken = await prisma.user.findFirst({ where: { email: account.email, id: { not: req.params.id } }, select: { id: true } });
+    if (taken) return res.status(409).json({ ok: false, message: 'Já existe uma conta com este e-mail.' });
+  }
+  const profile = { ...(firstName !== undefined && { firstName }), ...(lastName !== undefined && { lastName }), ...(phone !== undefined && { phone: phone || null }) };
   const updated = await prisma.user.update({
     where: { id: req.params.id },
-    // Desactivar ou mudar de papel revoga as sessões abertas
-    data: { ...data, passwordChangedAt: new Date() },
-    select: { id: true, email: true, role: true, active: true }
+    // Alterar conta, papel ou palavra-passe revoga as sessões abertas
+    data: {
+      ...account,
+      ...(password && { passwordHash: await hashPassword(password) }),
+      passwordChangedAt: new Date(),
+      ...(Object.keys(profile).length && {
+        customer: { upsert: { create: { firstName: firstName ?? '', lastName: lastName ?? '', ...profile }, update: profile } }
+      })
+    },
+    include: { customer: true }
   });
-  return res.json({ ok: true, data: updated });
+  return res.json({ ok: true, data: userOut(updated) });
+});
+
+// As encomendas da conta mantêm os dados do cliente guardados na compra
+adminRouter.delete('/users/:id', requireAdmin, async (req, res) => {
+  if (req.params.id === req.user.id) {
+    return res.status(400).json({ ok: false, message: 'Não pode eliminar a sua própria conta.' });
+  }
+  const found = await prisma.user.findUnique({ where: { id: req.params.id }, select: { id: true } });
+  if (!found) return res.status(404).json({ ok: false, message: 'Conta não encontrada.' });
+  await prisma.user.delete({ where: { id: found.id } });
+  return res.json({ ok: true });
 });
 
 // ---- Conversão e comportamento ----
@@ -485,6 +558,17 @@ adminRouter.post('/shipments', async (req, res) => {
 adminRouter.put('/shipments/:code', async (req, res) => {
   const data = shipmentSchema.partial().parse(req.body);
   await prisma.shipment.update({ where: { code: req.params.code }, data });
+  return res.json({ ok: true });
+});
+
+// Elimina o lote; as encomendas incluídas ficam sem lote (mantêm o estado actual)
+adminRouter.delete('/shipments/:code', async (req, res) => {
+  const found = await prisma.shipment.findUnique({ where: { code: req.params.code }, select: { id: true } });
+  if (!found) return res.status(404).json({ ok: false, message: 'Lote não encontrado.' });
+  await prisma.$transaction([
+    prisma.order.updateMany({ where: { shipmentId: found.id }, data: { shipmentId: null } }),
+    prisma.shipment.delete({ where: { id: found.id } })
+  ]);
   return res.json({ ok: true });
 });
 

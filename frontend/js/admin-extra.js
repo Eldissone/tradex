@@ -84,6 +84,7 @@ async function renderConversion() {
 // Utilizadores
 // =====================================================================
 const usersView = { segment: 'all', search: '' };
+let usersCache = [];
 let usersTimer = null;
 
 async function renderUsers() {
@@ -95,6 +96,7 @@ async function renderUsers() {
     return;
   }
   const users = res.data.data;
+  usersCache = users;
   if (!users.length) {
     tbody.innerHTML = '<tr><td colspan="8" class="table-empty-message">Nenhum utilizador encontrado.</td></tr>';
     return;
@@ -123,7 +125,11 @@ async function renderUsers() {
       <td><span class="table-pay-badge ${u.active ? 'table-badge-approved' : 'table-badge-pending'}">${u.active ? 'Activo' : 'Desactivado'}</span></td>
       <td>
         ${canEdit && u.id !== me?.id ? `
-          ${iconBtn({ icon: 'power', title: u.active ? 'Desactivar conta' : 'Activar conta', variant: u.active ? 'danger' : 'success', attrs: `data-user-toggle="${u.id}" data-active="${u.active ? '1' : '0'}"` })}` : '<span class="table-sub-detail">—</span>'}
+          <div class="row-actions">
+            ${iconBtn({ icon: 'edit', title: 'Editar utilizador', attrs: `data-user-edit="${u.id}"` })}
+            ${iconBtn({ icon: 'power', title: u.active ? 'Desactivar conta' : 'Activar conta', variant: u.active ? 'danger' : 'success', attrs: `data-user-toggle="${u.id}" data-active="${u.active ? '1' : '0'}"` })}
+            ${iconBtn({ icon: 'trash', title: 'Eliminar utilizador', variant: 'danger', attrs: `data-user-delete="${u.id}"` })}
+          </div>` : '<span class="table-sub-detail">—</span>'}
       </td>
     </tr>`).join('');
 }
@@ -143,8 +149,67 @@ function bindUsers() {
     usersTimer = setTimeout(renderUsers, 300);
   });
 
+  // Criar / editar utilizador (só ADMIN)
+  const modal = bindModal('userModalOverlay', 'btnCloseUserModal');
+  const form = document.getElementById('formUser');
+  const fb = document.getElementById('userFormFeedback');
+  const f = (id) => document.getElementById(id);
+  const openBtn = document.getElementById('btnOpenUserModal');
+  if (openBtn) openBtn.hidden = !isAdmin();
+
+  const fillUser = (u) => {
+    f('userFormId').value = u?.id || '';
+    f('userModalTitle').textContent = u ? `Editar: ${u.email}` : 'Novo Utilizador';
+    f('userFormFirstName').value = u?.firstName || '';
+    f('userFormLastName').value = u?.lastName || '';
+    f('userFormEmail').value = u?.email || '';
+    f('userFormPhone').value = u?.phone || '';
+    f('userFormRole').value = u?.role || 'CUSTOMER';
+    f('userFormPassword').value = '';
+    f('userFormPasswordLabel').textContent = u ? 'Nova palavra-passe (deixe vazio para manter)' : 'Palavra-passe *';
+    f('userFormActive').checked = u ? u.active : true;
+    feedback(fb, '');
+    modal.open();
+  };
+  openBtn?.addEventListener('click', () => fillUser(null));
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = f('userFormId').value;
+    const payload = {
+      firstName: f('userFormFirstName').value.trim(),
+      lastName: f('userFormLastName').value.trim(),
+      email: f('userFormEmail').value.trim(),
+      phone: f('userFormPhone').value.trim() || null,
+      role: f('userFormRole').value,
+      active: f('userFormActive').checked
+    };
+    const password = f('userFormPassword').value;
+    if (password) payload.password = password;
+    if (!payload.firstName || !payload.email) return feedback(fb, 'Indique o nome e o e-mail.');
+    if (!id && password.length < 8) return feedback(fb, 'A palavra-passe deve ter pelo menos 8 caracteres.');
+    const submit = form.querySelector('button[type="submit"]');
+    submit.disabled = true;
+    const res = id ? await api.admin.updateUser(id, payload) : await api.admin.createUser(payload);
+    submit.disabled = false;
+    if (!res.ok) return feedback(fb, res.message);
+    modal.close();
+    renderUsers();
+  });
+
   const tbody = document.getElementById('adminUsersTableBody');
   tbody?.addEventListener('click', async (e) => {
+    const edit = e.target.closest('[data-user-edit]');
+    if (edit) return fillUser(usersCache.find(u => u.id === edit.dataset.userEdit));
+    const del = e.target.closest('[data-user-delete]');
+    if (del) {
+      const u = usersCache.find(x => x.id === del.dataset.userDelete);
+      if (!confirm(`Eliminar a conta ${u?.email || ''}? Não pode ser desfeito. As encomendas já feitas mantêm os dados do cliente.`)) return;
+      del.disabled = true;
+      const r = await api.admin.deleteUser(del.dataset.userDelete);
+      if (!r.ok) alert(r.message);
+      return renderUsers();
+    }
     const btn = e.target.closest('[data-user-toggle]');
     if (!btn) return;
     const activate = btn.dataset.active !== '1';
@@ -201,7 +266,7 @@ function renderSuppliers() {
           <td>${esc(sup.terms || '—')}</td>
           <td>${sup.productsCount ?? 0}</td>
           <td>${sup.active ? 'Activo' : 'Inactivo'}</td>
-          <td>${iconBtn({ icon: 'edit', title: 'Editar fornecedor', attrs: `data-supplier-edit="${sup.id}"` })}</td>
+          <td><div class="row-actions">${iconBtn({ icon: 'edit', title: 'Editar fornecedor', attrs: `data-supplier-edit="${sup.id}"` })}${iconBtn({ icon: 'trash', title: 'Eliminar fornecedor', variant: 'danger', attrs: `data-supplier-delete="${sup.id}"` })}</div></td>
         </tr>`).join('')}</tbody>
     </table>`;
 }
@@ -232,6 +297,15 @@ function bindSuppliers() {
 
   document.getElementById('btnOpenSupplierModal')?.addEventListener('click', () => fill(null));
   document.getElementById('adminSuppliersGrid')?.addEventListener('click', (e) => {
+    const del = e.target.closest('[data-supplier-delete]');
+    if (del) {
+      const sup = suppliers.find(s => s.id === del.dataset.supplierDelete);
+      const n = sup?.productsCount || 0;
+      if (!confirm(`Eliminar o fornecedor "${sup?.name}"?${n ? ` Os ${n} produto(s) associados ficam sem fornecedor.` : ''} Não pode ser desfeito.`)) return;
+      del.disabled = true;
+      api.admin.deleteSupplier(del.dataset.supplierDelete).then(r => { if (!r.ok) alert(r.message); loadSuppliers(); });
+      return;
+    }
     const btn = e.target.closest('[data-supplier-edit]');
     if (btn) fill(suppliers.find(s => s.id === btn.dataset.supplierEdit));
   });
@@ -338,6 +412,7 @@ function renderShipments() {
         </select>
         <button type="button" class="btn-dark btn-xs" data-status-apply="${esc(shp.id)}">Actualizar estado</button>
         ${iconBtn({ icon: 'edit', title: 'Editar lote', attrs: `data-shipment-edit="${esc(shp.id)}"` })}
+        ${iconBtn({ icon: 'trash', title: 'Eliminar lote', variant: 'danger', attrs: `data-shipment-delete="${esc(shp.id)}"` })}
       </div>
     </div>`).join('');
 }
@@ -390,6 +465,17 @@ function bindShipments() {
   document.getElementById('adminShipmentsGrid')?.addEventListener('click', async (e) => {
     const edit = e.target.closest('[data-shipment-edit]');
     if (edit) return fill(shipments.find(s => s.id === edit.dataset.shipmentEdit));
+
+    const delShp = e.target.closest('[data-shipment-delete]');
+    if (delShp) {
+      const shp = shipments.find(s => s.id === delShp.dataset.shipmentDelete);
+      const n = shp?.ordersLinked.length || 0;
+      if (!confirm(`Eliminar o lote ${shp?.id}?${n ? ` As ${n} encomenda(s) incluídas ficam sem lote e mantêm o estado actual.` : ''} Não pode ser desfeito.`)) return;
+      delShp.disabled = true;
+      const r = await api.admin.deleteShipment(delShp.dataset.shipmentDelete);
+      if (!r.ok) alert(r.message);
+      return loadShipments();
+    }
 
     const link = e.target.closest('[data-link]');
     if (link) {

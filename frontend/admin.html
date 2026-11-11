@@ -475,6 +475,7 @@
               <p class="admin-panel-subtitle">Contas registadas, quem já comprou e quem veio de uma compra como convidado.</p>
             </div>
             <div class="admin-head-actions">
+              <button type="button" class="btn-dark" id="btnOpenUserModal" hidden>+ Novo Utilizador</button>
               <div class="admin-search-wrapper">
                 <input type="search" id="adminUserSearch" class="checkout-input" placeholder="Pesquisar nome, e-mail ou telefone" />
               </div>
@@ -877,6 +878,44 @@
           </div>
           <p class="proof-upload-feedback" id="orderDocFeedback" role="status"></p>
         </div>
+      </div>
+    </div>
+
+    <!-- Modal de Utilizador (criar / editar) -->
+    <div class="auth-modal-overlay" id="userModalOverlay">
+      <div class="auth-modal-card">
+        <div class="auth-modal-header">
+          <div class="auth-modal-title-wrap">
+            <h3 class="auth-modal-title" id="userModalTitle">Novo Utilizador</h3>
+            <p class="auth-modal-subtitle">Conta de cliente ou da equipa TradeX.</p>
+          </div>
+          <button type="button" class="auth-modal-close" id="btnCloseUserModal">&times;</button>
+        </div>
+        <form id="formUser" class="auth-tab-content active" novalidate>
+          <input type="hidden" id="userFormId" />
+          <div class="checkout-form-row">
+            <div class="checkout-form-group"><label for="userFormFirstName">Nome *</label><input type="text" id="userFormFirstName" class="checkout-input" required /></div>
+            <div class="checkout-form-group"><label for="userFormLastName">Apelido</label><input type="text" id="userFormLastName" class="checkout-input" /></div>
+          </div>
+          <div class="checkout-form-row">
+            <div class="checkout-form-group"><label for="userFormEmail">E-mail *</label><input type="email" id="userFormEmail" class="checkout-input" required /></div>
+            <div class="checkout-form-group"><label for="userFormPhone">Telefone</label><input type="text" id="userFormPhone" class="checkout-input" /></div>
+          </div>
+          <div class="checkout-form-row">
+            <div class="checkout-form-group">
+              <label for="userFormRole">Papel</label>
+              <select id="userFormRole" class="checkout-select">
+                <option value="CUSTOMER">Cliente</option>
+                <option value="STAFF">Equipa</option>
+                <option value="ADMIN">Administrador</option>
+              </select>
+            </div>
+            <div class="checkout-form-group"><label for="userFormPassword" id="userFormPasswordLabel">Palavra-passe *</label><input type="password" id="userFormPassword" class="checkout-input" autocomplete="new-password" minlength="8" /></div>
+          </div>
+          <label class="auth-checkbox-label"><input type="checkbox" id="userFormActive" checked /> <span>Conta activa</span></label>
+          <button type="submit" class="btn-dark btn-full">Guardar utilizador</button>
+          <p class="proof-upload-feedback" id="userFormFeedback" role="status"></p>
+        </form>
       </div>
     </div>
 
