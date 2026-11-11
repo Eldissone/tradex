@@ -450,6 +450,7 @@ function renderProductsModule() {
         <button type="button" class="btn-outline-dark btn-xs btn-toggle-product" data-product-id="${prod.id}" data-active="${prod.active === false ? '0' : '1'}">
           ${prod.active === false ? 'Activar' : 'Desactivar'}
         </button>
+        <button type="button" class="btn-outline-dark btn-xs btn-delete-product" data-product-id="${prod.id}" style="color:#b91c1c;border-color:#fca5a5">Eliminar</button>
       </td>
     </tr>
   `).join('');
@@ -457,6 +458,20 @@ function renderProductsModule() {
 
 // Activar / desactivar produto (desactivado deixa de aparecer na loja; encomendas antigas mantêm-se)
 document.getElementById('adminProductsTableBody')?.addEventListener('click', async (e) => {
+  const del = e.target.closest('.btn-delete-product');
+  if (del) {
+    const id = del.getAttribute('data-product-id');
+    if (!confirm('Eliminar este produto definitivamente? Não pode ser desfeito. As encomendas antigas mantêm o registo dos itens.')) return;
+    del.disabled = true;
+    const r = await api.products.remove(id);
+    del.disabled = false;
+    if (!r.ok) return alert(r.message || 'Não foi possível eliminar o produto.');
+    const i = PRODUCTS_DATA.findIndex(p => p.id === id);
+    if (i >= 0) PRODUCTS_DATA.splice(i, 1);
+    renderProductsModule();
+    renderCmsModule();
+    return;
+  }
   const btn = e.target.closest('.btn-toggle-product');
   if (!btn) return;
   const id = btn.getAttribute('data-product-id');

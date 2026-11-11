@@ -143,6 +143,15 @@ productsRouter.put('/:id', requireStaff, async (req, res) => {
   return res.json({ ok: true, data: serializeProduct(updated) });
 });
 
+// Eliminação definitiva (staff). As encomendas antigas mantêm título, imagem e preço dos itens.
+productsRouter.delete('/:id', requireStaff, async (req, res, next) => {
+  if (req.query.permanent !== '1') return next();
+  const found = await prisma.product.findUnique({ where: { id: req.params.id }, select: { id: true } });
+  if (!found) return res.status(404).json({ ok: false, message: 'Produto não encontrado.' });
+  await prisma.product.delete({ where: { id: req.params.id } });
+  return res.json({ ok: true, data: { id: req.params.id, deleted: true } });
+});
+
 // Desactivação (staff) — mantém o histórico das encomendas
 productsRouter.delete('/:id', requireStaff, async (req, res) => {
   const updated = await prisma.product.update({ where: { id: req.params.id }, data: { active: false }, include: INCLUDE });

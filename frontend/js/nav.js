@@ -46,8 +46,7 @@ function renderNav(container) {
   const items = NAV_CATEGORIES.map(c => `
     <li role="none">
       <a role="menuitem" href="catalogo.html?categoria=${c.slug}" class="nav-dd-item">
-        <span class="nav-dd-icon">${svg(c.icon)}</span>
-        <span>${c.label}</span>
+        ${c.label}
       </a>
     </li>`).join('');
 
@@ -57,15 +56,20 @@ function renderNav(container) {
         Produtos
         ${svg('<polyline points="6 9 12 15 18 9"></polyline>', 14)}
       </button>
-      <ul class="nav-dd-menu" id="navProductsMenu" role="menu" aria-label="Categorias de produtos">
-        <li role="none">
-          <a role="menuitem" href="catalogo.html" class="nav-dd-item nav-dd-all">
-            <span class="nav-dd-icon">${svg('<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect>')}</span>
-            <span>Todos os produtos</span>
-          </a>
-        </li>
-        ${items}
-      </ul>
+      <div class="nav-dd-menu" id="navProductsMenu">
+        <div class="nav-dd-inner">
+          <div class="nav-dd-intro">
+            <p class="nav-dd-title">Tudo da China, entregue em Angola</p>
+            <a href="catalogo.html" class="nav-dd-cta">Ver todos os produtos</a>
+          </div>
+          <div class="nav-dd-section">
+            <p class="nav-dd-heading">Categorias</p>
+            <ul class="nav-dd-list" role="menu" aria-label="Categorias de produtos">
+              ${items}
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
     <a href="rastreio.html"${trackingActive ? ' class="nav-link-active"' : ''}>Rastreio</a>
   `;

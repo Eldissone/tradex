@@ -103,7 +103,8 @@ export const api = {
     getById: (id) => request(`/products/${encodeURIComponent(id)}`),
     create: (data) => request('/products', { method: 'POST', body: data }),
     update: (id, data) => request(`/products/${encodeURIComponent(id)}`, { method: 'PUT', body: data }),
-    deactivate: (id) => request(`/products/${encodeURIComponent(id)}`, { method: 'DELETE' })
+    deactivate: (id) => request(`/products/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+    remove: (id) => request(`/products/${encodeURIComponent(id)}?permanent=1`, { method: 'DELETE' })
   },
 
   orders: {

@@ -8603,7 +8603,7 @@ footer {
    Navegação partilhada: "Produtos" (menu suspenso de categorias) + "Rastreio"
    ========================================================================== */
 .main-header .nav-dd {
-  position: relative;
+  position: static;
 }
 
 .main-header .nav-dd-toggle {
@@ -8612,7 +8612,9 @@ footer {
   gap: 0.3rem;
   background: none;
   border: 0;
-  padding: 0;
+  padding: 0.5rem 0.9rem;
+  margin: -0.5rem -0.9rem;
+  border-radius: 999px;
   font: inherit;
   color: #d1d5db;
   cursor: pointer;
@@ -8643,23 +8645,18 @@ footer {
 
 .main-header .nav-dd-menu {
   position: absolute;
-  top: calc(100% + 0.75rem);
-  left: -0.75rem;
+  top: 100%;
+  left: 0;
+  right: 0;
   z-index: 1000;
-  min-width: 260px;
-  margin: 0;
-  padding: 0.4rem;
-  list-style: none;
   background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+  border-top: 1px solid #e5e7eb;
+  border-radius: 0 0 28px 28px;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.14);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-4px);
-  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
-
-  
+  transform: translateY(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
 }
 
 .main-header .nav-dd.open .nav-dd-menu {
@@ -8668,40 +8665,84 @@ footer {
   transform: translateY(0);
 }
 
+.main-header .nav-dd-inner {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 2.25rem;
+}
+
+.main-header .nav-dd-intro {
+  padding-right: 2rem;
+}
+
+.main-header .nav-dd-title {
+  margin: 0 0 1.5rem;
+  font-size: 1.6rem;
+  line-height: 1.2;
+  font-weight: 500;
+  color: #111827;
+}
+
+.main-header .nav-links .nav-dd-cta {
+  display: inline-block;
+  padding: 0.7rem 1.3rem;
+  border-radius: 999px;
+  background: #f1f3f4;
+  color: #111827;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.main-header .nav-links .nav-dd-cta:hover {
+  background: #e5e7eb;
+  color: #000000;
+  text-decoration: none;
+}
+
+.main-header .nav-dd-section {
+  padding-left: 2rem;
+  border-left: 1px solid #eceff1;
+}
+
+.main-header .nav-dd-heading {
+  margin: 0 0 1.1rem;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.main-header .nav-dd-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.2rem 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .main-header .nav-links .nav-dd-item {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.55rem 0.65rem;
-  border-radius: 8px;
-  color: #1f2937;
-  font-size: 0.9rem;
+  display: block;
+  padding: 0.6rem 0;
+  color: #374151;
+  font-size: 0.95rem;
   text-decoration: none;
 }
 
 .main-header .nav-links .nav-dd-item:hover,
 .main-header .nav-links .nav-dd-item:focus-visible {
-  background: #f3f4f6;
   color: #000000;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
-.main-header .nav-dd-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
-  border-radius: 8px;
-  background: #ecfdf5;
-  color: #059669;
+.main-header .nav-dd.open .nav-dd-toggle {
+  background: rgba(255, 255, 255, 0.14);
 }
 
-.main-header .nav-dd-all {
-  border-bottom: 1px solid #f1f5f9;
-  margin-bottom: 0.25rem;
-  font-weight: 600;
+.main-header.past-hero .nav-dd.open .nav-dd-toggle {
+  background: #f1f3f4;
 }
 
 /* Em telemóvel, a navegação partilhada continua visível (apenas 2 itens) */
@@ -8711,18 +8752,15 @@ footer {
     gap: 0.9rem;
     font-size: 0.88rem;
   }
-  .main-header .nav-dd {
-    position: static;
+  .main-header .nav-dd-inner {
+    grid-template-columns: 1fr;
+    padding: 1.25rem 1rem 1.5rem;
   }
-  .main-header .nav-dd-menu {
-    left: 16px;
-    right: 16px;
-    top: 100%;
-    min-width: 0;
-  }
-  .main-header .nav {
-    position: relative;
-  }
+  .main-header .nav-dd-intro { padding-right: 0; margin-bottom: 1rem; }
+  .main-header .nav-dd-title { font-size: 1.2rem; margin-bottom: 0.9rem; }
+  .main-header .nav-dd-section { padding-left: 0; border-left: 0; }
+  .main-header .nav-dd-list { grid-template-columns: 1fr; }
+  .main-header .nav-dd-menu { border-radius: 0 0 20px 20px; }
 }
 
 .footer-links {
@@ -9385,3 +9423,6 @@ footer {
   .conv-layout { grid-template-columns: 1fr; }
   .conv-msg { max-width: 92%; }
 }
+
+.admin-table tr.is-inactive { opacity: 0.55; }
+.admin-table td small { color: #6b7280; }

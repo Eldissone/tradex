@@ -185,25 +185,23 @@ function renderSuppliers() {
     container.innerHTML = '<p class="table-empty-message">Sem fornecedores registados.</p>';
     return;
   }
-  container.innerHTML = suppliers.map(sup => `
-    <div class="admin-supplier-card ${sup.active ? '' : 'is-inactive'}">
-      <div class="supplier-card-head">
-        <div>
-          <h3 class="supplier-name">${esc(sup.name)}</h3>
-          <span class="supplier-prov">${esc(sup.province || '')}${sup.active ? '' : ' • Inactivo'}</span>
-        </div>
-        <span class="supplier-rating">${esc(sup.rating || '')}</span>
-      </div>
-      <div class="supplier-tags">${(sup.categories || []).map(c => `<span class="supplier-cat-tag">${esc(c)}</span>`).join('')}</div>
-      <div class="supplier-meta-list">
-        <div><span>Contacto:</span><strong>${esc(sup.contactPerson || '—')}</strong></div>
-        <div><span>E-mail:</span><strong>${sup.email ? `<a href="mailto:${esc(sup.email)}">${esc(sup.email)}</a>` : '—'}</strong></div>
-        <div><span>WeChat / WhatsApp:</span><strong>${esc(sup.wechat || '—')} • ${esc(sup.whatsapp || '—')}</strong></div>
-        <div><span>Termos:</span><strong>${esc(sup.terms || '—')}</strong></div>
-        <div><span>Produtos no catálogo:</span><strong>${sup.productsCount ?? 0}</strong></div>
-      </div>
-      <button type="button" class="btn-outline-dark btn-xs" data-supplier-edit="${sup.id}">Editar</button>
-    </div>`).join('');
+  container.innerHTML = `
+    <table class="admin-table">
+      <thead><tr>
+        <th>Fornecedor</th><th>Categorias</th><th>Contacto</th><th>WeChat / WhatsApp</th><th>Termos</th><th>Produtos</th><th>Estado</th><th></th>
+      </tr></thead>
+      <tbody>${suppliers.map(sup => `
+        <tr class="${sup.active ? '' : 'is-inactive'}">
+          <td><strong>${esc(sup.name)}</strong><br><small>${esc(sup.province || '')}${sup.rating ? ' • ' + esc(sup.rating) : ''}</small></td>
+          <td>${(sup.categories || []).map(c => `<span class="supplier-cat-tag">${esc(c)}</span>`).join(' ') || '—'}</td>
+          <td>${esc(sup.contactPerson || '—')}<br>${sup.email ? `<a href="mailto:${esc(sup.email)}">${esc(sup.email)}</a>` : '—'}</td>
+          <td>${esc(sup.wechat || '—')}<br>${esc(sup.whatsapp || '—')}</td>
+          <td>${esc(sup.terms || '—')}</td>
+          <td>${sup.productsCount ?? 0}</td>
+          <td>${sup.active ? 'Activo' : 'Inactivo'}</td>
+          <td><button type="button" class="btn-outline-dark btn-xs" data-supplier-edit="${sup.id}">Editar</button></td>
+        </tr>`).join('')}</tbody>
+    </table>`;
 }
 
 function bindSuppliers() {
