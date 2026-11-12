@@ -1482,12 +1482,12 @@ function openCmsModal(sectionKey, editId) {
     fieldsContainer.innerHTML = `
       <div class="checkout-form-group">
         <label for="cmsFieldHeroTitle">Título Principal do Slide (H1) *</label>
-        <input type="text" id="cmsFieldHeroTitle" class="checkout-input" value="${existing?.title || ''}" placeholder="Ex: Soluções solares com garantia de fábrica." required />
+        <input type="text" id="cmsFieldHeroTitle" class="checkout-input" value="${escapeHtml(existing?.title || '')}" placeholder="Ex: Soluções solares com garantia de fábrica." required />
       </div>
       <div class="checkout-form-row">
         <div class="checkout-form-group">
           <label for="cmsFieldHeroEyebrow">Selo / Eyebrow do Slide</label>
-          <input type="text" id="cmsFieldHeroEyebrow" class="checkout-input" value="${existing?.eyebrow || 'CHINA ➔ ANGOLA'}" placeholder="Ex: ENERGIA SOLAR & SISTEMAS HÍBRIDOS" />
+          <input type="text" id="cmsFieldHeroEyebrow" class="checkout-input" value="${escapeHtml(existing?.eyebrow || 'CHINA ➔ ANGOLA')}" placeholder="Ex: ENERGIA SOLAR & SISTEMAS HÍBRIDOS" />
         </div>
         <div class="checkout-form-group">
           <label for="cmsFieldHeroOrder">Ordem de Exibição no Slider</label>
@@ -1496,13 +1496,22 @@ function openCmsModal(sectionKey, editId) {
       </div>
       <div class="checkout-form-group">
         <label for="cmsFieldHeroLead">Texto Descritivo / Lead</label>
-        <textarea id="cmsFieldHeroLead" class="checkout-input" rows="3" placeholder="Insira o texto explicativo sobre os fornecedores e logística...">${existing?.lead || ''}</textarea>
+        <textarea id="cmsFieldHeroLead" class="checkout-input" rows="3" placeholder="Insira o texto explicativo sobre os fornecedores e logística...">${escapeHtml(existing?.lead || '')}</textarea>
       </div>
       <div class="checkout-form-group">
-        <label for="cmsFieldHeroImage">URL da Imagem de Fundo *</label>
-        <input type="text" id="cmsFieldHeroImage" class="checkout-input" value="${existing?.image || 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1600'}" required />
+        <label for="cmsFieldHeroImage">Imagem de Fundo *</label>
+        <div class="hero-image-upload">
+          <img id="cmsHeroImagePreview" class="hero-image-preview" alt="Pré-visualização" src="${escapeHtml(existing?.image || 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1600')}" />
+          <div class="hero-image-controls">
+            <input type="file" id="cmsHeroImageFile" accept="image/jpeg,image/png,image/webp" hidden />
+            <button type="button" class="btn-dark" id="cmsHeroImageBtn">Carregar imagem do computador</button>
+            <small id="cmsHeroImageStatus" class="table-sub-detail">JPG, PNG ou WEBP até 4 MB. Recomendado 1600 px de largura.</small>
+            <input type="text" id="cmsFieldHeroImage" class="checkout-input" value="${escapeHtml(existing?.image || 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1600')}" placeholder="…ou cole um URL (https://…)" required />
+          </div>
+        </div>
       </div>
     `;
+    setupHeroImageUpload();
   } else if (sectionKey === 'banners') {
     title.textContent = existing ? 'Editar Banner da Loja' : 'Novo Banner da Loja';
     sub.textContent = 'Configure o texto, chamada para ação (CTA) e imagem de destaque na página inicial.';
@@ -1640,6 +1649,33 @@ function openCmsModal(sectionKey, editId) {
   }
 
   modal.classList.add('visible');
+}
+
+// Carrega a imagem do slide para o servidor e preenche o campo de URL
+function setupHeroImageUpload() {
+  const fileInput = document.getElementById('cmsHeroImageFile');
+  const btn = document.getElementById('cmsHeroImageBtn');
+  const urlInput = document.getElementById('cmsFieldHeroImage');
+  const preview = document.getElementById('cmsHeroImagePreview');
+  const status = document.getElementById('cmsHeroImageStatus');
+  if (!fileInput || !btn || !urlInput) return;
+
+  btn.addEventListener('click', () => fileInput.click());
+  urlInput.addEventListener('change', () => { if (preview) preview.src = urlInput.value.trim(); });
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+    if (file.size > 4 * 1024 * 1024) { status.textContent = 'A imagem excede 4 MB.'; return; }
+    btn.disabled = true;
+    status.textContent = 'A enviar…';
+    const up = await api.admin.uploadImage(file);
+    btn.disabled = false;
+    fileInput.value = '';
+    if (!up.ok) { status.textContent = up.message || 'Falha no envio.'; return; }
+    urlInput.value = up.data.data.url;
+    if (preview) preview.src = up.data.data.url;
+    status.textContent = 'Imagem carregada. Clique em "Salvar Conteúdo" para aplicar.';
+  });
 }
 
 function saveCmsModalForm() {

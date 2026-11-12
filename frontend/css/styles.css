@@ -9961,3 +9961,10 @@ body.doc-viewer-open {
 .cart-qty-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .cart-qty-input { width: 40px; height: 30px; border: 0; text-align: center; font: inherit; font-size: 0.9rem; background: transparent; -moz-appearance: textfield; }
 .cart-qty-input::-webkit-outer-spin-button, .cart-qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+/* Upload da imagem do slide (CMS) */
+.hero-image-upload { display: flex; gap: 1rem; align-items: flex-start; }
+.hero-image-preview { width: 120px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb; background: #f3f4f6; flex: none; }
+.hero-image-controls { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; min-width: 0; }
+.hero-image-controls .btn-dark { align-self: flex-start; padding: 0.5rem 1rem; font-size: 0.85rem; }
+@media (max-width: 560px) { .hero-image-upload { flex-direction: column; } }
