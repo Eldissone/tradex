@@ -72,18 +72,21 @@ productsRouter.get('/:id', async (req, res) => {
   return res.json({ ok: true, data: serializeProduct(item) });
 });
 
+// Só http(s) ou caminhos relativos (nunca javascript:/data:)
+const imageUrl = z.string().max(1000).refine(v => /^(https?:\/\/|\/)/i.test(v), 'URL de imagem inválido.');
+
 const productSchema = z.object({
-  title: z.string().trim().min(1, 'O título é obrigatório.'),
+  title: z.string().trim().min(1, 'O título é obrigatório.').max(200),
   category: z.string().trim().min(1, 'A categoria é obrigatória.'),
   priceAoa: z.coerce.number().positive('O preço deve ser positivo.'),
-  description: z.string().optional().nullable(),
+  description: z.string().max(5000).optional().nullable(),
   origin: z.string().optional().nullable(),
   badge: z.string().optional().nullable(),
   moq: z.string().optional().nullable(),
   unit: z.string().optional(),
-  specs: z.string().optional().nullable(),
-  image: z.string().optional().nullable(),
-  images: z.array(z.object({ url: z.string(), label: z.string().optional() })).optional(),
+  specs: z.string().max(1000).optional().nullable(),
+  image: imageUrl.optional().nullable(),
+  images: z.array(z.object({ url: imageUrl, label: z.string().optional() })).optional(),
   techSpecs: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
   logistics: z.record(z.string(), z.any()).optional(),
   active: z.boolean().optional(),

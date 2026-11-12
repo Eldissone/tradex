@@ -7,19 +7,23 @@ import { optionalAuth, requireAuth, requireStaff, requireAdmin, isStaff } from '
 import { serializeOrder, ORDER_INCLUDE, ORDER_STATUS_LABELS } from '../serializers.js';
 
 import multer from 'multer';
+import { rateLimit } from '../middlewares/rate-limit.js';
 import { deleteProof } from '../../infrastructure/storage/payment-proofs.js';
 import { MAX_DOCUMENT_BYTES, detectDocumentType, saveDocument, deleteDocumentFile } from '../../infrastructure/storage/order-documents.js';
 
 export const ordersRouter = Router();
 
+// Criação pública de encomendas: limita spam e enchimento da base de dados
+const orderCreateLimiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 20, message: 'Demasiados pedidos a partir desta ligação. Tente novamente mais tarde.' });
+
 const addressSchema = z.object({
-  label: z.string().optional().nullable(),
-  recipientName: z.string().optional().nullable(),
-  phone: z.string().optional().nullable(),
-  province: z.string().optional().nullable(),
-  municipality: z.string().optional().nullable(),
-  street: z.string().optional().nullable(),
-  reference: z.string().optional().nullable()
+  label: z.string().max(80).optional().nullable(),
+  recipientName: z.string().max(120).optional().nullable(),
+  phone: z.string().max(40).optional().nullable(),
+  province: z.string().max(80).optional().nullable(),
+  municipality: z.string().max(80).optional().nullable(),
+  street: z.string().max(200).optional().nullable(),
+  reference: z.string().max(200).optional().nullable()
 });
 
 const createOrderSchema = z.object({
@@ -28,10 +32,10 @@ const createOrderSchema = z.object({
     quantity: z.coerce.number().int().positive().max(100000)
   })).min(1, 'O pedido está vazio.'),
   customer: z.object({
-    name: z.string().trim().min(1, 'O nome é obrigatório.'),
+    name: z.string().trim().min(1, 'O nome é obrigatório.').max(120),
     email: z.string().trim().toLowerCase().email('E-mail inválido.'),
-    phone: z.string().trim().min(6, 'O telefone é obrigatório.'),
-    nif: z.string().trim().optional().nullable()
+    phone: z.string().trim().min(6, 'O telefone é obrigatório.').max(40),
+    nif: z.string().trim().max(40).optional().nullable()
   }),
   addressId: z.string().optional().nullable(),
   address: addressSchema.optional().nullable(),
@@ -47,7 +51,7 @@ function canSeeOrder(user, order) {
 }
 
 // Criação de encomenda (cliente com sessão ou convidado)
-ordersRouter.post('/', optionalAuth, async (req, res) => {
+ordersRouter.post('/', orderCreateLimiter, optionalAuth, async (req, res) => {
   const input = createOrderSchema.parse(req.body);
   try {
     const order = await createOrder(input, { customer: req.user?.customer || null, channel: 'WEB' });

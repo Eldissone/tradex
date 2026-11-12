@@ -1,3 +1,4 @@
+import { esc } from './esc.js';
 import { api } from './api.js';
 import { cartStore, renderCartList } from './cart.js';
 import { PRODUCTS_DATA, loadProducts } from './product-store.js';
@@ -50,26 +51,26 @@ function renderCarousel(filterCategory = 'all') {
     <article class="carousel-card" data-id="${p.id}">
       <div>
         <div class="carousel-card-banner">
-          <span class="carousel-badge">${p.badge}</span>
-          <span class="carousel-origin">${p.origin}</span>
+          <span class="carousel-badge">${esc(p.badge)}</span>
+          <span class="carousel-origin">${esc(p.origin)}</span>
         </div>
 
         <a href="produto?id=${p.id}" class="nav-link">
           <div class="product-mirror-box">
             <div class="product-mirror-sheen"></div>
-            <img src="${p.image}" alt="${p.title}" class="product-mirror-img" loading="lazy" />
+            <img src="${esc(p.image)}" alt="${esc(p.title)}" class="product-mirror-img" loading="lazy" />
             <div class="product-mirror-base"></div>
           </div>
 
           <span class="product-category">${p.category}</span>
-          <h3 class="product-title">${p.title}</h3>
-          <p class="product-specs">${p.specs}</p>
+          <h3 class="product-title">${esc(p.title)}</h3>
+          <p class="product-specs">${esc(p.specs)}</p>
         </a>
       </div>
       <div class="product-bottom">
         <div class="product-price">
           ${cartStore.formatAoa(p.priceAoa)}
-          <small>por ${p.unit}</small>
+          <small>por ${esc(p.unit)}</small>
         </div>
         <button type="button" class="btn-add-item" data-add="${p.id}">
           + Adicionar
@@ -265,7 +266,7 @@ function setupCalculator() {
 
     const products = PRODUCTS_DATA.filter(p => p.active !== false);
     productSelect.innerHTML = products.map(p =>
-      `<option value="${p.id}">${p.title} — ${cartStore.formatAoa(p.priceAoa)}${p.unit ? ' / ' + p.unit : ''}</option>`
+      `<option value="${esc(p.id)}">${esc(p.title)} — ${cartStore.formatAoa(p.priceAoa)}${p.unit ? ' / ' + esc(p.unit) : ''}</option>`
     ).join('');
     if (prevProduct && products.some(p => p.id === prevProduct)) productSelect.value = prevProduct;
 
@@ -366,7 +367,7 @@ function renderFaqSection() {
   container.innerHTML = faqs.map((faq, idx) => `
     <div class="faq-item ${idx === initialOpenIndex ? 'open' : ''}">
       <button type="button" class="faq-question" aria-expanded="${idx === initialOpenIndex ? 'true' : 'false'}">
-        <span class="faq-question-title">${faq.question}</span>
+        <span class="faq-question-title">${esc(faq.question)}</span>
         <span class="faq-action-icon" aria-hidden="true">
           <svg class="faq-icon-plus" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -378,7 +379,7 @@ function renderFaqSection() {
         </span>
       </button>
       <div class="faq-answer">
-        <p>${faq.answer}</p>
+        <p>${esc(faq.answer)}</p>
       </div>
     </div>
   `).join('');

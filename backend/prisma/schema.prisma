@@ -391,3 +391,25 @@ model OrderDocument {
 
   @@index([orderId])
 }
+
+// Registo de operações de escrita feitas por utilizadores autenticados (staff/admin)
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actorEmail String?
+  actorRole  String?
+  action     String
+  method     String
+  path       String
+  entity     String?
+  entityId   String?
+  status     Int
+  ip         String?
+  userAgent  String?
+  details    Json?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([actorId, createdAt])
+  @@index([entity, entityId])
+}

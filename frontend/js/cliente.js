@@ -1,3 +1,4 @@
+import { esc } from './esc.js';
 // TradeX Global Trading - Dashboard do Cliente
 import { authStore, openAuthModal } from './auth.js';
 import { api } from './api.js';
@@ -195,9 +196,9 @@ function renderOrdersList() {
     }
 
     const itemsSummary = (order.items || []).slice(0, 3).map(item => `
-      <div class="order-item-chip" title="${item.title}">
-        <img src="${item.image || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=100'}" alt="${item.title}" />
-        <span>${item.quantity}x ${item.title.length > 25 ? item.title.slice(0, 25) + '...' : item.title}</span>
+      <div class="order-item-chip" title="${esc(item.title)}">
+        <img src="${esc(item.image || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=100')}" alt="${esc(item.title)}" />
+        <span>${item.quantity}x ${esc(item.title.length > 25 ? item.title.slice(0, 25) + '...' : item.title)}</span>
       </div>
     `).join('');
 
@@ -228,7 +229,7 @@ function renderOrdersList() {
             </div>
             <div class="order-info-col">
               <span class="order-info-label">Destino em Angola:</span>
-              <strong class="order-info-val">${order.logistics?.deliveryMethod === 'pickup' ? 'Levantamento no Terminal TradeX' : `${order.logistics?.address?.municipality || 'Luanda'}, ${order.logistics?.address?.province || 'Luanda'}`}</strong>
+              <strong class="order-info-val">${order.logistics?.deliveryMethod === 'pickup' ? 'Levantamento no Terminal TradeX' : esc(`${order.logistics?.address?.municipality || 'Luanda'}, ${order.logistics?.address?.province || 'Luanda'}`)}</strong>
             </div>
             <div class="order-info-col">
               <span class="order-info-label">Total a Liquidar:</span>
@@ -303,7 +304,7 @@ function renderPaymentsTable() {
     return `
       <tr>
         <td>
-          <strong class="pay-tx-code">${pay.reference || pay.transactionId || '—'}</strong>
+          <strong class="pay-tx-code">${esc(pay.reference || pay.transactionId || '—')}</strong>
         </td>
         <td>
           <a href="rastreio?codigo=${encodeURIComponent(pay.orderNumber)}" class="table-order-link">${pay.orderNumber}</a>
@@ -335,12 +336,12 @@ function renderAddressesGrid() {
   container.innerHTML = addresses.map(addr => `
     <div class="client-address-card ${addr.isDefault ? 'default-address' : ''}">
       <div class="address-top-row">
-        <strong class="address-title-tag">${addr.label || 'Morada de Descarga'}</strong>
+        <strong class="address-title-tag">${esc(addr.label || 'Morada de Descarga')}</strong>
         ${addr.isDefault ? '<span class="address-main-badge">Principal</span>' : ''}
       </div>
-      <p class="address-recipient-line">${addr.recipientName} • ${addr.phone}</p>
-      <p class="address-full-location">${addr.street}, ${addr.municipality}, ${addr.province}</p>
-      ${addr.reference ? `<p class="address-ref-line">Ponto de Referência: ${addr.reference}</p>` : ''}
+      <p class="address-recipient-line">${esc(addr.recipientName)} • ${esc(addr.phone)}</p>
+      <p class="address-full-location">${esc(addr.street)}, ${esc(addr.municipality)}, ${esc(addr.province)}</p>
+      ${addr.reference ? `<p class="address-ref-line">Ponto de Referência: ${esc(addr.reference)}</p>` : ''}
     </div>
   `).join('');
 }
@@ -366,11 +367,11 @@ function renderFavoritesGrid() {
   container.innerHTML = favoriteProducts.map(p => `
     <div class="client-fav-card">
       <div class="fav-card-image">
-        <img src="${p.image || p.images?.[0]?.url || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300'}" alt="${p.title}" />
+        <img src="${esc(p.image || p.images?.[0]?.url || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300')}" alt="${esc(p.title)}" />
       </div>
       <div class="fav-card-content">
         <span class="fav-card-cat">${(p.categoryLabel || p.category || '').toUpperCase()}</span>
-        <h4 class="fav-card-title">${p.title}</h4>
+        <h4 class="fav-card-title">${esc(p.title)}</h4>
         <strong class="fav-card-price">${cartStore.formatAoa(p.priceAoa)}</strong>
         <div class="fav-card-actions">
           <a href="produto?id=${encodeURIComponent(p.id)}" class="btn-outline-dark btn-sm">Ver Detalhes</a>
@@ -531,9 +532,9 @@ function openOrderModal(order, autoTriggerPayment = false) {
     <div class="modal-order-items">
       ${(order.items || []).map(i => `
         <div class="modal-item-row">
-          <img src="${i.image || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=100'}" alt="${i.title}" />
+          <img src="${esc(i.image || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=100')}" alt="${esc(i.title)}" />
           <div class="modal-item-detail">
-            <strong>${i.title}</strong>
+            <strong>${esc(i.title)}</strong>
             <span>${i.quantity} un. x ${cartStore.formatAoa(i.priceAoa)}</span>
           </div>
           <strong class="modal-item-total">${cartStore.formatAoa(i.subtotal || i.priceAoa * i.quantity)}</strong>
@@ -550,7 +551,7 @@ function openOrderModal(order, autoTriggerPayment = false) {
           ${(PAYMENT_STATUS_LABELS[paymentStatus] || 'Aguarda Transferência').toUpperCase()}
         </span>
       </div>
-      ${order.payment?.reference ? `<p class="modal-tx-code">Referência: <strong>${order.payment.reference}</strong></p>` : ''}
+      ${order.payment?.reference ? `<p class="modal-tx-code">Referência: <strong>${esc(order.payment.reference)}</strong></p>` : ''}
     </div>
 
     ${isPending ? `
@@ -578,7 +579,7 @@ function openOrderModal(order, autoTriggerPayment = false) {
     api.config.payments().then(res => {
       const box = document.getElementById('modalBankAccounts');
       const accounts = res.ok ? res.data.data.bank?.accounts || [] : [];
-      if (box) box.innerHTML = accounts.map(a => `<p><strong>${a.bank}:</strong> ${a.iban}</p>`).join('');
+      if (box) box.innerHTML = accounts.map(a => `<p><strong>${esc(a.bank)}:</strong> ${esc(a.iban)}</p>`).join('');
     });
   }
 

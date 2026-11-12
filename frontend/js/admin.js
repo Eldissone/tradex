@@ -240,10 +240,10 @@ function renderAnalyticsModule() {
         <div class="activity-bullet"></div>
         <div class="activity-content">
           <div class="activity-head">
-            <strong>${act.title}</strong>
-            <span class="activity-date">${act.date}</span>
+            <strong>${escapeHtml(act.title)}</strong>
+            <span class="activity-date">${escapeHtml(act.date)}</span>
           </div>
-          <p class="activity-desc">${act.desc}</p>
+          <p class="activity-desc">${escapeHtml(act.desc)}</p>
         </div>
       </li>
     `).join('');
@@ -362,8 +362,8 @@ function renderOrdersModule() {
         </td>
         <td>
           <div class="row-actions">
-            ${iconBtn({ icon: 'refresh', title: 'Alterar estado', variant: 'primary', cls: 'btn-open-status-modal', attrs: `data-order-number="${order.number}"` })}
-            ${iconBtn({ icon: 'trash', title: 'Eliminar encomenda', variant: 'danger', cls: 'btn-delete-order', attrs: `data-order-number="${order.number}"` })}
+            ${iconBtn({ icon: 'refresh', title: 'Alterar estado', variant: 'primary', cls: 'btn-open-status-modal', attrs: `data-order-number="${escapeHtml(order.number)}"` })}
+            ${iconBtn({ icon: 'trash', title: 'Eliminar encomenda', variant: 'danger', cls: 'btn-delete-order', attrs: `data-order-number="${escapeHtml(order.number)}"` })}
           </div>
         </td>
       </tr>
@@ -510,18 +510,18 @@ function renderProductsModule() {
     <tr>
       <td>
         <div class="admin-prod-cell">
-          <img src="${prod.image}" alt="${prod.title}" class="admin-prod-thumb" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=200';" />
+          <img src="${escapeHtml(prod.image)}" alt="${escapeHtml(prod.title)}" class="admin-prod-thumb" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=200';" />
           <div>
-            <strong>${prod.title}</strong>
-            <span class="table-sub-detail">${prod.specs || ''}</span>
+            <strong>${escapeHtml(prod.title)}</strong>
+            <span class="table-sub-detail">${escapeHtml(prod.specs || '')}</span>
           </div>
         </div>
       </td>
       <td>
-        <span class="admin-cat-pill">${prod.categoryLabel || prod.category.toUpperCase()}</span>
+        <span class="admin-cat-pill">${escapeHtml(prod.categoryLabel || prod.category.toUpperCase())}</span>
         ${prod.active === false ? '<span class="table-sub-detail">Inactivo</span>' : ''}
       </td>
-      <td>${prod.origin || 'Guangdong, China'}</td>
+      <td>${escapeHtml(prod.origin || 'Guangdong, China')}</td>
       <td>${prod.moq || '1 Unidade'}</td>
       <td>
         <strong class="pay-amount">${cartStore.formatAoa(prod.priceAoa)}</strong>
@@ -628,7 +628,7 @@ function setupProductModal() {
             </div>
 
             <div class="upload-preview-container">
-              <img src="${photo.url || ''}" class="upload-preview-img" alt="${badgeLabel}" />
+              <img src="${escapeHtml(photo.url || '')}" class="upload-preview-img" alt="${escapeHtml(badgeLabel)}" />
               <div class="upload-preview-overlay">
                 <span class="upload-overlay-text">Substituir Ficheiro</span>
               </div>
@@ -1018,13 +1018,13 @@ function renderFinanceModule() {
     return `
       <tr>
         <td>
-          <strong class="pay-tx-code">${pay.reference || pay.transactionId || '—'}</strong>
+          <strong class="pay-tx-code">${escapeHtml(pay.reference || pay.transactionId || '—')}</strong>
         </td>
         <td>
-          <strong>${pay.orderNumber}</strong>
+          <strong>${escapeHtml(pay.orderNumber)}</strong>
           ${pay.customerName ? `<span class="table-sub-detail">${escapeHtml(pay.customerName)}</span>` : ''}
         </td>
-        <td>${pay.methodName || 'Transferência Bancária'}</td>
+        <td>${escapeHtml(pay.methodName || 'Transferência Bancária')}</td>
         <td>${new Date(pay.date).toLocaleDateString('pt-AO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
         <td>
           <strong class="pay-amount">${cartStore.formatAoa(pay.amountAoa)}</strong>
@@ -1183,15 +1183,15 @@ function renderCmsFeaturedTable() {
       <tr>
         <td>
           <div class="admin-prod-cell">
-            <img src="${prod.image}" alt="${prod.title}" class="admin-prod-thumb" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=200';" />
+            <img src="${escapeHtml(prod.image)}" alt="${escapeHtml(prod.title)}" class="admin-prod-thumb" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=200';" />
             <div>
-              <strong>${prod.title}</strong>
-              <span class="table-sub-detail">${prod.specs || ''}</span>
+              <strong>${escapeHtml(prod.title)}</strong>
+              <span class="table-sub-detail">${escapeHtml(prod.specs || '')}</span>
             </div>
           </div>
         </td>
-        <td><span class="admin-cat-pill">${prod.categoryLabel || prod.category.toUpperCase()}</span></td>
-        <td>${prod.origin || 'China'}</td>
+        <td><span class="admin-cat-pill">${escapeHtml(prod.categoryLabel || prod.category.toUpperCase())}</span></td>
+        <td>${escapeHtml(prod.origin || 'China')}</td>
         <td><strong class="pay-amount">${cartStore.formatAoa(prod.priceAoa)}</strong></td>
         <td>
           <span class="${isFeatured ? 'cms-badge-active' : 'cms-badge-paused'}">
@@ -1225,13 +1225,13 @@ function renderCmsCatalogHeroTable() {
   tbody.innerHTML = slides.map(slide => `
     <tr>
       <td>
-        <strong>${slide.title}</strong>
+        <strong>${escapeHtml(slide.title)}</strong>
         <span class="table-sub-detail">${slide.lead || ''}</span>
       </td>
       <td><span class="admin-cat-pill">${slide.eyebrow || 'Destaque'}</span></td>
       <td>#${slide.order || 1}</td>
       <td>
-        <img src="${slide.image}" alt="${slide.title}" class="admin-prod-thumb" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=200';" />
+        <img src="${escapeHtml(slide.image)}" alt="${escapeHtml(slide.title)}" class="admin-prod-thumb" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=200';" />
       </td>
       <td>
         <span class="${slide.active ? 'cms-badge-active' : 'cms-badge-paused'}">
@@ -1260,12 +1260,12 @@ function renderCmsBannersTable() {
   tbody.innerHTML = data.banners.map(b => `
     <tr>
       <td>
-        <strong>${b.title}</strong>
-        <span class="table-sub-detail">${b.subtitle || ''}</span>
+        <strong>${escapeHtml(b.title)}</strong>
+        <span class="table-sub-detail">${escapeHtml(b.subtitle || '')}</span>
       </td>
       <td>${b.location}</td>
       <td>
-        <span class="admin-cat-pill">${b.ctaText} &rarr; ${b.ctaLink}</span>
+        <span class="admin-cat-pill">${escapeHtml(b.ctaText)} &rarr; ${escapeHtml(b.ctaLink)}</span>
       </td>
       <td>
         <span class="${b.active ? 'cms-badge-active' : 'cms-badge-paused'}">
@@ -1294,8 +1294,8 @@ function renderCmsPromotionsTable() {
   tbody.innerHTML = data.promotions.map(p => `
     <tr>
       <td>
-        <strong>${p.title}</strong>
-        <span class="table-sub-detail">Categoria: ${p.category}</span>
+        <strong>${escapeHtml(p.title)}</strong>
+        <span class="table-sub-detail">Categoria: ${escapeHtml(p.category)}</span>
       </td>
       <td><code>${p.code}</code></td>
       <td><strong class="pay-amount">${p.discount}</strong></td>
@@ -1327,13 +1327,13 @@ function renderCmsNewsTable() {
   tbody.innerHTML = data.news.map(n => `
     <tr>
       <td>
-        <strong>${n.title}</strong>
-        <span class="table-sub-detail">${n.summary}</span>
+        <strong>${escapeHtml(n.title)}</strong>
+        <span class="table-sub-detail">${escapeHtml(n.summary)}</span>
       </td>
-      <td><span class="admin-cat-pill">${n.category}</span></td>
-      <td>${n.date}</td>
-      <td>${n.author}</td>
-      <td><span class="cms-badge-active">● ${n.status}</span></td>
+      <td><span class="admin-cat-pill">${escapeHtml(n.category)}</span></td>
+      <td>${escapeHtml(n.date)}</td>
+      <td>${escapeHtml(n.author)}</td>
+      <td><span class="cms-badge-active">● ${escapeHtml(n.status)}</span></td>
       <td>
         <div class="cms-actions-cell">
           ${iconBtn({ icon: 'edit', title: 'Editar', cls: 'btn-action-cms-edit', attrs: `data-action="edit-news" data-id="${n.id}"` })}
@@ -1386,7 +1386,7 @@ function renderCmsPagesTable() {
 
   tbody.innerHTML = data.pages.map(p => `
     <tr>
-      <td><strong>${p.title}</strong></td>
+      <td><strong>${escapeHtml(p.title)}</strong></td>
       <td><code>${p.slug}</code></td>
       <td>${p.lastUpdated}</td>
       <td><span class="cms-badge-active">● ${p.status}</span></td>

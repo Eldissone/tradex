@@ -1,3 +1,4 @@
+import { esc } from './esc.js';
 import { PRODUCTS_DATA, loadProducts } from './product-store.js';
 import { cartStore, renderCartList } from './cart.js';
 import { api } from './api.js';
@@ -76,7 +77,7 @@ function renderThumbnails(product) {
 
   container.innerHTML = product.images.map((img, index) => `
     <button type="button" class="product-thumb ${index === 0 ? 'active' : ''}" data-index="${index}">
-      <img src="${img.url}" alt="${img.label}" loading="lazy" />
+      <img src="${esc(img.url)}" alt="${esc(img.label)}" loading="lazy" />
       <span class="product-thumb-label">Ângulo ${index + 1}</span>
     </button>
   `).join('');
@@ -111,8 +112,8 @@ function renderTechSpecs(product) {
 
   tbody.innerHTML = product.techSpecs.map(spec => `
     <tr>
-      <th>${spec.label}</th>
-      <td>${spec.value}</td>
+      <th>${esc(spec.label)}</th>
+      <td>${esc(spec.value)}</td>
     </tr>
   `).join('');
 }
@@ -161,18 +162,18 @@ function renderRelatedProducts(current) {
         <a href="produto?id=${p.id}" class="nav-link">
           <div class="product-mirror-box">
             <div class="product-mirror-sheen"></div>
-            <img src="${p.image}" alt="${p.title}" class="product-mirror-img" loading="lazy" />
+            <img src="${esc(p.image)}" alt="${esc(p.title)}" class="product-mirror-img" loading="lazy" />
             <div class="product-mirror-base"></div>
           </div>
           <span class="product-category">${p.categoryLabel}</span>
-          <h3 class="product-title">${p.title}</h3>
-          <p class="product-specs">${p.specs}</p>
+          <h3 class="product-title">${esc(p.title)}</h3>
+          <p class="product-specs">${esc(p.specs)}</p>
         </a>
       </div>
       <div class="product-bottom">
         <div class="product-price">
           ${cartStore.formatAoa(p.priceAoa)}
-          <small>por ${p.unit}</small>
+          <small>por ${esc(p.unit)}</small>
         </div>
         <a href="produto?id=${p.id}" class="btn-add-item">
           Ver Detalhes

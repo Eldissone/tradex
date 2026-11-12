@@ -1,3 +1,4 @@
+import { esc } from './esc.js';
 // TradeX Global Trading - Checkout & Gestão de Encomendas
 import { cartStore } from './cart.js';
 import { authStore, openAuthModal } from './auth.js';
@@ -119,11 +120,11 @@ function renderCheckoutOrderSummary() {
       return `
       <div class="checkout-item-row">
         <div class="checkout-item-thumb">
-          <img src="${validSrc}" alt="${item.title}" onerror="this.onerror=null;this.src='${fallbackThumb}';" />
+          <img src="${esc(validSrc)}" alt="${esc(item.title)}" onerror="this.onerror=null;this.src='${fallbackThumb}';" />
           <span class="checkout-item-qty-badge">${item.quantity}</span>
         </div>
         <div class="checkout-item-info">
-          <h4 class="checkout-item-title">${item.title}</h4>
+          <h4 class="checkout-item-title">${esc(item.title)}</h4>
           <span class="checkout-item-category">${item.category ? item.category.toUpperCase() : 'TRADE-X'}</span>
           <span class="checkout-item-unit-price">${cartStore.formatAoa(item.priceAoa)} un.</span>
           <div class="cart-qty" role="group" aria-label="Unidades encomendadas">

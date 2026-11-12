@@ -1,3 +1,4 @@
+import { esc } from './esc.js';
 import { cartStore, renderCartList } from './cart.js';
 import { api } from './api.js';
 import { PRODUCTS_DATA as ALL_PRODUCTS, loadProducts } from './product-store.js';
@@ -49,25 +50,25 @@ function renderCatalog() {
       <div>
         <div class="product-card-top">
           <span class="product-category">${p.categoryLabel}</span>
-          <span class="product-origin">${p.origin}</span>
+          <span class="product-origin">${esc(p.origin)}</span>
         </div>
 
         <a href="produto?id=${p.id}" class="nav-link">
           <div class="product-mirror-box">
             <div class="product-mirror-sheen"></div>
-            <img src="${p.image}" alt="${p.title}" class="product-mirror-img" loading="lazy" />
+            <img src="${esc(p.image)}" alt="${esc(p.title)}" class="product-mirror-img" loading="lazy" />
             <div class="product-mirror-base"></div>
           </div>
 
-          <h3 class="product-title">${p.title}</h3>
+          <h3 class="product-title">${esc(p.title)}</h3>
         </a>
-        <p class="product-specs">${p.specs}</p>
-        <p class="badge-moq"><strong>Qtd. Mínima (MOQ):</strong> ${p.moq}</p>
+        <p class="product-specs">${esc(p.specs)}</p>
+        <p class="badge-moq"><strong>Qtd. Mínima (MOQ):</strong> ${esc(p.moq)}</p>
       </div>
       <div class="product-bottom">
         <div class="product-price">
           ${cartStore.formatAoa(p.priceAoa)}
-          <small>por ${p.unit}</small>
+          <small>por ${esc(p.unit)}</small>
         </div>
         <button type="button" class="btn-add-item" data-add="${p.id}">
           + Carrinho
@@ -222,11 +223,11 @@ function setupCatalogHeroSlider() {
   if (track && slidesData.length > 0) {
     track.innerHTML = slidesData.map((slide, idx) => `
       <div class="catalog-slide ${idx === 0 ? 'active' : ''}" data-slide="${idx}">
-        <img src="${slide.image}" class="catalog-slide-bg-img" alt="${slide.title}" />
+        <img src="${esc(slide.image)}" class="catalog-slide-bg-img" alt="${esc(slide.title)}" />
         <div class="catalog-slide-overlay"></div>
         <div class="catalog-slide-content">
           ${slide.eyebrow ? `<p class="eyebrow">${slide.eyebrow}</p>` : ''}
-          <h1>${slide.title}</h1>
+          <h1>${esc(slide.title)}</h1>
           <p class="lead">${slide.lead || ''}</p>
         </div>
       </div>

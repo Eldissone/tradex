@@ -5,6 +5,8 @@ const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(3000),
   CORS_ORIGIN: z.string().default('http://localhost:5174'),
+  // Nº de proxies de confiança à frente da API (0 = nenhum). Necessário para req.ip e rate limit correctos.
+  TRUST_PROXY: z.coerce.number().int().min(0).max(5).default(0),
   DATABASE_URL: z.string().min(1),
 
   // Autenticação

@@ -4,6 +4,7 @@ import { prisma } from '../../infrastructure/database/prisma.js';
 import {
   hashPassword,
   verifyPassword,
+  DUMMY_HASH,
   signAccessToken,
   createResetToken,
   hashResetToken
@@ -13,6 +14,7 @@ import { env } from '../../config/env.js';
 import { sendPasswordResetEmail } from '../../infrastructure/notifications/index.js';
 import { emailConfigured } from '../../infrastructure/notifications/email.js';
 import { serializeUser } from '../serializers.js';
+import { logSecurityEvent } from '../middlewares/audit.js';
 import { rateLimit } from '../middlewares/rate-limit.js';
 
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
@@ -81,8 +83,10 @@ authRouter.post('/login', authLimiter, async (req, res) => {
   const { email, password } = loginSchema.parse(req.body);
 
   const user = await prisma.user.findUnique({ where: { email }, include: { customer: true } });
+  if (!user) await verifyPassword(password, DUMMY_HASH);
   const valid = user && user.active && (await verifyPassword(password, user.passwordHash));
   if (!valid) {
+    logSecurityEvent(req, 'auth.login_failed', { email });
     return res.status(401).json({ ok: false, message: 'E-mail ou palavra-passe incorretos.' });
   }
 

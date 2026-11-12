@@ -145,3 +145,9 @@ location / {
 ```
 
 Sem esta regra, abrir `/catalogo` directamente dá 404 (a navegação dentro do site também deixa de funcionar).
+
+## Segurança em produção (proxy, HTTPS, CSP, auditoria)
+
+- **HTTPS e proxy:** com `NODE_ENV=production` a API redirecciona HTTP→HTTPS e envia HSTS. Defina `TRUST_PROXY=1` (nº de proxies à frente) para o IP real chegar ao rate limit, e faça o proxy enviar `X-Forwarded-Proto`.
+- **CSP da loja:** `frontend/vite.config.js` define os cabeçalhos (`SECURITY_HEADERS`) apenas no `vite preview`. Quem serve o `dist/` (Nginx/Caddy) deve enviar os mesmos: `Content-Security-Policy`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`. Ajuste `connect-src` ao domínio da API.
+- **Auditoria:** a tabela `AuditLog` regista escritas de staff/admin (com corpo, sem campos `pass/token/secret`), logins falhados e respostas 401/403/429. Consulta: `SELECT * FROM "AuditLog" ORDER BY "createdAt" DESC LIMIT 100;`. Retenção: 12 meses (limpeza diária no arranque da API); tokens de recuperação expirados há mais de 7 dias também são apagados.

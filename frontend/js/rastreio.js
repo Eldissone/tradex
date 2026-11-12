@@ -1,3 +1,4 @@
+import { esc } from './esc.js';
 import { cartStore, renderCartList } from './cart.js';
 import { authStore } from './auth.js';
 import { api } from './api.js';
@@ -42,8 +43,8 @@ function renderShipmentDetails(shipment) {
       <div class="track-route-header">
         <div class="route-city-block">
           <span class="route-city-label">ORIGEM</span>
-          <h3 class="route-city-name">${shipment.origin.split(',')[0]}</h3>
-          <span class="route-subdetail">${shipment.origin}</span>
+          <h3 class="route-city-name">${esc(shipment.origin.split(',')[0])}</h3>
+          <span class="route-subdetail">${esc(shipment.origin)}</span>
         </div>
         <div class="route-transit-graphic">
           <div class="route-mode-badge">${modeSvg} <span>${shipment.mode.split(' ')[0]}</span></div>
@@ -72,7 +73,7 @@ function renderShipmentDetails(shipment) {
                 ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' 
                 : idx + 1}
             </div>
-            <span class="milestone-label">${m.label}</span>
+            <span class="milestone-label">${esc(m.label)}</span>
           </div>
         `).join('')}
       </div>
@@ -124,14 +125,14 @@ function renderShipmentDetails(shipment) {
               <div class="event-content-box">
                 <div class="event-header-flex">
                   <span class="event-date-stamp">${ev.date}</span>
-                  <span class="event-badge ${ev.badgeClass}">${ev.badge}</span>
+                  <span class="event-badge ${esc(ev.badgeClass)}">${esc(ev.badge)}</span>
                 </div>
-                <h4 class="event-title">${ev.title}</h4>
+                <h4 class="event-title">${esc(ev.title)}</h4>
                 <p class="event-location-text">
                   <svg class="event-pin-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                  <span>${ev.location}</span>
+                  <span>${esc(ev.location)}</span>
                 </p>
-                <p class="event-detail-text">${ev.detail}</p>
+                <p class="event-detail-text">${esc(ev.detail)}</p>
               </div>
             </li>
           `).join('')}
@@ -232,7 +233,7 @@ async function renderPaymentProofCard(shipment, onDone, knownEmail) {
 
   const cfg = await api.config.payments();
   const accounts = cfg.ok ? cfg.data.data.bank?.accounts || [] : [];
-  card.querySelector('[data-bank]').innerHTML = accounts.map(a => `<p><strong>${a.bank}:</strong> ${a.iban}</p>`).join('');
+  card.querySelector('[data-bank]').innerHTML = accounts.map(a => `<p><strong>${esc(a.bank)}:</strong> ${esc(a.iban)}</p>`).join('');
 
   renderProofUploader(card.querySelector('[data-uploader]'), {
     orderNumber: shipment.code,

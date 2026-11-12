@@ -25,8 +25,40 @@ function cleanUrls() {
   };
 }
 
+// Cabeçalhos de segurança da loja (preview/produção local). Em produção, replicar no proxy (ver docs/operacao.md).
+const API_ORIGIN = (process.env.VITE_API_URL || 'http://localhost:3000').replace(/\/api\/v1\/?$/, '');
+const SECURITY_HEADERS = {
+  'Content-Security-Policy': [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com data:",
+    "img-src 'self' data: blob: https:",
+    `connect-src 'self' ${API_ORIGIN}`,
+    "frame-src 'self' blob:",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'"
+  ].join('; '),
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
+};
+function securityHeaders() {
+  return {
+    name: 'security-headers',
+    configurePreviewServer(server) {
+      server.middlewares.use((_req, res, next) => {
+        for (const [k, v] of Object.entries(SECURITY_HEADERS)) res.setHeader(k, v);
+        next();
+      });
+    }
+  };
+}
+
 export default defineConfig({
-  plugins: [cleanUrls()],
+  plugins: [cleanUrls(), securityHeaders()],
   server: { 
     port: 5174,
     host: '0.0.0.0'
