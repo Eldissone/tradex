@@ -9952,3 +9952,12 @@ body.doc-viewer-open {
   height: 0;
 }
 .checkout-step-card[hidden] { display: none !important; }
+
+/* Controlo de quantidade no carrinho */
+.cart-item-main { min-width: 0; }
+.cart-qty { display: inline-flex; align-items: center; margin-top: 0.5rem; border: 1px solid #d1d5db; border-radius: 999px; overflow: hidden; background: #fff; }
+.cart-qty-btn { width: 30px; height: 30px; border: 0; background: transparent; font-size: 1.05rem; line-height: 1; cursor: pointer; color: #111827; }
+.cart-qty-btn:hover:not(:disabled) { background: #f3f4f6; }
+.cart-qty-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.cart-qty-input { width: 40px; height: 30px; border: 0; text-align: center; font: inherit; font-size: 0.9rem; background: transparent; -moz-appearance: textfield; }
+.cart-qty-input::-webkit-outer-spin-button, .cart-qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }

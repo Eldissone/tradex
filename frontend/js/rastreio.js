@@ -1,4 +1,4 @@
-import { cartStore } from './cart.js';
+import { cartStore, renderCartList } from './cart.js';
 import { authStore } from './auth.js';
 import { api } from './api.js';
 import { renderProofUploader } from './proof-upload.js';
@@ -371,26 +371,7 @@ function updateCartUi() {
     return;
   }
 
-  listEl.innerHTML = items.map((item, index) => `
-    <li class="cart-item">
-      <div class="cart-item-header">
-        <span class="cart-item-title">${item.title}</span>
-        <button class="cart-item-remove" data-remove-idx="${index}" aria-label="Remover">✕</button>
-      </div>
-      <div class="cart-item-footer">
-        <span class="cart-item-qty">Qtd: ${item.quantity}</span>
-        <span class="cart-item-price">${cartStore.formatAoa(item.priceAoa * item.quantity)}</span>
-      </div>
-    </li>
-  `).join('');
-
-  listEl.querySelectorAll('.cart-item-remove').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const idx = parseInt(btn.getAttribute('data-remove-idx'), 10);
-      cartStore.removeItem(idx);
-      updateCartUi();
-    });
-  });
+  renderCartList(listEl, items, updateCartUi);
 }
 
 function openCart() {

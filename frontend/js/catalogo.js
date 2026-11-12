@@ -1,4 +1,4 @@
-import { cartStore } from './cart.js';
+import { cartStore, renderCartList } from './cart.js';
 import { api } from './api.js';
 import { PRODUCTS_DATA as ALL_PRODUCTS, loadProducts } from './product-store.js';
 import { cmsStore, loadCms } from './cms.js';
@@ -112,28 +112,7 @@ function updateCartUi() {
     return;
   }
 
-  listEl.innerHTML = items.map((item, index) => `
-    <li class="cart-item">
-      <div>
-        <h5>${item.title}</h5>
-        <p>${item.quantity}x ${cartStore.formatAoa(item.priceAoa)}</p>
-      </div>
-      <div class="cart-item-right">
-        <strong>${cartStore.formatAoa(item.priceAoa * item.quantity)}</strong><br>
-        <button type="button" class="btn-cart-remove" data-remove="${index}">
-          Remover
-        </button>
-      </div>
-    </li>
-  `).join('');
-
-  listEl.querySelectorAll('[data-remove]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const idx = parseInt(btn.getAttribute('data-remove'), 10);
-      cartStore.removeItem(idx);
-      updateCartUi();
-    });
-  });
+  renderCartList(listEl, items, updateCartUi);
 }
 
 function openCart() {

@@ -64,6 +64,23 @@ function renderShippingConfigLabels() {
   });
 }
 
+// Unidades encomendadas: alterar a quantidade no resumo do checkout
+document.addEventListener('click', (e) => {
+  const m = e.target.closest('[data-co-minus]');
+  const p = e.target.closest('[data-co-plus]');
+  const idx = m ? +m.dataset.coMinus : p ? +p.dataset.coPlus : -1;
+  if (idx < 0) return;
+  const cur = cartStore.getItems()[idx]?.quantity || 1;
+  cartStore.setQuantity(idx, cur + (p ? 1 : -1));
+  renderCheckoutOrderSummary();
+});
+document.addEventListener('change', (e) => {
+  const inp = e.target.closest('[data-co-input]');
+  if (!inp) return;
+  cartStore.setQuantity(+inp.dataset.coInput, Math.max(1, parseInt(inp.value, 10) || 1));
+  renderCheckoutOrderSummary();
+});
+
 // Renderização dos Itens do Pedido na Coluna Direita
 function renderCheckoutOrderSummary() {
   const items = cartStore.getItems();
@@ -109,6 +126,11 @@ function renderCheckoutOrderSummary() {
           <h4 class="checkout-item-title">${item.title}</h4>
           <span class="checkout-item-category">${item.category ? item.category.toUpperCase() : 'TRADE-X'}</span>
           <span class="checkout-item-unit-price">${cartStore.formatAoa(item.priceAoa)} un.</span>
+          <div class="cart-qty" role="group" aria-label="Unidades encomendadas">
+            <button type="button" class="cart-qty-btn" data-co-minus="${items.indexOf(item)}" aria-label="Diminuir unidades" ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
+            <input type="number" class="cart-qty-input" data-co-input="${items.indexOf(item)}" value="${item.quantity}" min="1" max="99" aria-label="Unidades" />
+            <button type="button" class="cart-qty-btn" data-co-plus="${items.indexOf(item)}" aria-label="Aumentar unidades" ${item.quantity >= 99 ? 'disabled' : ''}>+</button>
+          </div>
         </div>
         <div class="checkout-item-subtotal">
           ${cartStore.formatAoa(item.priceAoa * item.quantity)}
