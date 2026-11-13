@@ -16,6 +16,7 @@ import { emailConfigured } from '../../infrastructure/notifications/email.js';
 import { serializeUser } from '../serializers.js';
 import { logSecurityEvent } from '../middlewares/audit.js';
 import { rateLimit } from '../middlewares/rate-limit.js';
+import { bootstrapAdminUser } from '../../infrastructure/database/bootstrap.js';
 
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
 const recoveryLimiter = rateLimit({ windowMs: 60 * 60 * 1000, max: 5 });
@@ -82,7 +83,14 @@ authRouter.post('/register', authLimiter, async (req, res) => {
 authRouter.post('/login', authLimiter, async (req, res) => {
   const { email, password } = loginSchema.parse(req.body);
 
-  const user = await prisma.user.findUnique({ where: { email }, include: { customer: true } });
+  let user = await prisma.user.findUnique({ where: { email }, include: { customer: true } });
+  
+  // Se o utilizador não existir mas corresponder ao e-mail de administrador configurado no .env, garante o bootstrap
+  if (!user && env.ADMIN_EMAIL && email === env.ADMIN_EMAIL.trim().toLowerCase()) {
+    await bootstrapAdminUser();
+    user = await prisma.user.findUnique({ where: { email }, include: { customer: true } });
+  }
+
   if (!user) await verifyPassword(password, DUMMY_HASH);
   const valid = user && user.active && (await verifyPassword(password, user.passwordHash));
   if (!valid) {
