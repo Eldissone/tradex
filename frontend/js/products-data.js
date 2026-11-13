@@ -1,5 +1,5 @@
 // Base de Dados Centralizada de Produtos TradeX (China ➔ Angola)
-
+/*
 export const PRODUCTS_DATA = [
   {
     id: 'prod-01',
@@ -521,3 +521,4 @@ export const PRODUCTS_DATA = [
   }
 ];
 
+*/
