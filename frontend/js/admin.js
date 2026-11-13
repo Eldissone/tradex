@@ -160,8 +160,23 @@ function setupAdminNavigation() {
   const mobileToggle = document.getElementById('btnToggleAdminSidebar');
   const sidebar = document.getElementById('adminSidebar');
 
-  mobileToggle?.addEventListener('click', () => {
-    sidebar?.classList.toggle('open');
+  // Em ecrãs pequenos a sidebar é uma gaveta: fundo escuro, fecha ao tocar fora ou com Esc
+  const backdrop = document.createElement('div');
+  backdrop.className = 'admin-sidebar-backdrop';
+  document.body.appendChild(backdrop);
+  const setSidebar = (open) => {
+    sidebar?.classList.toggle('open', open);
+    backdrop.classList.toggle('visible', open);
+    document.body.classList.toggle('admin-sidebar-locked', open);
+    mobileToggle?.setAttribute('aria-expanded', String(open));
+  };
+  mobileToggle?.addEventListener('click', () => setSidebar(!sidebar?.classList.contains('open')));
+  backdrop.addEventListener('click', () => setSidebar(false));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sidebar?.classList.contains('open')) setSidebar(false);
+  });
+  window.matchMedia('(min-width: 1025px)').addEventListener('change', (m) => {
+    if (m.matches) setSidebar(false);
   });
 
   navBtns.forEach(btn => {
@@ -178,7 +193,8 @@ function setupAdminNavigation() {
         targetPanel.classList.add('active');
       }
 
-      sidebar?.classList.remove('open');
+      setSidebar(false);
+      window.scrollTo({ top: 0 });
     });
   });
 
@@ -510,7 +526,7 @@ function renderProductsModule() {
     <tr>
       <td>
         <div class="admin-prod-cell">
-          <img src="${escapeHtml(prod.image)}" alt="${escapeHtml(prod.title)}" class="admin-prod-thumb" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=200';" />
+          <img src="${escapeHtml(prod.image)}" alt="${escapeHtml(prod.title)}" class="admin-prod-thumb" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=200';" />
           <div>
             <strong>${escapeHtml(prod.title)}</strong>
             <span class="table-sub-detail">${escapeHtml(prod.specs || '')}</span>
@@ -1183,7 +1199,7 @@ function renderCmsFeaturedTable() {
       <tr>
         <td>
           <div class="admin-prod-cell">
-            <img src="${escapeHtml(prod.image)}" alt="${escapeHtml(prod.title)}" class="admin-prod-thumb" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=200';" />
+            <img src="${escapeHtml(prod.image)}" alt="${escapeHtml(prod.title)}" class="admin-prod-thumb" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=200';" />
             <div>
               <strong>${escapeHtml(prod.title)}</strong>
               <span class="table-sub-detail">${escapeHtml(prod.specs || '')}</span>
@@ -1231,7 +1247,7 @@ function renderCmsCatalogHeroTable() {
       <td><span class="admin-cat-pill">${slide.eyebrow || 'Destaque'}</span></td>
       <td>#${slide.order || 1}</td>
       <td>
-        <img src="${escapeHtml(slide.image)}" alt="${escapeHtml(slide.title)}" class="admin-prod-thumb" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=200';" />
+        <img src="${escapeHtml(slide.image)}" alt="${escapeHtml(slide.title)}" class="admin-prod-thumb" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=200';" />
       </td>
       <td>
         <span class="${slide.active ? 'cms-badge-active' : 'cms-badge-paused'}">

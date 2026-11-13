@@ -77,7 +77,7 @@ function renderThumbnails(product) {
 
   container.innerHTML = product.images.map((img, index) => `
     <button type="button" class="product-thumb ${index === 0 ? 'active' : ''}" data-index="${index}">
-      <img src="${esc(img.url)}" alt="${esc(img.label)}" loading="lazy" />
+      <img src="${esc(img.url)}" alt="${esc(img.label)}" loading="lazy" decoding="async" />
       <span class="product-thumb-label">Ângulo ${index + 1}</span>
     </button>
   `).join('');

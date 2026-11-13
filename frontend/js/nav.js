@@ -99,8 +99,54 @@ function renderNav(container) {
   });
 }
 
+// Menu hambúrguer (≤ 768 px): recolhe os links num painel sob o cabeçalho
+function setupBurger(container) {
+  const header = container.closest('.main-header');
+  const actions = header && header.querySelector('.nav-actions');
+  if (!header || !actions || actions.querySelector('.nav-burger')) return;
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'nav-icon-btn nav-burger';
+  btn.setAttribute('aria-label', 'Abrir menu');
+  btn.setAttribute('aria-expanded', 'false');
+  btn.innerHTML =
+    '<svg class="header-icon icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>' +
+    '<svg class="header-icon icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>';
+  actions.appendChild(btn);
+
+  const setOpen = (open) => {
+    header.classList.toggle('nav-open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    btn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
+  };
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setOpen(!header.classList.contains('nav-open'));
+  });
+  container.addEventListener('click', (e) => {
+    if (e.target.closest('a')) setOpen(false);
+  });
+  document.addEventListener('click', (e) => {
+    if (!header.contains(e.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && header.classList.contains('nav-open')) {
+      setOpen(false);
+      btn.focus();
+    }
+  });
+  window.matchMedia('(min-width: 769px)').addEventListener('change', (m) => {
+    if (m.matches) setOpen(false);
+  });
+}
+
 function init() {
-  document.querySelectorAll('[data-shared-nav]').forEach(renderNav);
+  document.querySelectorAll('[data-shared-nav]').forEach((c) => {
+    renderNav(c);
+    setupBurger(c);
+  });
 }
 
 if (document.readyState === 'loading') {

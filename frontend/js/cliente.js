@@ -197,7 +197,7 @@ function renderOrdersList() {
 
     const itemsSummary = (order.items || []).slice(0, 3).map(item => `
       <div class="order-item-chip" title="${esc(item.title)}">
-        <img src="${esc(item.image || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=100')}" alt="${esc(item.title)}" />
+        <img loading="lazy" decoding="async" src="${esc(item.image || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=100')}" alt="${esc(item.title)}" />
         <span>${item.quantity}x ${esc(item.title.length > 25 ? item.title.slice(0, 25) + '...' : item.title)}</span>
       </div>
     `).join('');
@@ -367,7 +367,7 @@ function renderFavoritesGrid() {
   container.innerHTML = favoriteProducts.map(p => `
     <div class="client-fav-card">
       <div class="fav-card-image">
-        <img src="${esc(p.image || p.images?.[0]?.url || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300')}" alt="${esc(p.title)}" />
+        <img loading="lazy" decoding="async" src="${esc(p.image || p.images?.[0]?.url || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300')}" alt="${esc(p.title)}" />
       </div>
       <div class="fav-card-content">
         <span class="fav-card-cat">${(p.categoryLabel || p.category || '').toUpperCase()}</span>
@@ -532,7 +532,7 @@ function openOrderModal(order, autoTriggerPayment = false) {
     <div class="modal-order-items">
       ${(order.items || []).map(i => `
         <div class="modal-item-row">
-          <img src="${esc(i.image || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=100')}" alt="${esc(i.title)}" />
+          <img loading="lazy" decoding="async" src="${esc(i.image || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=100')}" alt="${esc(i.title)}" />
           <div class="modal-item-detail">
             <strong>${esc(i.title)}</strong>
             <span>${i.quantity} un. x ${cartStore.formatAoa(i.priceAoa)}</span>
