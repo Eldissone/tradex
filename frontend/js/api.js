@@ -1,4 +1,5 @@
 // TradeX Global Trading - Cliente da API
+import { netStart, netEnd } from './form-loading.js';
 const API_CONFIG = {
   baseUrl: import.meta.env?.VITE_API_URL || window.TRADEX_API_URL || 'http://localhost:3000/api/v1',
   timeoutMs: 10000
@@ -42,6 +43,7 @@ export const tokenStore = {
 };
 
 async function request(endpoint, options = {}) {
+  netStart();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), options.timeoutMs || API_CONFIG.timeoutMs);
 
@@ -84,6 +86,7 @@ async function request(endpoint, options = {}) {
     };
   } finally {
     clearTimeout(timeout);
+    netEnd();
   }
 }
 

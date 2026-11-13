@@ -9968,3 +9968,15 @@ body.doc-viewer-open {
 .hero-image-controls { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; min-width: 0; }
 .hero-image-controls .btn-dark { align-self: flex-start; padding: 0.5rem 1rem; font-size: 0.85rem; }
 @media (max-width: 560px) { .hero-image-upload { flex-direction: column; } }
+
+/* Botões de formulário em carregamento (js/form-loading.js) */
+button.is-loading { position: relative; pointer-events: none; color: transparent !important; cursor: progress; }
+button.is-loading * { color: transparent !important; }
+button.is-loading svg { opacity: 0; }
+button.is-loading::after {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 1.1em; height: 1.1em; margin: -0.55em 0 0 -0.55em;
+  border: 2px solid var(--tx-spin, #fff); border-right-color: transparent; border-radius: 50%;
+  animation: tx-spin 0.7s linear infinite;
+}
+@keyframes tx-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { button.is-loading::after { animation-duration: 1.6s; } }
