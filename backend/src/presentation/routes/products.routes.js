@@ -96,8 +96,11 @@ productsRouter.get('/:id', async (req, res) => {
   return res.json({ ok: true, data: serializeProduct(item) });
 });
 
-// Só http(s) ou caminhos relativos (nunca javascript:/data:)
-const imageUrl = z.string().max(1000).refine(v => /^(https?:\/\/|\/)/i.test(v), 'URL de imagem inválido.');
+// Aceita URLs http(s) (incluindo Supabase Storage), caminhos relativos e data URIs
+const imageUrl = z.string().refine(
+  v => /^(https?:\/\/|\/|data:image\/)/i.test(v),
+  'URL de imagem inválido.'
+);
 
 const productSchema = z.object({
   title: z.string().trim().min(1, 'O título é obrigatório.').max(200),

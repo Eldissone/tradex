@@ -657,8 +657,13 @@ adminRouter.post('/uploads', imageUpload.single('file'), async (req, res) => {
   
   try {
     const stored = await savePublicImage(req.file.buffer, type);
-    const base = `${req.headers['x-forwarded-proto'] || req.protocol}://${req.get('host')}`;
-    const url = stored.startsWith('data:') ? stored : `${base}/uploads/${stored}`;
+    let url;
+    if (stored.startsWith('http://') || stored.startsWith('https://') || stored.startsWith('data:')) {
+      url = stored;
+    } else {
+      const base = `${req.headers['x-forwarded-proto'] || req.protocol}://${req.get('host')}`;
+      url = `${base}/uploads/${stored}`;
+    }
     return res.status(201).json({ ok: true, data: { url } });
   } catch (err) {
     console.error('[TradeX Admin] Erro no upload:', err.message);

@@ -25,6 +25,12 @@ const schema = z.object({
   SEED_DEMO_CUSTOMER_EMAIL: z.string().email().optional(),
   SEED_DEMO_CUSTOMER_PASSWORD: z.string().min(6).optional(),
 
+  // Supabase Storage (Upload de imagens em nuvem)
+  SUPABASE_URL: z.string().url().default('https://edpqioicmritxugzisha.supabase.co'),
+  SUPABASE_KEY: z.string().optional().transform(v => v || undefined),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().optional().transform(v => v || undefined),
+  SUPABASE_BUCKET: z.string().default('storage'),
+
   // Endereço público da loja (links em e-mails e mensagens)
   PUBLIC_SITE_URL: z.string().url().optional(),
 
