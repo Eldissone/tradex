@@ -10817,8 +10817,8 @@ th {
 /* Hero mobile/tablet: ocupa 90% da altura do ecrã, imagem maior, botões com ícones numa linha */
 @media (max-width: 960px) {
   .hero {
-    min-height: 90vh;
-    min-height: 90svh;
+    min-height: 92vh;
+    min-height: 92svh;
     align-items: center;
   }
 
@@ -10855,5 +10855,21 @@ th {
     height: 12px;
     flex: none;
     display: inline-block;
+  }
+}
+
+/* Hero mobile/tablet: imagem maior e botões mais abaixo */
+@media (max-width: 960px) {
+  .hero-container {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .hero-person-img {
+    width: 138%;
+    margin-right: -10%;
+  }
+
+  .hero-content .actions {
+    margin-top: 1rem;
   }
 }
