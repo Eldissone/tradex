@@ -47,9 +47,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 
-// Resposta explícita para preflight OPTIONS
-app.options('*', cors());
-
 // 2. Em produção, exige HTTPS (excepto requisições OPTIONS de preflight)
 if (env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
