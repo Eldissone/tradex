@@ -6,35 +6,46 @@ import { api } from './api.js';
 let currentProduct = null;
 let currentQuantity = 1;
 
+function renderAll(product) {
+  renderProductDetails(product);
+  renderThumbnails(product);
+  renderTechSpecs(product);
+  renderLogistics(product);
+  renderRelatedProducts(product);
+}
+
+function showNotFound() {
+  document.title = 'Produto não encontrado | TradeX Global Trading';
+  const titleEl = document.getElementById('productTitle');
+  if (titleEl) titleEl.textContent = 'Produto não encontrado';
+  const descEl = document.getElementById('productDescription');
+  if (descEl) descEl.innerHTML = 'Este produto já não está disponível. <a href="catalogo">Ver o catálogo</a>.';
+  document.querySelectorAll('#productPriceAoa, #productUnitInfo').forEach(el => { el.textContent = ''; });
+  document.getElementById('btnAddToCartDetail')?.setAttribute('disabled', 'true');
+}
+
 function initProductPage() {
   const params = new URLSearchParams(window.location.search);
-  const productId = params.get('id') || 'prod-01';
+  const productId = params.get('id');
 
-  currentProduct = PRODUCTS_DATA.find(p => p.id === productId) || PRODUCTS_DATA[0];
-
-  renderProductDetails(currentProduct);
-  renderThumbnails(currentProduct);
-  renderTechSpecs(currentProduct);
-  renderLogistics(currentProduct);
-  renderRelatedProducts(currentProduct);
   setupQuantitySelector();
   setupAddToCart();
   setupCartDrawer();
   updateCartUi();
   window.addEventListener('tradex:cart-changed', (e) => { if (e.detail?.source === 'server') updateCartUi(); });
 
-  // Actualiza com os dados da base de dados (preço, fotos, descrição)
-  window.addEventListener('tradex:products-changed', () => {
-    const fresh = PRODUCTS_DATA.find(p => p.id === productId);
-    if (!fresh) return;
-    currentProduct = fresh;
-    renderProductDetails(currentProduct);
-    renderThumbnails(currentProduct);
-    renderTechSpecs(currentProduct);
-    renderLogistics(currentProduct);
-    renderRelatedProducts(currentProduct);
-  });
-  loadProducts();
+  // Os produtos vêm da base de dados: só se renderiza quando o produto existe
+  const apply = () => {
+    const found = PRODUCTS_DATA.find(p => p.id === productId || p.slug === productId);
+    if (!found) return false;
+    currentProduct = found;
+    renderAll(found);
+    return true;
+  };
+
+  apply();
+  window.addEventListener('tradex:products-changed', apply);
+  loadProducts().then(() => { if (!apply() && !currentProduct) showNotFound(); });
 }
 
 // 1. Renderiza os Detalhes Principais
