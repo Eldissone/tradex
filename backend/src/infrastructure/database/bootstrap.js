@@ -2,8 +2,30 @@ import { prisma } from './prisma.js';
 import { env } from '../../config/env.js';
 import { hashPassword } from '../auth/auth.js';
 
+const DEFAULT_CATEGORIES = [
+  { slug: 'solar', name: 'Eletricidade' },
+  { slug: 'industrial', name: 'Industrial' },
+  { slug: 'electronics', name: 'Eletrónicos' },
+  { slug: 'machinery', name: 'Maquinas' },
+  { slug: 'construction', name: 'Materiais' }
+];
+
+export async function bootstrapCategories() {
+  try {
+    for (const cat of DEFAULT_CATEGORIES) {
+      await prisma.category.upsert({
+        where: { slug: cat.slug },
+        update: {},
+        create: cat
+      }).catch(() => null);
+    }
+  } catch {}
+}
+
 // Cria a conta de administrador definida no .env, se ainda não existir.
 export async function bootstrapAdminUser() {
+  await bootstrapCategories().catch(() => null);
+
   if (!env.ADMIN_EMAIL || !env.ADMIN_PASSWORD) {
     console.info('[TradeX Bootstrap] ADMIN_EMAIL/ADMIN_PASSWORD não definidos — nenhum administrador criado.');
     return { created: false };

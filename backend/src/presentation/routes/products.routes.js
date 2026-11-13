@@ -123,13 +123,44 @@ const productSchema = z.object({
   supplierId: z.string().optional().nullable()
 });
 
-async function resolveCategoryId(slug) {
-  const cat = await prisma.category.findUnique({ where: { slug } });
-  if (!cat) {
-    const err = new Error('CATEGORY_NOT_FOUND');
+const KNOWN_CATEGORIES = {
+  solar: 'Energia Solar',
+  industrial: 'Construção & Equipamento',
+  electronics: 'Eletrónicos & Iluminação',
+  machinery: 'Maquinaria & Geradores',
+  construction: 'Materiais de Construção'
+};
+
+async function resolveCategoryId(slugOrName) {
+  if (!slugOrName) {
+    const err = new Error('CATEGORY_REQUIRED');
     err.status = 400;
     throw err;
   }
+  const clean = slugOrName.trim();
+
+  // 1. Procura por slug
+  let cat = await prisma.category.findUnique({ where: { slug: clean } });
+  if (cat) return cat.id;
+
+  // 2. Procura por id (caso venha o UUID da categoria)
+  cat = await prisma.category.findUnique({ where: { id: clean } }).catch(() => null);
+  if (cat) return cat.id;
+
+  // 3. Procura por nome (insensível a maiúsculas/minúsculas)
+  cat = await prisma.category.findFirst({
+    where: { name: { equals: clean, mode: 'insensitive' } }
+  }).catch(() => null);
+  if (cat) return cat.id;
+
+  // 4. Se não existir na base de dados (e.g. BD nova no Supabase), cria automaticamente com upsert
+  const slug = clean.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || `cat-${Date.now()}`;
+  const name = KNOWN_CATEGORIES[slug] || clean.charAt(0).toUpperCase() + clean.slice(1);
+  cat = await prisma.category.upsert({
+    where: { slug },
+    update: {},
+    create: { slug, name }
+  });
   return cat.id;
 }
 
