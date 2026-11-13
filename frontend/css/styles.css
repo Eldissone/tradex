@@ -10873,3 +10873,7 @@ th {
     margin-top: 1rem;
   }
 }
+/* Ilustração isométrica do FAQ: oculta em mobile */
+@media (max-width: 640px) {
+  .faq-graphic-col { display: none !important; }
+}
