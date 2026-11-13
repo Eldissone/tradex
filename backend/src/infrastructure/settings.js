@@ -27,11 +27,16 @@ const DEFAULTS = {
 };
 
 export async function getSetting(key) {
-  const row = await prisma.setting.findUnique({ where: { key } });
   const fallback = DEFAULTS[key];
-  if (!row) return fallback;
-  // Mantém chaves por defeito que ainda não existam no registo guardado
-  return fallback && typeof fallback === 'object' ? { ...fallback, ...row.value } : row.value;
+  try {
+    const row = await prisma.setting.findUnique({ where: { key } });
+    if (!row) return fallback;
+    // Mantém chaves por defeito que ainda não existam no registo guardado
+    return fallback && typeof fallback === 'object' ? { ...fallback, ...row.value } : row.value;
+  } catch (err) {
+    console.warn(`[TradeX Settings] Não foi possível carregar configuração '${key}' da base de dados:`, err.message);
+    return fallback;
+  }
 }
 
 export async function setSetting(key, value) {

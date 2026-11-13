@@ -1,0 +1,14 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/catalogo", "destination": "/catalogo.html" },
+    { "source": "/produto", "destination": "/produto.html" },
+    { "source": "/rastreio", "destination": "/rastreio.html" },
+    { "source": "/checkout", "destination": "/checkout.html" },
+    { "source": "/cliente", "destination": "/cliente.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/redefinir-password", "destination": "/redefinir-password.html" }
+  ]
+}
+

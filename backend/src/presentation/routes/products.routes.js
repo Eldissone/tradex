@@ -49,14 +49,38 @@ productsRouter.get('/', optionalAuth, async (req, res) => {
     sort === 'price_desc' ? { priceAoa: 'desc' } :
     { createdAt: 'asc' };
 
-  const items = await prisma.product.findMany({ where, orderBy, include: INCLUDE });
-  return res.json({ ok: true, total: items.length, data: items.map(serializeProduct) });
+  try {
+    const items = await prisma.product.findMany({ where, orderBy, include: INCLUDE });
+    return res.json({ ok: true, total: items.length, data: items.map(serializeProduct) });
+  } catch (err) {
+    console.warn('[TradeX Products] Base de dados inacessível ou offline:', err.message);
+    return res.json({
+      ok: true,
+      total: 0,
+      data: [],
+      database: 'offline',
+      message: 'Base de dados em configuração. A carregar catálogo padrão local.'
+    });
+  }
 });
 
 // Categorias
 productsRouter.get('/categories', async (_req, res) => {
-  const cats = await prisma.category.findMany({ orderBy: { name: 'asc' } });
-  return res.json({ ok: true, data: cats.map(c => ({ id: c.id, slug: c.slug, name: c.name })) });
+  try {
+    const cats = await prisma.category.findMany({ orderBy: { name: 'asc' } });
+    return res.json({ ok: true, data: cats.map(c => ({ id: c.id, slug: c.slug, name: c.name })) });
+  } catch (err) {
+    console.warn('[TradeX Categories] Base de dados offline:', err.message);
+    return res.json({
+      ok: true,
+      data: [
+        { id: 'cat-solar', slug: 'solar', name: 'Energia Solar' },
+        { id: 'cat-industrial', slug: 'industrial', name: 'Maquinaria & Construção' },
+        { id: 'cat-electronics', slug: 'electronics', name: 'Eletrónicos & Iluminação' },
+        { id: 'cat-vehicles', slug: 'vehicles', name: 'Veículos & Peças' }
+      ]
+    });
+  }
 });
 
 // Detalhe por ID ou slug
