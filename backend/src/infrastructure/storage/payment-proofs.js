@@ -20,14 +20,28 @@ export function detectProofType(buffer) {
 }
 
 export async function saveProof(buffer, type) {
-  const relative = `${new Date().getFullYear()}/${crypto.randomUUID()}.${type.ext}`;
-  const absolute = path.join(STORAGE_ROOT, relative);
-  await fs.mkdir(path.dirname(absolute), { recursive: true });
-  await fs.writeFile(absolute, buffer, { flag: 'wx' });
-  return relative;
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    return `data:${type.mime};base64,${buffer.toString('base64')}`;
+  }
+
+  try {
+    const relative = `${new Date().getFullYear()}/${crypto.randomUUID()}.${type.ext}`;
+    const absolute = path.join(STORAGE_ROOT, relative);
+    await fs.mkdir(path.dirname(absolute), { recursive: true });
+    await fs.writeFile(absolute, buffer, { flag: 'wx' });
+    return relative;
+  } catch (err) {
+    if (err.code === 'EROFS' || err.code === 'EACCES') {
+      return `data:${type.mime};base64,${buffer.toString('base64')}`;
+    }
+    throw err;
+  }
 }
 
 export function resolveProofPath(relative) {
+  if (relative && relative.startsWith('data:')) {
+    return null;
+  }
   const absolute = path.resolve(STORAGE_ROOT, relative);
   // Impede sair da pasta de armazenamento
   if (!absolute.startsWith(STORAGE_ROOT + path.sep)) {
@@ -37,8 +51,9 @@ export function resolveProofPath(relative) {
 }
 
 export async function deleteProof(relative) {
-  if (!relative) return;
+  if (!relative || relative.startsWith('data:')) return;
   try {
-    await fs.unlink(resolveProofPath(relative));
+    const p = resolveProofPath(relative);
+    if (p) await fs.unlink(p);
   } catch {}
 }

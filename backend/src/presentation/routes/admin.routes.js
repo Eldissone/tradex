@@ -654,7 +654,14 @@ adminRouter.post('/uploads', imageUpload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ ok: false, message: 'Escolha uma imagem.' });
   const type = detectImageType(req.file.buffer);
   if (!type) return res.status(400).json({ ok: false, message: 'Formato não suportado. Use JPG, PNG ou WEBP.' });
-  const relative = await savePublicImage(req.file.buffer, type);
-  const base = `${req.protocol}://${req.get('host')}`;
-  return res.status(201).json({ ok: true, data: { url: `${base}/uploads/${relative}` } });
+  
+  try {
+    const stored = await savePublicImage(req.file.buffer, type);
+    const base = `${req.headers['x-forwarded-proto'] || req.protocol}://${req.get('host')}`;
+    const url = stored.startsWith('data:') ? stored : `${base}/uploads/${stored}`;
+    return res.status(201).json({ ok: true, data: { url } });
+  } catch (err) {
+    console.error('[TradeX Admin] Erro no upload:', err.message);
+    return res.status(500).json({ ok: false, message: 'Não foi possível gravar a imagem.' });
+  }
 });

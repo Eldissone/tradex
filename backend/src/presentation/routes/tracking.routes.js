@@ -159,5 +159,9 @@ trackingRouter.post('/documents/file', lookupLimiter, optionalAuth, async (req, 
   res.setHeader('Content-Disposition', `inline; filename="${safeName}"`);
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('Cache-Control', 'private, no-store');
+  if (doc.path.startsWith('data:')) {
+    const base64Data = doc.path.split(',')[1] || '';
+    return res.send(Buffer.from(base64Data, 'base64'));
+  }
   return res.sendFile(resolveDocumentPath(doc.path));
 });

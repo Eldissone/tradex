@@ -17,11 +17,22 @@ export function detectImageType(buffer) {
   return SIGNATURES.find(s => s.test(buffer)) || null;
 }
 
-// Devolve o caminho público relativo, ex.: "2026/3f2c….webp"
+// Devolve o caminho público relativo ou Data URI em ambiente serverless (Vercel / AWS Lambda)
 export async function savePublicImage(buffer, type) {
-  const relative = `${new Date().getFullYear()}/${crypto.randomUUID()}.${type.ext}`;
-  const absolute = path.join(PUBLIC_UPLOADS_ROOT, relative);
-  await fs.mkdir(path.dirname(absolute), { recursive: true });
-  await fs.writeFile(absolute, buffer, { flag: 'wx' });
-  return relative;
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    return `data:${type.mime};base64,${buffer.toString('base64')}`;
+  }
+
+  try {
+    const relative = `${new Date().getFullYear()}/${crypto.randomUUID()}.${type.ext}`;
+    const absolute = path.join(PUBLIC_UPLOADS_ROOT, relative);
+    await fs.mkdir(path.dirname(absolute), { recursive: true });
+    await fs.writeFile(absolute, buffer, { flag: 'wx' });
+    return relative;
+  } catch (err) {
+    if (err.code === 'EROFS' || err.code === 'EACCES') {
+      return `data:${type.mime};base64,${buffer.toString('base64')}`;
+    }
+    throw err;
+  }
 }
