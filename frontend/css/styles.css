@@ -10190,3 +10190,19 @@ td, th { overflow-wrap: break-word; }
   .admin-filters-selects { flex-wrap: wrap; }
   .admin-filters-selects select, .admin-filters-selects input { min-width: 0; flex: 1 1 140px; min-height: 44px; }
 }
+
+/* Filtros de categoria: uma só linha com scroll horizontal em mobile/tablet */
+@media (max-width: 768px) {
+  .category-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+    padding: 0.25rem 1.25rem 0.5rem;
+    scroll-padding: 0 1.25rem;
+  }
+  .category-filters::-webkit-scrollbar { display: none; }
+  .category-filters .filter-btn { flex: 0 0 auto; white-space: nowrap; }
+}
