@@ -8,6 +8,7 @@ const schema = z.object({
   // Nº de proxies de confiança à frente da API (1 = proxy padrão, e.g. Vercel, Railway, Cloudflare).
   TRUST_PROXY: z.coerce.number().int().min(0).max(5).default(1),
   DATABASE_URL: z.string().min(1).default('postgresql://tradex:tradex@localhost:5432/tradex?schema=public'),
+  DIRECT_URL: z.string().optional(),
 
   // Autenticação
   JWT_SECRET: z.string().min(32).default('tradex_fallback_jwt_secret_must_be_set_in_production_32chars'),
