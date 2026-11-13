@@ -10069,6 +10069,10 @@ td, th { overflow-wrap: break-word; }
   .main-header .nav-links[data-shared-nav] .nav-dd-inner { padding: 0.5rem 0 0.25rem; }
   .main-header .nav-links[data-shared-nav] .nav-dd-intro { display: none; }
   .main-header .nav-links[data-shared-nav] .nav-dd-item { color: #374151; padding: 0.7rem 0.5rem; display: block; min-height: 44px; box-sizing: border-box; }
+
+  .tracking-portal-cta {
+    text-align: center;
+  }
 }
 
 @media (max-width: 640px) {
@@ -10205,4 +10209,21 @@ td, th { overflow-wrap: break-word; }
   }
   .category-filters::-webkit-scrollbar { display: none; }
   .category-filters .filter-btn { flex: 0 0 auto; white-space: nowrap; }
+}
+
+/* Destaques: em mobile/tablet deslizar com o dedo, cartão centrado, sem setas */
+@media (max-width: 768px) {
+  .carousel-controls { display: none; }
+  .carousel-track {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem 1rem;
+    scroll-padding: 0 1rem;
+  }
+  .carousel-card { flex: 0 0 100%; min-width: 0; scroll-snap-align: center; scroll-snap-stop: always; box-sizing: border-box; padding: 1.5rem 1.25rem; }
+  .carousel-card-banner { gap: 0.75rem; }
+  .carousel-badge { flex: 0 1 auto; width: fit-content; max-width: 70%; line-height: 1.35; }
+  .carousel-origin { flex: 0 0 auto; }
 }
