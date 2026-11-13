@@ -47,48 +47,65 @@ function sessionResponse(user) {
 authRouter.post('/register', authLimiter, async (req, res) => {
   const data = registerSchema.parse(req.body);
 
-  const existing = await prisma.user.findUnique({ where: { email: data.email } });
-  if (existing) {
-    return res.status(409).json({ ok: false, message: 'Já existe uma conta registada com este e-mail.' });
-  }
+  try {
+    const existing = await prisma.user.findUnique({ where: { email: data.email } });
+    if (existing) {
+      return res.status(409).json({ ok: false, message: 'Já existe uma conta registada com este e-mail.' });
+    }
 
-  const user = await prisma.user.create({
-    data: {
-      email: data.email,
-      passwordHash: await hashPassword(data.password),
-      role: 'CUSTOMER',
-      lastLoginAt: new Date(),
-      customer: {
-        create: {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          phone: data.phone || null,
-          nif: data.nif || null
+    const user = await prisma.user.create({
+      data: {
+        email: data.email,
+        passwordHash: await hashPassword(data.password),
+        role: 'CUSTOMER',
+        lastLoginAt: new Date(),
+        customer: {
+          create: {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            phone: data.phone || null,
+            nif: data.nif || null
+          }
         }
-      }
-    },
-    include: { customer: true }
-  });
+      },
+      include: { customer: true }
+    });
 
-  // Associa encomendas feitas como convidado com o mesmo e-mail
-  await prisma.order.updateMany({
-    where: { customerId: null, customerEmail: data.email },
-    data: { customerId: user.customer.id }
-  });
+    // Associa encomendas feitas como convidado com o mesmo e-mail
+    await prisma.order.updateMany({
+      where: { customerId: null, customerEmail: data.email },
+      data: { customerId: user.customer.id }
+    });
 
-  return res.status(201).json(sessionResponse(user));
+    return res.status(201).json(sessionResponse(user));
+  } catch (err) {
+    console.error('[TradeX Auth] Erro ao registar utilizador:', err.message);
+    return res.status(503).json({
+      ok: false,
+      message: 'Base de dados indisponível em produção. Verifique a variável DATABASE_URL nas configurações da Vercel.'
+    });
+  }
 });
 
 // Início de sessão
 authRouter.post('/login', authLimiter, async (req, res) => {
   const { email, password } = loginSchema.parse(req.body);
 
-  let user = await prisma.user.findUnique({ where: { email }, include: { customer: true } });
-  
-  // Se o utilizador não existir mas corresponder ao e-mail de administrador configurado no .env, garante o bootstrap
-  if (!user && env.ADMIN_EMAIL && email === env.ADMIN_EMAIL.trim().toLowerCase()) {
-    await bootstrapAdminUser();
+  let user = null;
+  try {
     user = await prisma.user.findUnique({ where: { email }, include: { customer: true } });
+    
+    // Se o utilizador não existir mas corresponder ao e-mail de administrador configurado no .env, garante o bootstrap
+    if (!user && env.ADMIN_EMAIL && email === env.ADMIN_EMAIL.trim().toLowerCase()) {
+      await bootstrapAdminUser();
+      user = await prisma.user.findUnique({ where: { email }, include: { customer: true } });
+    }
+  } catch (err) {
+    console.error('[TradeX Auth] Erro ao aceder à base de dados no login:', err.message);
+    return res.status(503).json({
+      ok: false,
+      message: 'Base de dados indisponível em produção. Verifique a variável DATABASE_URL nas configurações da Vercel.'
+    });
   }
 
   if (!user) await verifyPassword(password, DUMMY_HASH);
@@ -98,7 +115,12 @@ authRouter.post('/login', authLimiter, async (req, res) => {
     return res.status(401).json({ ok: false, message: 'E-mail ou palavra-passe incorretos.' });
   }
 
-  await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
+  try {
+    await prisma.user.update({ where: { id: user.id }, data: { lastLoginAt: new Date() } });
+  } catch (err) {
+    console.warn('[TradeX Auth] Não foi possível atualizar lastLoginAt:', err.message);
+  }
+
   return res.json(sessionResponse(user));
 });
 
