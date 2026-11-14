@@ -3,12 +3,18 @@ import { cartStore, renderCartList } from './cart.js';
 import { api } from './api.js';
 import { PRODUCTS_DATA as ALL_PRODUCTS, loadProducts } from './product-store.js';
 import { cmsStore, loadCms } from './cms.js';
+import { openProductRequestModal } from './product-request.js';
 
 export { ALL_PRODUCTS };
 
 let currentCategory = 'all';
 let currentSearch = '';
 let currentSort = 'featured';
+
+// Botão "Efetuar Pedido" do estado vazio (o conteúdo é re-renderizado, por isso delegação)
+document.addEventListener('click', (e) => {
+  if (e.target.closest('[data-action="request-product"]')) openProductRequestModal();
+});
 
 function renderCatalog() {
   const container = document.getElementById('catalogGrid');
@@ -38,8 +44,8 @@ function renderCatalog() {
     container.innerHTML = `
       <div class="catalog-empty-state">
         <h3 class="catalog-empty-title">Nenhum produto encontrado</h3>
-        <p class="catalog-empty-desc">Tente pesquisar por outros termos ou solicite uma cotação de sourcing personalizado.</p>
-        <a href="#sourcing" class="btn-dark catalog-empty-action">Solicitar Cotação Direta da China</a>
+        <p class="catalog-empty-desc">Tente pesquisar por outros termos ou envie-nos uma imagem do produto que procura e nós tratamos de o disponibilizar.</p>
+        <button type="button" class="btn-dark catalog-empty-action" data-action="request-product">Efetuar Pedido</button>
       </div>
     `;
     return;

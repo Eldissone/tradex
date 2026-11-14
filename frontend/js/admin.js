@@ -7,6 +7,7 @@ import { openDocViewer } from './doc-viewer.js';
 import { iconBtn, icon } from './icons.js';
 import { cmsStore, loadCms } from './cms.js';
 import { initAdminExtras, refreshAdminExtras, supplierStore } from './admin-extra.js';
+import { initProductRequests, refreshProductRequests } from './admin-product-requests.js';
 import { initConversations, refreshConversations, refreshNotificationLogs, fillNotificationOrders } from './admin-conversations.js';
 
 // Dados carregados da API (backoffice)
@@ -36,6 +37,7 @@ function initAdminDashboard() {
   bindOrdersModule();
   initAdminExtras();
   initConversations();
+  initProductRequests();
   setupOrderStatusModal();
   setupProductModal();
   renderAnalyticsModule();
@@ -80,6 +82,7 @@ async function loadAdminData() {
   }
   refreshAdminExtras();
   refreshConversations();
+  refreshProductRequests();
 }
 
 function renderOperatorHeader() {

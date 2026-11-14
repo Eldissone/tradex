@@ -51,6 +51,16 @@
             <span>Catálogo & Preços AOA</span>
           </button>
 
+          <button type="button" class="admin-nav-item" data-tab="requests">
+            <svg class="admin-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <span>Pedidos de Produto</span>
+            <span class="admin-badge-count" id="adminRequestsBadge" hidden>0</span>
+          </button>
+
           <button type="button" class="admin-nav-item" data-tab="suppliers">
             <svg class="admin-nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
@@ -432,6 +442,43 @@
         </section>
 
         <!-- Módulo 7: Notificações (WhatsApp e e-mail) -->
+        <!-- Módulo: Pedidos de Produto (imagens enviadas por clientes) -->
+        <section class="admin-tab-panel" id="adminPanelRequests">
+          <div class="admin-panel-head">
+            <div>
+              <h1 class="admin-panel-title">Pedidos de Produto</h1>
+              <p class="admin-panel-subtitle">Imagens enviadas por clientes para produtos que não existem no catálogo. Pesquise, disponibilize no sistema e atualize o estado.</p>
+            </div>
+            <div class="admin-head-actions">
+              <button type="button" class="btn-dark" id="btnRefreshRequests">Atualizar</button>
+            </div>
+          </div>
+
+          <div class="admin-filters-bar" id="adminRequestFilters">
+            <button type="button" class="admin-filter-pill active" data-filter="all">Todos</button>
+            <button type="button" class="admin-filter-pill" data-filter="NEW">Novos</button>
+            <button type="button" class="admin-filter-pill" data-filter="IN_REVIEW">Em pesquisa</button>
+            <button type="button" class="admin-filter-pill" data-filter="AVAILABLE">Disponibilizados</button>
+            <button type="button" class="admin-filter-pill" data-filter="REJECTED">Rejeitados</button>
+          </div>
+
+          <div class="admin-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Imagem</th>
+                  <th>Cliente</th>
+                  <th>Descrição</th>
+                  <th>Estado</th>
+                  <th>Data</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="adminRequestsBody"></tbody>
+            </table>
+          </div>
+        </section>
+
         <section class="admin-tab-panel" id="adminPanelNotifications">
           <div class="admin-panel-head">
             <div>
@@ -756,6 +803,47 @@
     </div>
 
     <!-- Modal de Alteração de Estado da Encomenda (Máquina de Estados) -->
+    <!-- Modal: detalhe do pedido de produto -->
+    <div class="auth-modal-overlay" id="requestModalOverlay">
+      <div class="auth-modal-card pr-admin-card" role="dialog" aria-modal="true" aria-labelledby="requestModalTitle">
+        <div class="auth-modal-header">
+          <div>
+            <h2 class="auth-modal-title" id="requestModalTitle">Pedido de produto</h2>
+            <p class="auth-modal-subtitle" id="requestModalMeta"></p>
+          </div>
+          <button type="button" class="auth-modal-close" id="requestModalClose" aria-label="Fechar">✕</button>
+        </div>
+        <div class="pr-admin-body">
+          <a id="requestModalImgLink" href="#" target="_blank" rel="noopener noreferrer" class="pr-admin-img-wrap">
+            <img id="requestModalImg" alt="Imagem enviada pelo cliente" />
+          </a>
+          <div class="pr-admin-info" id="requestModalInfo"></div>
+          <div class="auth-form-group">
+            <label for="requestModalStatus">Estado</label>
+            <select id="requestModalStatus" class="auth-input">
+              <option value="NEW">Novo</option>
+              <option value="IN_REVIEW">Em pesquisa</option>
+              <option value="AVAILABLE">Disponibilizado no sistema</option>
+              <option value="REJECTED">Rejeitado</option>
+            </select>
+          </div>
+          <div class="auth-form-group">
+            <label for="requestModalProduct">Produto criado no catálogo <span class="pr-optional">(opcional)</span></label>
+            <select id="requestModalProduct" class="auth-input"><option value="">— Nenhum —</option></select>
+          </div>
+          <div class="auth-form-group">
+            <label for="requestModalNote">Nota interna <span class="pr-optional">(opcional)</span></label>
+            <textarea id="requestModalNote" class="auth-input" rows="3" maxlength="1500" placeholder="Fornecedor encontrado, preço estimado, motivo da rejeição..."></textarea>
+          </div>
+          <div class="auth-feedback" id="requestModalFeedback" role="alert"></div>
+          <div class="pr-admin-actions">
+            <button type="button" class="btn-danger-outline" id="requestModalDelete">Eliminar</button>
+            <button type="button" class="auth-submit-btn" id="requestModalSave">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="auth-modal-overlay" id="supplierModalOverlay">
       <div class="auth-modal-card">
         <div class="auth-modal-header">

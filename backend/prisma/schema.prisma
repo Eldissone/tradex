@@ -414,3 +414,30 @@ model AuditLog {
   @@index([actorId, createdAt])
   @@index([entity, entityId])
 }
+
+// Pedido de produto que não existe no catálogo: o cliente envia imagem + descrição
+// e a equipa pesquisa no backoffice e disponibiliza no sistema.
+enum ProductRequestStatus {
+  NEW
+  IN_REVIEW
+  AVAILABLE
+  REJECTED
+}
+
+model ProductRequest {
+  id          String               @id @default(cuid())
+  customerId  String?
+  name        String
+  email       String?
+  phone       String
+  description String?
+  imageUrl    String
+  status      ProductRequestStatus @default(NEW)
+  adminNote   String?
+  productId   String?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  @@index([status, createdAt])
+  @@index([customerId])
+}

@@ -7,6 +7,7 @@ import { paymentsRouter } from './payments.routes.js';
 import { trackingRouter } from './tracking.routes.js';
 import { adminRouter } from './admin.routes.js';
 import { customersRouter } from './customers.routes.js';
+import { productRequestsRouter } from './product-requests.routes.js';
 import { whatsappRouter } from './whatsapp.routes.js';
 import { getSetting } from '../../infrastructure/settings.js';
 
@@ -16,6 +17,7 @@ apiRouter.use('/health', healthRouter);
 apiRouter.use('/auth', authRouter);
 apiRouter.use('/me', customersRouter);
 apiRouter.use('/products', productsRouter);
+apiRouter.use('/product-requests', productRequestsRouter);
 apiRouter.use('/orders', ordersRouter);
 apiRouter.use('/payments', paymentsRouter);
 apiRouter.use('/tracking', trackingRouter);

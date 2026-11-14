@@ -107,6 +107,13 @@ export const api = {
     resetPassword: (token, password) => request('/auth/reset-password', { method: 'POST', body: { token, password } })
   },
 
+  productRequests: {
+    create: (formData) => request('/product-requests', { method: 'POST', body: formData, timeoutMs: 60000 }),
+    list: (status) => request(`/product-requests${qs({ status })}`),
+    update: (id, data) => request(`/product-requests/${encodeURIComponent(id)}`, { method: 'PATCH', body: data }),
+    remove: (id) => request(`/product-requests/${encodeURIComponent(id)}`, { method: 'DELETE' })
+  },
+
   me: {
     addresses: () => request('/me/addresses'),
     addAddress: (address) => request('/me/addresses', { method: 'POST', body: address }),
