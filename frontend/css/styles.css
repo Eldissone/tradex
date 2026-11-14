@@ -2996,7 +2996,7 @@ footer {
 }
 
 .tracking-eyebrow {
-  color: #fff21a;
+  color: #0b0b0b;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -8465,7 +8465,7 @@ footer {
 }
 
 .faq-eyebrow {
-  color: #fff21a !important;
+  color: #0b0b0b !important;
   font-size: 3rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.12em !important;
@@ -8547,14 +8547,14 @@ footer {
   width: 24px !important;
   height: 24px !important;
   flex-shrink: 0 !important;
-  color: #fff21a !important;
+  color: #0b0b0b !important;
 }
 
 .faq-icon-plus,
 .faq-icon-chevron {
   width: 18px !important;
   height: 18px !important;
-  stroke: #fff21a !important;
+  stroke: #0b0b0b !important;
   transition: transform 0.2s ease, opacity 0.2s ease !important;
 }
 
@@ -10873,7 +10873,10 @@ th {
     margin-top: 1rem;
   }
 }
+
 /* Ilustração isométrica do FAQ: oculta em mobile */
 @media (max-width: 640px) {
-  .faq-graphic-col { display: none !important; }
+  .faq-graphic-col {
+    display: none !important;
+  }
 }
