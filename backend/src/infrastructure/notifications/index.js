@@ -48,7 +48,7 @@ async function buildMessage(order, event, extra = {}) {
       };
     case 'status_changed': {
       const label = ORDER_STATUS_LABELS[order.status] || order.status;
-      const pickup = order.status === 'READY_FOR_PICKUP' ? '\n\nPode levantar no Terminal TradeX, Bairro Azul, Luanda.' : '';
+      const pickup = order.status === 'READY_FOR_PICKUP' ? '\n\nPode levantar no Terminal TradeX, Kilamba, Luanda.' : '';
       return {
         subject: `${order.number}: ${label}`,
         summary: `${label}.${extra.note ? ` ${extra.note}` : ''}`,

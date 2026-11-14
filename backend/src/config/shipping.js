@@ -10,7 +10,7 @@ export const SHIPPING_MODES = {
 export const CARGO_INSURANCE_RATE = 0.04;
 
 export const DELIVERY_METHODS = {
-  pickup: { label: 'Levantamento no Terminal TradeX (Luanda)', feeAoa: 0 },
+  pickup: { label: 'Levantamento no Terminal TradeX (Kilamba, Luanda)', feeAoa: 0 },
   delivery_luanda: { label: 'Entrega ao domicílio em Luanda', feeAoa: 15000 },
   delivery_interprovincial: { label: 'Entrega interprovincial', feeAoa: 35000 }
 };

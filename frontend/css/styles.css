@@ -8363,7 +8363,7 @@ footer {
 
 .contact-cards-grid {
   display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
   gap: 1.5rem !important;
   margin-top: 2.5rem !important;
 }

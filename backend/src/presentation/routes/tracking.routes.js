@@ -112,7 +112,7 @@ trackingRouter.post('/lookup', lookupLimiter, optionalAuth, async (req, res) => 
       origin: 'Guangzhou, China',
       destination: 'Luanda, Angola',
       finalDelivery: order.deliveryMethod === 'pickup'
-        ? 'Terminal TradeX, Bairro Azul, Luanda'
+        ? 'Terminal TradeX, Kilamba, Luanda'
         : `${address?.municipality || ''}${address?.province ? `, ${address.province}` : ''}`,
       departureDate: order.trackingEvents.find(e => e.status === 'IN_INTERNATIONAL_TRANSIT')
         ? fmtDate(order.trackingEvents.find(e => e.status === 'IN_INTERNATIONAL_TRANSIT').occurredAt)

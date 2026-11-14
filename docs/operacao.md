@@ -33,7 +33,7 @@ Estados, por ordem:
 | Em Processamento (compra na China) | Compra feita ao fornecedor |
 | Enviado | Entregue ao agente parceiro (aéreo ou marítimo) |
 | Chegou a Angola | O agente confirmou a chegada |
-| Pronto para Levantamento | Disponível no Terminal TradeX, Bairro Azul |
+| Pronto para Levantamento | Disponível no Terminal TradeX, Kilamba |
 | Em Entrega ao Domicílio | Com a equipa de entregas |
 | Entregue | Concluída |
 | Cancelada | |

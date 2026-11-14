@@ -173,7 +173,7 @@ const handlers = {
       })),
       cargo_insurance_percent: Math.round(shipping.cargoInsuranceRate * 1000) / 10,
       delivery: Object.entries(shipping.deliveryMethods).map(([key, d]) => ({ key, name: d.label, fee: d.feeAoa ? kz(d.feeAoa) : 'Gratuito' })),
-      pickup_address: 'Terminal TradeX, Bairro Azul, Luanda',
+      pickup_address: 'Terminal TradeX, Kilamba, Luanda',
       payment: 'Transferência bancária; o cliente envia o comprovativo pelo link de rastreio.',
       bank_accounts: bank.accounts,
       account_holder: bank.accountHolder
