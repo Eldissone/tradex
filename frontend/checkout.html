@@ -1,474 +1,524 @@
 <!DOCTYPE html>
 <html lang="pt-AO">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Finalização Segura de Encomenda | TradeX Global Angola</title>
-    <meta name="description" content="Finalize a sua importação com segurança. Pagamento facilitado em Kwanzas e entrega porta a porta em Angola." />
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/styles.css" />
-  </head>
-  <body class="checkout-page-body">
-    <!-- Header Fixo / Barra de Navegação -->
-    <header id="mainHeader" class="main-header past-hero">
-    
 
-      <nav class="nav" aria-label="Navegação principal">
-        <div class="brand-wrap">
-          <a class="brand" href="/#inicio">TRADEX<span>GLOBAL</span></a>
-          <span class="brand-badge store-badge">Checkout Seguro</span>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finalização Segura de Encomenda | TradeX Global Angola</title>
+  <meta name="description"
+    content="Finalize a sua importação com segurança. Pagamento facilitado em Kwanzas e entrega porta a porta em Angola." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body class="checkout-page-body">
+  <!-- Header Fixo / Barra de Navegação -->
+  <header id="mainHeader" class="main-header past-hero">
+
+
+    <nav class="nav" aria-label="Navegação principal">
+      <div class="brand-wrap">
+        <a class="brand" href="/#inicio">TRADEX<span>GLOBAL</span></a>
+        <span class="brand-badge store-badge">Checkout Seguro</span>
+      </div>
+      <div class="nav-links" data-shared-nav></div>
+      <div class="nav-actions">
+        <a href="catalogo" class="nav-icon-btn" id="headerSearchBtn" aria-label="Pesquisar Produtos" title="Pesquisar">
+          <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </a>
+        <a href="rastreio" class="nav-icon-btn" id="headerUserBtn" aria-label="Área do Cliente e Rastreio"
+          title="Acompanhar Encomenda / Perfil">
+          <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="checkout-main-content">
+    <!-- Mensagem de Carrinho Vazio -->
+    <section class="checkout-empty-section" id="checkoutEmptyState">
+      <div class="checkout-empty-box">
+        <div class="empty-icon-circle">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
         </div>
-        <div class="nav-links" data-shared-nav></div>
-        <div class="nav-actions">
-          <a href="catalogo" class="nav-icon-btn" id="headerSearchBtn" aria-label="Pesquisar Produtos" title="Pesquisar">
-            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          </a>
-          <a href="rastreio" class="nav-icon-btn" id="headerUserBtn" aria-label="Área do Cliente e Rastreio" title="Acompanhar Encomenda / Perfil">
-            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-          </a>
+        <h2>O seu pedido está vazio</h2>
+        <p>Adicione equipamentos ou produtos do catálogo para gerar a sua cotação e encomenda de importação.</p>
+        <a href="catalogo" class="btn-dark">Explorar Produtos no Catálogo &rarr;</a>
+      </div>
+    </section>
+
+    <!-- Layout Principal de Checkout -->
+    <div class="checkout-layout-container" id="checkoutMainLayout">
+      <!-- Coluna da Esquerda: Formulários Passo a Passo -->
+      <div class="checkout-forms-column">
+        <div class="checkout-flow-header">
+          <h1 class="checkout-title">Finalizar Encomenda de Importação</h1>
+          <p class="checkout-subtitle">Preencha os dados de entrega em Angola e confirme a forma de liquidação em
+            Kwanzas.</p>
         </div>
-      </nav>
-    </header>
 
-    <main class="checkout-main-content">
-      <!-- Mensagem de Carrinho Vazio -->
-      <section class="checkout-empty-section" id="checkoutEmptyState">
-        <div class="checkout-empty-box">
-          <div class="empty-icon-circle">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="9" cy="21" r="1"></circle>
-              <circle cx="20" cy="21" r="1"></circle>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
-          </div>
-          <h2>O seu pedido está vazio</h2>
-          <p>Adicione equipamentos ou produtos do catálogo para gerar a sua cotação e encomenda de importação.</p>
-          <a href="catalogo" class="btn-dark">Explorar Produtos no Catálogo &rarr;</a>
-        </div>
-      </section>
-
-      <!-- Layout Principal de Checkout -->
-      <div class="checkout-layout-container" id="checkoutMainLayout">
-        <!-- Coluna da Esquerda: Formulários Passo a Passo -->
-        <div class="checkout-forms-column">
-          <div class="checkout-flow-header">
-            <h1 class="checkout-title">Finalizar Encomenda de Importação</h1>
-            <p class="checkout-subtitle">Preencha os dados de entrega em Angola e confirme a forma de liquidação em Kwanzas.</p>
-          </div>
-
-          <form id="checkoutMainForm" class="checkout-form-steps">
-            <!-- Passo 1: Identificação do Cliente -->
-            <div class="checkout-step-card">
-              <div class="step-card-head">
-                <span class="step-badge">1</span>
-                <div>
-                  <h3 class="step-card-title">Identificação do Cliente</h3>
-                  <p class="step-card-desc">Pode continuar como convidado ou utilizar os dados da sua conta TradeX.</p>
-                </div>
-              </div>
-
-              <!-- Notificação de utilizador logado -->
-              <div class="logged-user-notice" id="customerLoggedNotice">
-                <div class="logged-user-avatar">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                </div>
-                <div class="logged-user-details">
-                  <strong id="loggedUserName">Manuel Dos Santos</strong>
-                  <span id="loggedUserEmail"></span>
-                </div>
-                <button type="button" class="btn-text-link" id="btnSwitchGuest">Alterar dados</button>
-              </div>
-
-              <!-- Campos de identificação / Convidado -->
-              <div class="guest-fields-group" id="customerGuestFields">
-                <div class="checkout-form-row">
-                  <div class="checkout-form-group">
-                    <label for="custFullName">Nome Completo / Empresa *</label>
-                    <input type="text" id="custFullName" class="checkout-input" placeholder="Ex: Manuel Dos Santos ou Empresa Lda" required />
-                  </div>
-                  <div class="checkout-form-group">
-                    <label for="custNif">NIF / Identificação Fiscal</label>
-                    <input type="text" id="custNif" class="checkout-input" placeholder="Ex: 541829102LA041" />
-                  </div>
-                </div>
-
-                <div class="checkout-form-row">
-                  <div class="checkout-form-group">
-                    <label for="custEmail">E-mail para Fatura e Rastreio *</label>
-                    <input type="email" id="custEmail" class="checkout-input" placeholder="exemplo@empresa.ao" required />
-                  </div>
-                  <div class="checkout-form-group">
-                    <label for="custPhone">Telefone de Contacto / WhatsApp *</label>
-                    <input type="tel" id="custPhone" class="checkout-input" placeholder="+244 9xx xxx xxx" required />
-                  </div>
-                </div>
+        <form id="checkoutMainForm" class="checkout-form-steps">
+          <!-- Passo 1: Identificação do Cliente -->
+          <div class="checkout-step-card">
+            <div class="step-card-head">
+              <span class="step-badge">1</span>
+              <div>
+                <h3 class="step-card-title">Identificação do Cliente</h3>
+                <p class="step-card-desc">Pode continuar como convidado ou utilizar os dados da sua conta TradeX.</p>
               </div>
             </div>
 
-            <!-- Passo 2: Endereço de Entrega em Angola -->
-            <div class="checkout-step-card">
-              <div class="step-card-head">
-                <span class="step-badge">2</span>
-                <div>
-                  <h3 class="step-card-title">Endereço de Entrega & Destino</h3>
-                  <p class="step-card-desc">Selecione o local de entrega em Luanda ou noutra província de Angola.</p>
-                </div>
+            <!-- Notificação de utilizador logado -->
+            <div class="logged-user-notice" id="customerLoggedNotice">
+              <div class="logged-user-avatar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
               </div>
-
-              <!-- Endereços Salvos -->
-              <div class="saved-addresses-list" id="savedAddressesList">
-                <!-- Injetado dinamicamente via checkout.js -->
+              <div class="logged-user-details">
+                <strong id="loggedUserName">Manuel Dos Santos</strong>
+                <span id="loggedUserEmail"></span>
               </div>
+              <button type="button" class="btn-text-link" id="btnSwitchGuest">Alterar dados</button>
+            </div>
 
-              <div class="add-address-action">
-                <button type="button" class="btn-secondary-link" id="btnToggleNewAddress">
-                  <span>+ Adicionar Novo Endereço de Entrega</span>
-                </button>
-              </div>
-
-              <!-- Formulário de Novo Endereço (Colapsável) -->
-              <div class="new-address-form-box" id="newAddressForm">
-                <h4 class="new-address-title">Nova Morada de Entrega</h4>
-                <div class="checkout-form-row">
-                  <div class="checkout-form-group">
-                    <label for="newAddrLabel">Identificador (ex: Escritório, Armazém)</label>
-                    <input type="text" id="newAddrLabel" class="checkout-input" placeholder="Escritório Talatona" />
-                  </div>
-                  <div class="checkout-form-group">
-                    <label for="newAddrRecipient">Nome do Destinatário</label>
-                    <input type="text" id="newAddrRecipient" class="checkout-input" placeholder="Nome de quem recebe" />
-                  </div>
-                </div>
-                <div class="checkout-form-row">
-                  <div class="checkout-form-group">
-                    <label for="newAddrProvince">Província</label>
-                    <select id="newAddrProvince" class="checkout-select">
-                      <option value="Luanda" selected>Luanda</option>
-                      <option value="Benguela">Benguela</option>
-                      <option value="Huambo">Huambo</option>
-                      <option value="Huíla">Huíla</option>
-                      <option value="Cabinda">Cabinda</option>
-                      <option value="Kwanza Sul">Kwanza Sul</option>
-                    </select>
-                  </div>
-                  <div class="checkout-form-group">
-                    <label for="newAddrMunicipality">Município / Distrito</label>
-                    <input type="text" id="newAddrMunicipality" class="checkout-input" placeholder="Talatona, Maianga, Viana..." />
-                  </div>
+            <!-- Campos de identificação / Convidado -->
+            <div class="guest-fields-group" id="customerGuestFields">
+              <div class="checkout-form-row">
+                <div class="checkout-form-group">
+                  <label for="custFullName">Nome Completo / Empresa *</label>
+                  <input type="text" id="custFullName" class="checkout-input"
+                    placeholder="Ex: Manuel Dos Santos ou Empresa Lda" required />
                 </div>
                 <div class="checkout-form-group">
-                  <label for="newAddrStreet">Rua, Número ou Edifício</label>
-                  <input type="text" id="newAddrStreet" class="checkout-input" placeholder="Rua Comandante Gika, Edifício Garden..." />
+                  <label for="custNif">NIF / Identificação Fiscal</label>
+                  <input type="text" id="custNif" class="checkout-input" placeholder="Ex: 541829102LA041" />
+                </div>
+              </div>
+
+              <div class="checkout-form-row">
+                <div class="checkout-form-group">
+                  <label for="custEmail">E-mail para Fatura e Rastreio *</label>
+                  <input type="email" id="custEmail" class="checkout-input" placeholder="exemplo@empresa.ao" required />
                 </div>
                 <div class="checkout-form-group">
-                  <label for="newAddrRef">Ponto de Referência</label>
-                  <input type="text" id="newAddrRef" class="checkout-input" placeholder="Próximo ao Shopping X ou bomba de combustível..." />
-                </div>
-                <button type="button" class="btn-dark" id="btnSaveNewAddress">Guardar Morada</button>
-              </div>
-
-              <!-- Método de Entrega Local -->
-              <div class="delivery-methods-group">
-                <label class="delivery-option-radio">
-                  <input type="radio" name="deliveryMethod" value="pickup" checked />
-                  <div class="delivery-option-box">
-                    <div>
-                      <strong>Levantamento no Terminal TradeX (Luanda)</strong>
-                      <p>Recolha direta sem custos adicionais no Terminal Logístico TradeX (Bairro Azul, Luanda).</p>
-                    </div>
-                    <span class="delivery-price-tag free">Gratuito</span>
-                  </div>
-                </label>
-
-                <label class="delivery-option-radio">
-                  <input type="radio" name="deliveryMethod" value="delivery_luanda" />
-                  <div class="delivery-option-box">
-                    <div>
-                      <strong>Entrega Porta a Porta em Luanda</strong>
-                      <p>Transporte com frota dedicada e descarga direta na sua empresa ou residência.</p>
-                    </div>
-                    <span class="delivery-price-tag" data-delivery-fee="delivery_luanda">15.000 Kz</span>
-                  </div>
-                </label>
-
-                <label class="delivery-option-radio">
-                  <input type="radio" name="deliveryMethod" value="delivery_interprovincial" />
-                  <div class="delivery-option-box">
-                    <div>
-                      <strong>Expedição Interprovincial</strong>
-                      <p>Despacho rodoviário consolidado para Benguela, Huambo, Lubango ou outras províncias.</p>
-                    </div>
-                    <span class="delivery-price-tag" data-delivery-fee="delivery_interprovincial">35.000 Kz</span>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <!-- Passo 3: Modalidade de Transporte Internacional -->
-            <div class="checkout-step-card" id="checkoutShippingStep">
-              <div class="step-card-head">
-                <span class="step-badge">3</span>
-                <div>
-                  <h3 class="step-card-title">Modalidade de Envio Internacional</h3>
-                  <p class="step-card-desc">Escolha entre a rota marítima consolidada ou o frete aéreo prioritário.</p>
+                  <label for="custPhone">Telefone de Contacto / WhatsApp *</label>
+                  <input type="tel" id="custPhone" class="checkout-input" placeholder="+244 9xx xxx xxx" required />
                 </div>
               </div>
+            </div>
+          </div>
 
-              <div class="shipping-modes-group">
-                <label class="shipping-mode-card">
-                  <input type="radio" name="shippingMode" value="sea_lcl" checked />
-                  <div class="shipping-mode-content">
-                    <div class="mode-header">
-                      <span class="mode-icon-tag">
-                        <svg class="mode-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                          <path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
-                          <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"></path>
-                          <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"></path>
-                          <path d="M12 10v4"></path>
-                          <path d="M12 2v3"></path>
-                        </svg>
-                        MARÍTIMO
-                      </span>
-                      <span class="mode-time-tag" data-transit="sea_lcl">30 a 60 dias</span>
-                    </div>
-                    <h4>Envio Marítimo Porta a Porta</h4>
-                    <p>Ideal para cargas industriais, painéis solares e mercadorias de grande volume. Frete otimizado.</p>
-                  </div>
-                </label>
-
-                <label class="shipping-mode-card">
-                  <input type="radio" name="shippingMode" value="air_exp" />
-                  <div class="shipping-mode-content">
-                    <div class="mode-header">
-                      <span class="mode-icon-tag">
-                        <svg class="mode-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                          <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"></path>
-                        </svg>
-                        AÉREO EXPRESS
-                      </span>
-                      <span class="mode-time-tag" data-transit="air_exp">5 a 15 dias</span>
-                    </div>
-                    <h4>Transporte Aéreo Expresso Prioritário</h4>
-                    <p>Despacho expresso prioritário para entregas urgentes e equipamentos de alta rotação.</p>
-                  </div>
-                </label>
+          <!-- Passo 2: Endereço de Entrega em Angola -->
+          <div class="checkout-step-card">
+            <div class="step-card-head">
+              <span class="step-badge">2</span>
+              <div>
+                <h3 class="step-card-title">Endereço de Entrega & Destino</h3>
+                <p class="step-card-desc">Selecione o local de entrega em Luanda ou noutra província de Angola.</p>
               </div>
             </div>
 
-            <!-- Passo 4: Método de Pagamento em Kwanzas -->
-            <div class="checkout-step-card">
-              <div class="step-card-head">
-                <span class="step-badge" id="stepBadgePayment">4</span>
-                <div>
-                  <h3 class="step-card-title">Método de Pagamento em Kwanzas (AOA)</h3>
-                  <p class="step-card-desc">Selecione o meio de liquidação autorizado para emissão da encomenda.</p>
-                </div>
-              </div>
-
-              <div class="payment-methods-selector">
-                <label class="payment-method-item" data-pm="mcx_express" hidden>
-                  <input type="radio" name="paymentMethod" value="mcx_express" />
-                  <div class="payment-method-box">
-                    <div class="pm-title-row">
-                      <span class="pm-name">Multicaixa Express (MCX)</span>
-                      <span class="pm-badge">Instantâneo</span>
-                    </div>
-                    <p class="pm-desc">Receba uma notificação imediata no seu aplicativo Multicaixa Express para aprovar o pagamento no telemóvel.</p>
-                    <div class="pm-subfields" id="paymentMcxExpressFields">
-                      <label for="mcxPhoneInput">Número de Telemóvel do Multicaixa Express:</label>
-                      <input type="tel" id="mcxPhoneInput" class="checkout-input" placeholder="+244 9xx xxx xxx" />
-                    </div>
-                  </div>
-                </label>
-
-                <label class="payment-method-item" data-pm="mcx_reference" hidden>
-                  <input type="radio" name="paymentMethod" value="mcx_reference" />
-                  <div class="payment-method-box">
-                    <div class="pm-title-row">
-                      <span class="pm-name">Pagamento por Referência Multicaixa</span>
-                      <span class="pm-badge">ATM / GPO</span>
-                    </div>
-                    <p class="pm-desc">Gere uma Entidade e Referência de 9 dígitos para pagar em qualquer caixa ATM Multicaixa ou Homebanking.</p>
-                    <div class="pm-subfields" id="paymentMcxRefFields">
-                      <p class="pm-hint-text">A referência será emitida logo após a confirmação com prazo de 48 horas para pagamento.</p>
-                    </div>
-                  </div>
-                </label>
-
-                <label class="payment-method-item" data-pm="bank_transfer">
-                  <input type="radio" name="paymentMethod" value="bank_transfer" checked />
-                  <div class="payment-method-box">
-                    <div class="pm-title-row">
-                      <span class="pm-name">Transferência Bancária Direta</span>
-                      <span class="pm-badge">Disponível</span>
-                    </div>
-                    <p class="pm-desc">Transfira diretamente para as contas da TradeX Global Trading Lda e anexe o comprovativo.</p>
-                    <div class="pm-subfields visible" id="paymentBankTransferFields">
-                      <p class="pm-hint-text">Os dados bancários serão exibidos após confirmar a encomenda. Depois de transferir, envie o comprovativo para validação.</p>
-                    </div>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <!-- Botão de Confirmação Final -->
-            <div class="checkout-submit-box">
-              <button type="submit" class="btn-dark btn-full checkout-confirm-btn" id="btnConfirmOrder">
-                <span>Confirmar e Gerar Encomenda Oficial TradeX &rarr;</span>
-              </button>
-              <p class="checkout-terms-note">
-                Ao confirmar, concorda com os Termos de Serviço de Importação TradeX Global Lda.
-              </p>
-            </div>
-          </form>
-        </div>
-
-        <!-- Coluna da Direita: Resumo do Pedido & Breakdown Financeiro -->
-        <div class="checkout-summary-column">
-          <div class="checkout-summary-card">
-            <h3 class="summary-card-title">Resumo do Pedido</h3>
-            
-            <!-- Lista de Produtos -->
-            <div class="checkout-items-list" id="checkoutItemsList">
+            <!-- Endereços Salvos -->
+            <div class="saved-addresses-list" id="savedAddressesList">
               <!-- Injetado dinamicamente via checkout.js -->
             </div>
 
-            <!-- Discriminativo de Custos -->
-            <div class="summary-cost-breakdown">
-              <div class="summary-line">
-                <span>Subtotal dos Produtos:</span>
-                <strong id="summarySubtotal">0 Kz</strong>
+            <div class="add-address-action">
+              <button type="button" class="btn-secondary-link" id="btnToggleNewAddress">
+                <span>+ Adicionar Novo Endereço de Entrega</span>
+              </button>
+            </div>
+
+            <!-- Formulário de Novo Endereço (Colapsável) -->
+            <div class="new-address-form-box" id="newAddressForm">
+              <h4 class="new-address-title">Nova Morada de Entrega</h4>
+              <div class="checkout-form-row">
+                <div class="checkout-form-group">
+                  <label for="newAddrLabel">Identificador (ex: Escritório, Armazém)</label>
+                  <input type="text" id="newAddrLabel" class="checkout-input" placeholder="Escritório Talatona" />
+                </div>
+                <div class="checkout-form-group">
+                  <label for="newAddrRecipient">Nome do Destinatário</label>
+                  <input type="text" id="newAddrRecipient" class="checkout-input" placeholder="Nome de quem recebe" />
+                </div>
               </div>
-              <div class="summary-line">
-                <span>Frete Internacional Porta a Porta (China ➔ Angola):</span>
-                <strong id="summaryFreight">0 Kz</strong>
+              <div class="checkout-form-row">
+                <div class="checkout-form-group">
+                  <label for="newAddrProvince">Província</label>
+                  <select id="newAddrProvince" class="checkout-select">
+                    <option value="Luanda" selected>Luanda</option>
+                    <option value="Benguela">Benguela</option>
+                    <option value="Huambo">Huambo</option>
+                    <option value="Huíla">Huíla</option>
+                    <option value="Cabinda">Cabinda</option>
+                    <option value="Kwanza Sul">Kwanza Sul</option>
+                  </select>
+                </div>
+                <div class="checkout-form-group">
+                  <label for="newAddrMunicipality">Município / Distrito</label>
+                  <input type="text" id="newAddrMunicipality" class="checkout-input"
+                    placeholder="Talatona, Maianga, Viana..." />
+                </div>
               </div>
-              <div class="summary-line">
-                <span>Seguro de Carga:</span>
-                <strong id="summaryCustoms">0 Kz</strong>
+              <div class="checkout-form-group">
+                <label for="newAddrStreet">Rua, Número ou Edifício</label>
+                <input type="text" id="newAddrStreet" class="checkout-input"
+                  placeholder="Rua Comandante Gika, Edifício Garden..." />
               </div>
-              <div class="summary-line">
-                <span>Entrega Local em Angola:</span>
-                <strong id="summaryDelivery">Gratuito (Terminal)</strong>
+              <div class="checkout-form-group">
+                <label for="newAddrRef">Ponto de Referência</label>
+                <input type="text" id="newAddrRef" class="checkout-input"
+                  placeholder="Próximo ao Shopping X ou bomba de combustível..." />
               </div>
-              <div class="summary-total-divider"></div>
-              <div class="summary-total-line">
-                <span>Total a Liquidar (AOA):</span>
-                <strong class="total-aoa-amount" id="summaryGrandTotal">0 Kz</strong>
+              <button type="button" class="btn-dark" id="btnSaveNewAddress">Guardar Morada</button>
+            </div>
+
+            <!-- Método de Entrega Local -->
+            <div class="delivery-methods-group">
+              <label class="delivery-option-radio">
+                <input type="radio" name="deliveryMethod" value="pickup" checked />
+                <div class="delivery-option-box">
+                  <div>
+                    <strong>Levantamento no Terminal TradeX (Luanda)</strong>
+                    <p>Recolha direta sem custos adicionais no Terminal Logístico TradeX (Bairro Azul, Luanda).</p>
+                  </div>
+                  <span class="delivery-price-tag free">Gratuito</span>
+                </div>
+              </label>
+
+              <label class="delivery-option-radio">
+                <input type="radio" name="deliveryMethod" value="delivery_luanda" />
+                <div class="delivery-option-box">
+                  <div>
+                    <strong>Entrega Porta a Porta em Luanda</strong>
+                    <p>Transporte com frota dedicada e descarga direta na sua empresa ou residência.</p>
+                  </div>
+                  <span class="delivery-price-tag" data-delivery-fee="delivery_luanda">15.000 Kz</span>
+                </div>
+              </label>
+
+              <label class="delivery-option-radio">
+                <input type="radio" name="deliveryMethod" value="delivery_interprovincial" />
+                <div class="delivery-option-box">
+                  <div>
+                    <strong>Expedição Interprovincial</strong>
+                    <p>Despacho rodoviário consolidado para Benguela, Huambo, Lubango ou outras províncias.</p>
+                  </div>
+                  <span class="delivery-price-tag" data-delivery-fee="delivery_interprovincial">35.000 Kz</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Passo 3: Modalidade de Transporte Internacional -->
+          <div class="checkout-step-card" id="checkoutShippingStep">
+            <div class="step-card-head">
+              <span class="step-badge">3</span>
+              <div>
+                <h3 class="step-card-title">Modalidade de Envio Internacional</h3>
+                <p class="step-card-desc">Escolha entre a rota marítima consolidada ou o frete aéreo prioritário.</p>
               </div>
             </div>
 
-            <!-- Selos de Confiança -->
-            <div class="summary-trust-badges">
-              <div class="trust-badge-row">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                <span>Carga 100% Segurada com Cobertura Internacional</span>
-              </div>
-              <div class="trust-badge-row">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                <span>Fatura Pró-forma Oficial Emitida em Kwanzas</span>
-              </div>
-              <div class="trust-badge-row">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                <span>Rastreamento em Tempo Real no Portal de Cargas</span>
-              </div>
+            <div class="shipping-modes-group">
+              <label class="shipping-mode-card">
+                <input type="radio" name="shippingMode" value="sea_lcl" checked />
+                <div class="shipping-mode-content">
+                  <div class="mode-header">
+                    <span class="mode-icon-tag">
+                      <svg class="mode-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <path
+                          d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1">
+                        </path>
+                        <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"></path>
+                        <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"></path>
+                        <path d="M12 10v4"></path>
+                        <path d="M12 2v3"></path>
+                      </svg>
+                      MARÍTIMO
+                    </span>
+                    <span class="mode-time-tag" data-transit="sea_lcl">30 a 60 dias</span>
+                  </div>
+                  <h4>Envio Marítimo Porta a Porta</h4>
+                  <p>Ideal para cargas industriais, painéis solares e mercadorias de grande volume. Frete otimizado.</p>
+                </div>
+              </label>
+
+              <label class="shipping-mode-card">
+                <input type="radio" name="shippingMode" value="air_exp" />
+                <div class="shipping-mode-content">
+                  <div class="mode-header">
+                    <span class="mode-icon-tag">
+                      <svg class="mode-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <path
+                          d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z">
+                        </path>
+                      </svg>
+                      AÉREO EXPRESS
+                    </span>
+                    <span class="mode-time-tag" data-transit="air_exp">5 a 15 dias</span>
+                  </div>
+                  <h4>Transporte Aéreo Expresso Prioritário</h4>
+                  <p>Despacho expresso prioritário para entregas urgentes e equipamentos de alta rotação.</p>
+                </div>
+              </label>
             </div>
           </div>
-        </div>
+
+          <!-- Passo 4: Método de Pagamento em Kwanzas -->
+          <div class="checkout-step-card">
+            <div class="step-card-head">
+              <span class="step-badge" id="stepBadgePayment">4</span>
+              <div>
+                <h3 class="step-card-title">Método de Pagamento em Kwanzas (AOA)</h3>
+                <p class="step-card-desc">Selecione o meio de liquidação autorizado para emissão da encomenda.</p>
+              </div>
+            </div>
+
+            <div class="payment-methods-selector">
+              <label class="payment-method-item" data-pm="mcx_express" hidden>
+                <input type="radio" name="paymentMethod" value="mcx_express" />
+                <div class="payment-method-box">
+                  <div class="pm-title-row">
+                    <span class="pm-name">Multicaixa Express (MCX)</span>
+                    <span class="pm-badge">Instantâneo</span>
+                  </div>
+                  <p class="pm-desc">Receba uma notificação imediata no seu aplicativo Multicaixa Express para aprovar o
+                    pagamento no telemóvel.</p>
+                  <div class="pm-subfields" id="paymentMcxExpressFields">
+                    <label for="mcxPhoneInput">Número de Telemóvel do Multicaixa Express:</label>
+                    <input type="tel" id="mcxPhoneInput" class="checkout-input" placeholder="+244 9xx xxx xxx" />
+                  </div>
+                </div>
+              </label>
+
+              <label class="payment-method-item" data-pm="mcx_reference" hidden>
+                <input type="radio" name="paymentMethod" value="mcx_reference" />
+                <div class="payment-method-box">
+                  <div class="pm-title-row">
+                    <span class="pm-name">Pagamento por Referência Multicaixa</span>
+                    <span class="pm-badge">ATM / GPO</span>
+                  </div>
+                  <p class="pm-desc">Gere uma Entidade e Referência de 9 dígitos para pagar em qualquer caixa ATM
+                    Multicaixa ou Homebanking.</p>
+                  <div class="pm-subfields" id="paymentMcxRefFields">
+                    <p class="pm-hint-text">A referência será emitida logo após a confirmação com prazo de 48 horas para
+                      pagamento.</p>
+                  </div>
+                </div>
+              </label>
+
+              <label class="payment-method-item" data-pm="bank_transfer">
+                <input type="radio" name="paymentMethod" value="bank_transfer" checked />
+                <div class="payment-method-box">
+                  <div class="pm-title-row">
+                    <span class="pm-name">Transferência Bancária Direta</span>
+                    <span class="pm-badge">Disponível</span>
+                  </div>
+                  <p class="pm-desc">Transfira diretamente para as contas da TradeX Global Trading Lda e anexe o
+                    comprovativo.</p>
+                  <div class="pm-subfields visible" id="paymentBankTransferFields">
+                    <p class="pm-hint-text">Os dados bancários serão exibidos após confirmar a encomenda. Depois de
+                      transferir, envie o comprovativo para validação.</p>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Botão de Confirmação Final -->
+          <div class="checkout-submit-box">
+            <button type="submit" class="btn-dark btn-full checkout-confirm-btn" id="btnConfirmOrder">
+              <span>Confirmar e Gerar Encomenda Oficial TradeX &rarr;</span>
+            </button>
+            <p class="checkout-terms-note">
+              Ao confirmar, concorda com os Termos de Serviço de Importação TradeX Global Lda.
+            </p>
+          </div>
+        </form>
       </div>
 
-      <!-- Tela de Confirmação & Recibo da Encomenda (Exibida pós-checkout) -->
-      <section class="checkout-success-section" id="checkoutSuccessScreen">
-        <div class="success-card-box">
-          <div class="success-check-badge">
-            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          </div>
-          <span class="success-pretitle">ENCOMENDA REGISTADA COM SUCESSO</span>
-          <h2 class="success-order-code" id="successOrderNumber">#TDX-AO-2026-9842</h2>
-          <p class="success-desc">
-            A sua encomenda de importação foi gerada no sistema TradeX Global. Abaixo encontram-se as instruções de liquidação em Kwanzas e os dados para acompanhar a sua encomenda.
-          </p>
+      <!-- Coluna da Direita: Resumo do Pedido & Breakdown Financeiro -->
+      <div class="checkout-summary-column">
+        <div class="checkout-summary-card">
+          <h3 class="summary-card-title">Resumo do Pedido</h3>
 
-          <div class="receipt-meta-box">
-            <div class="receipt-col">
-              <span class="meta-label">Data da Emissão:</span>
-              <strong id="successOrderDate">07 de Novembro de 2026</strong>
-            </div>
-            <div class="receipt-col">
-              <span class="meta-label">Titular / Empresa:</span>
-              <strong id="successCustomerName">Manuel Dos Santos</strong>
-            </div>
-            <div class="receipt-col">
-              <span class="meta-label">Método de Pagamento:</span>
-              <strong id="successPaymentMethod">Transferência Bancária</strong>
-            </div>
-            <div class="receipt-col">
-              <span class="meta-label">Total a Liquidar:</span>
-              <strong class="receipt-highlight" id="successOrderTotal">0 Kz</strong>
-            </div>
-          </div>
-
-          <!-- Caixa de Instruções Específicas do Pagamento -->
-          <div id="successPaymentDetails">
+          <!-- Lista de Produtos -->
+          <div class="checkout-items-list" id="checkoutItemsList">
             <!-- Injetado dinamicamente via checkout.js -->
           </div>
 
-          <!-- Convidado: criar conta com os dados da compra -->
-          <div id="successCreateAccount" class="success-create-account" hidden></div>
+          <!-- Discriminativo de Custos -->
+          <div class="summary-cost-breakdown">
+            <div class="summary-line">
+              <span>Subtotal dos Produtos:</span>
+              <strong id="summarySubtotal">0 Kz</strong>
+            </div>
+            <div class="summary-line">
+              <span>Frete Internacional Porta a Porta (China ➔ Angola):</span>
+              <strong id="summaryFreight">0 Kz</strong>
+            </div>
+            <div class="summary-line">
+              <span>Seguro de Carga:</span>
+              <strong id="summaryCustoms">0 Kz</strong>
+            </div>
+            <div class="summary-line">
+              <span>Entrega Local em Angola:</span>
+              <strong id="summaryDelivery">Gratuito (Terminal)</strong>
+            </div>
+            <div class="summary-total-divider"></div>
+            <div class="summary-total-line">
+              <span>Total a Liquidar (AOA):</span>
+              <strong class="total-aoa-amount" id="summaryGrandTotal">0 Kz</strong>
+            </div>
+          </div>
 
-          <div class="success-actions-bar">
-            <a href="rastreio" class="btn-dark" id="btnTrackSuccessOrder">
-              <span>Acompanhar no Portal de Rastreio &rarr;</span>
-            </a>
-            <button type="button" class="btn-outline-dark" id="btnPrintReceipt">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                <rect x="6" y="14" width="12" height="8"></rect>
+          <!-- Selos de Confiança -->
+          <div class="summary-trust-badges">
+            <div class="trust-badge-row">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
               </svg>
-              <span>Imprimir Fatura / Comprovativo</span>
-            </button>
-            <a href="catalogo" class="btn-secondary-link">Voltar ao Catálogo de Produtos</a>
+              <span>Carga 100% Segurada com Cobertura Internacional</span>
+            </div>
+            <div class="trust-badge-row">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+              <span>Fatura Pró-forma Oficial Emitida em Kwanzas</span>
+            </div>
+            <div class="trust-badge-row">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>Rastreamento em Tempo Real no Portal de Cargas</span>
+            </div>
           </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </div>
 
-    <!-- Rodapé -->
-    <footer class="footer-main">
-      <div class="footer-container">
-        <div class="footer-left">
-          <p class="footer-brand">TRADEX <span>GLOBAL</span></p>
-          <p class="footer-copy">&copy; 2026 TradeX Global Trading Lda. Luanda, Angola — Guangzhou, China. Todos os direitos reservados.</p>
+    <!-- Tela de Confirmação & Recibo da Encomenda (Exibida pós-checkout) -->
+    <section class="checkout-success-section" id="checkoutSuccessScreen">
+      <div class="success-card-box">
+        <div class="success-check-badge">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
         </div>
-        <div class="footer-right">
-          <a href="/">Início</a>
-          <a href="catalogo">Catálogo</a>
-          <a href="rastreio">Rastreio</a>
-          <a href="/#simulador">Simulador</a>
-          <a href="/#contacto">Contacto</a>
+        <span class="success-pretitle">ENCOMENDA REGISTADA COM SUCESSO</span>
+        <h2 class="success-order-code" id="successOrderNumber">#TDX-AO-2026-9842</h2>
+        <p class="success-desc">
+          A sua encomenda de importação foi gerada no sistema TradeX Global. Abaixo encontram-se as instruções de
+          liquidação em Kwanzas e os dados para acompanhar a sua encomenda.
+        </p>
+
+        <div class="receipt-meta-box">
+          <div class="receipt-col">
+            <span class="meta-label">Data da Emissão:</span>
+            <strong id="successOrderDate">07 de Novembro de 2026</strong>
+          </div>
+          <div class="receipt-col">
+            <span class="meta-label">Titular / Empresa:</span>
+            <strong id="successCustomerName">Manuel Dos Santos</strong>
+          </div>
+          <div class="receipt-col">
+            <span class="meta-label">Método de Pagamento:</span>
+            <strong id="successPaymentMethod">Transferência Bancária</strong>
+          </div>
+          <div class="receipt-col">
+            <span class="meta-label">Total a Liquidar:</span>
+            <strong class="receipt-highlight" id="successOrderTotal">0 Kz</strong>
+          </div>
+        </div>
+
+        <!-- Caixa de Instruções Específicas do Pagamento -->
+        <div id="successPaymentDetails">
+          <!-- Injetado dinamicamente via checkout.js -->
+        </div>
+
+        <!-- Convidado: criar conta com os dados da compra -->
+        <div id="successCreateAccount" class="success-create-account" hidden></div>
+
+        <div class="success-actions-bar">
+          <a href="rastreio" class="btn-dark" id="btnTrackSuccessOrder">
+            <span>Acompanhar no Portal de Rastreio &rarr;</span>
+          </a>
+          <button type="button" class="btn-outline-dark" id="btnPrintReceipt">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            <span>Imprimir Fatura / Comprovativo</span>
+          </button>
+          <a href="catalogo" class="btn-secondary-link">Voltar ao Catálogo de Produtos</a>
         </div>
       </div>
-    </footer>
+    </section>
+  </main>
 
-    <script type="module" src="js/nav.js"></script>
+  <!-- Rodapé -->
+  <footer class="footer-main">
+    <div class="footer-container">
+      <div class="footer-left">
+        <p class="footer-brand">TRADEX <span>GLOBAL</span></p>
+        <p class="footer-copy">&copy; 2026 TradeX Global Trading Lda. Luanda, Angola — Guangzhou, China. Todos os
+          direitos reservados.</p>
+      </div>
+      <div class="footer-right">
+        <a href="/">Início</a>
+        <a href="catalogo">Catálogo</a>
+        <a href="rastreio">Rastreio</a>
+        <a href="/#simulador">Simulador</a>
+        <a href="/#contacto">Contacto</a>
+      </div>
+    </div>
+  </footer>
 
-    <script type="module" src="js/auth.js"></script>
-    <script type="module" src="js/checkout.js"></script>
-  </body>
+  <!-- Botão Flutuante do WhatsApp -->
+  <a href="https://wa.me/244952670034" class="whatsapp-float-btn" aria-label="WhatsApp" target="_blank"
+    rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+
+  <script type="module" src="js/nav.js"></script>
+
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/checkout.js"></script>
+</body>
+
 </html>
-

@@ -8,10 +8,9 @@ export const DEFAULT_SHIPPING_SETTINGS = {
 };
 
 export const DEFAULT_BANK_SETTINGS = {
-  accountHolder: 'TradeX Global Trading Lda',
+  accountHolder: 'Nest Hub Comercio Geral Lda',
   accounts: [
-    { bank: 'Banco BFA', iban: 'AO06.0006.0000.4491.0294.1018.4' },
-    { bank: 'Banco BAI', iban: 'AO06.0040.0000.9918.2231.1029.0' }
+    { bank: 'Banco ATLANTICO', iban: 'AO06.0055.0000.8899.8449.1018.0' }
   ]
 };
 

@@ -1,208 +1,224 @@
 <!doctype html>
 <html lang="pt-AO">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="TradeX Global Trading - Catálogo completo de produtos para importação da China para Angola com preços em Kwanza." />
-    <title>Catálogo de Produtos | TradeX Global Trading</title>
-    <link rel="stylesheet" href="css/styles.css" />
-  </head>
-  <body>
-    <!-- Gaveta do Pedido (Cart Drawer) -->
-    <div id="cartOverlay" class="cart-drawer-overlay"></div>
-    <aside id="cartDrawer" class="cart-drawer" aria-label="Resumo do Pedido">
-      <div class="cart-drawer-head">
-        <h3>Pedido de Importação</h3>
-        <button id="closeCartBtn" class="btn-close-cart" aria-label="Fechar">✕</button>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="TradeX Global Trading - Catálogo completo de produtos para importação da China para Angola com preços em Kwanza." />
+  <title>Catálogo de Produtos | TradeX Global Trading</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body>
+  <!-- Gaveta do Pedido (Cart Drawer) -->
+  <div id="cartOverlay" class="cart-drawer-overlay"></div>
+  <aside id="cartDrawer" class="cart-drawer" aria-label="Resumo do Pedido">
+    <div class="cart-drawer-head">
+      <h3>Pedido de Importação</h3>
+      <button id="closeCartBtn" class="btn-close-cart" aria-label="Fechar">✕</button>
+    </div>
+    <ul id="cartItemsList" class="cart-items-list">
+      <li class="cart-empty-msg">
+        O seu pedido está vazio. Selecione itens do catálogo.
+      </li>
+    </ul>
+    <div class="cart-footer">
+      <div class="cart-total-line">
+        <span>Total Estimado:</span>
+        <span id="cartTotalAoa">0 Kz</span>
       </div>
-      <ul id="cartItemsList" class="cart-items-list">
-        <li class="cart-empty-msg">
-          O seu pedido está vazio. Selecione itens do catálogo.
-        </li>
-      </ul>
-      <div class="cart-footer">
-        <div class="cart-total-line">
-          <span>Total Estimado:</span>
-          <span id="cartTotalAoa">0 Kz</span>
+      <button id="btnSubmitCart" class="btn-dark btn-full">
+        Finalizar Cotação em Kwanza
+      </button>
+    </div>
+  </aside>
+
+  <!-- Header Fixo / Barra de Navegação -->
+  <header id="mainHeader" class="main-header">
+    <nav class="nav" aria-label="Navegação principal">
+      <div class="brand-wrap">
+        <a class="brand" href="/#inicio">TRADEX<span>GLOBAL</span></a>
+      </div>
+      <div class="nav-links" data-shared-nav></div>
+      <div class="nav-actions">
+        <a href="catalogo" class="nav-icon-btn" id="headerSearchBtn" aria-label="Pesquisar Produtos" title="Pesquisar">
+          <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </a>
+        <button id="openCartBtn" class="nav-icon-btn nav-cart-icon-btn" type="button" aria-label="Abrir Pedido"
+          title="Carrinho de Compras">
+          <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span id="cartCount" class="nav-cart-badge">0</span>
+        </button>
+        <a href="rastreio" class="nav-icon-btn" id="headerUserBtn" aria-label="Área do Cliente e Rastreio"
+          title="Acompanhar Encomenda / Perfil">
+          <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- Cabeçalho do Catálogo com Slider de Banners Dinâmico (Gerido pelo CMS) -->
+    <section class="catalog-hero-slider" id="catalogHeroSlider" aria-label="Banners em Destaque do Catálogo">
+      <div id="catalogSlideTrack">
+        <!-- Slide inicial / Injetado dinamicamente via catalogo.js a partir do CMS -->
+        <div class="catalog-slide active" data-slide="0">
+          <div class="catalog-slide-bg slide-bg-1"></div>
+          <div class="catalog-slide-overlay"></div>
+          <div class="catalog-slide-content">
+            <p class="eyebrow">CHINA ➔ ANGOLA</p>
+            <h1>Produtos industriais e comerciais com preços em Kwanza.</h1>
+            <p class="lead">
+              Fornecedores validados nas principais províncias industriais da China (Guangdong, Zhejiang, Jiangsu,
+              Shandong). Entrega porta a porta em Angola.
+            </p>
+          </div>
         </div>
-        <button id="btnSubmitCart" class="btn-dark btn-full">
-          Finalizar Cotação em Kwanza
+      </div>
+
+      <!-- Controlos do Slider (Setas + Indicadores Dots) -->
+      <div class="catalog-slider-controls">
+        <button id="sliderPrevBtn" class="catalog-slider-arrow" aria-label="Banner anterior">
+          <svg class="slider-arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <div class="catalog-slider-dots" id="sliderDots">
+          <button class="catalog-slider-dot active" data-go="0" aria-label="Ir para banner 1"></button>
+        </div>
+        <button id="sliderNextBtn" class="catalog-slider-arrow" aria-label="Próximo banner">
+          <svg class="slider-arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
         </button>
       </div>
-    </aside>
+    </section>
 
-    <!-- Header Fixo / Barra de Navegação -->
-    <header id="mainHeader" class="main-header">
-      <nav class="nav" aria-label="Navegação principal">
-        <div class="brand-wrap">
-          <a class="brand" href="/#inicio">TRADEX<span>GLOBAL</span></a>
-        </div>
-        <div class="nav-links" data-shared-nav></div>
-        <div class="nav-actions">
-          <a href="catalogo" class="nav-icon-btn" id="headerSearchBtn" aria-label="Pesquisar Produtos" title="Pesquisar">
-            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Secção Principal do Catálogo -->
+    <section class="section-standard">
+      <!-- Barra de Ferramentas / Pesquisa & Ordenação -->
+      <div class="catalog-toolbar">
+        <form id="searchForm" class="catalog-search-box">
+          <input type="text" id="catalogSearch" class="catalog-search-input"
+            placeholder="Pesquisar por produto, especificação ou fábrica (ex: solar, andaimes)..." />
+          <button type="submit" class="catalog-search-btn">
+            <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-          </a>
-          <button id="openCartBtn" class="nav-icon-btn nav-cart-icon-btn" type="button" aria-label="Abrir Pedido" title="Carrinho de Compras">
-            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="9" cy="21" r="1"></circle>
-              <circle cx="20" cy="21" r="1"></circle>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
-            <span id="cartCount" class="nav-cart-badge">0</span>
+            <span>Pesquisar</span>
           </button>
-          <a href="rastreio" class="nav-icon-btn" id="headerUserBtn" aria-label="Área do Cliente e Rastreio" title="Acompanhar Encomenda / Perfil">
-            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-          </a>
+        </form>
+
+        <div class="catalog-sort-box">
+          <label for="catalogSort" class="catalog-sort-label">Ordenar por:</label>
+          <select id="catalogSort" class="catalog-sort-select">
+            <option value="featured">Destaques Comerciais</option>
+            <option value="price-asc">Menor Preço (AOA)</option>
+            <option value="price-desc">Maior Preço (AOA)</option>
+          </select>
         </div>
-      </nav>
-    </header>
+      </div>
 
-    <main>
+      <!-- Filtros por Categoria -->
+      <div class="category-filters" id="categoryFilters">
+        <button class="filter-btn active" data-category="all">Todos os produtos</button>
+        <button class="filter-btn" data-category="solar">Energia Solar</button>
+        <button class="filter-btn" data-category="industrial">Construção & Equipamento</button>
+        <button class="filter-btn" data-category="electronics">Eletrónicos & Iluminação</button>
+        <button class="filter-btn" data-category="machinery">Maquinaria & Geradores</button>
+        <button class="filter-btn" data-category="construction">Materiais de Construção</button>
+      </div>
 
-      <!-- Cabeçalho do Catálogo com Slider de Banners Dinâmico (Gerido pelo CMS) -->
-      <section class="catalog-hero-slider" id="catalogHeroSlider" aria-label="Banners em Destaque do Catálogo">
-        <div id="catalogSlideTrack">
-          <!-- Slide inicial / Injetado dinamicamente via catalogo.js a partir do CMS -->
-          <div class="catalog-slide active" data-slide="0">
-            <div class="catalog-slide-bg slide-bg-1"></div>
-            <div class="catalog-slide-overlay"></div>
-            <div class="catalog-slide-content">
-              <p class="eyebrow">CHINA ➔ ANGOLA</p>
-              <h1>Produtos industriais e comerciais com preços em Kwanza.</h1>
-              <p class="lead">
-                Fornecedores validados nas principais províncias industriais da China (Guangdong, Zhejiang, Jiangsu, Shandong). Entrega porta a porta em Angola.
-              </p>
-            </div>
+      <!-- Contador de Resultados -->
+      <div class="catalog-results-info" id="resultsCount">
+        A carregar produtos...
+      </div>
+
+      <!-- Grelha de Produtos -->
+      <div class="product-grid" id="catalogGrid">
+        <!-- Injetado dinamicamente via catalogo.js -->
+      </div>
+    </section>
+
+    <!-- Sourcing Direto para Itens Não Listados -->
+    <section id="sourcing" class="section-standard section-alt-bg">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-dark">NÃO ENCONTROU O QUE PROCURA?</p>
+        <h2>Sourcing personalizado de qualquer produto na China</h2>
+        <p>Se tem um produto específico em vista no 1688, Alibaba, Taobao ou catálogo de feiras (Canton Fair), tratamos
+          da negociação direta de fábrica, controlo de qualidade e remessa para Angola.</p>
+      </div>
+
+      <div class="quote-box">
+        <form id="sourcingForm" class="quote-form">
+          <div class="quote-field">
+            <label for="clientName">Nome Completo / Empresa</label>
+            <input type="text" id="clientName" placeholder="Ex: Importações Silva Lda" required />
           </div>
-        </div>
-
-        <!-- Controlos do Slider (Setas + Indicadores Dots) -->
-        <div class="catalog-slider-controls">
-          <button id="sliderPrevBtn" class="catalog-slider-arrow" aria-label="Banner anterior">
-            <svg class="slider-arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
+          <div class="quote-field">
+            <label for="clientContact">Telefone ou WhatsApp (Angola)</label>
+            <input type="tel" id="clientContact" placeholder="+244 9..." required />
+          </div>
+          <div class="quote-field">
+            <label for="productDesc">Descrição Detalhada ou Link de Fábrica</label>
+            <textarea id="productDesc" rows="3"
+              placeholder="Cole aqui o link do fornecedor chinês, quantidade desejada ou requisitos técnicos..."></textarea>
+          </div>
+          <button type="submit" class="btn-dark btn-self-start">
+            Solicitar Cotação em Kwanza
           </button>
-          <div class="catalog-slider-dots" id="sliderDots">
-            <button class="catalog-slider-dot active" data-go="0" aria-label="Ir para banner 1"></button>
+          <div id="sourcingSuccessMsg" class="sourcing-feedback-msg">
+            Solicitação registada com sucesso! A nossa equipa entrará em contacto com a cotação detalhada.
           </div>
-          <button id="sliderNextBtn" class="catalog-slider-arrow" aria-label="Próximo banner">
-            <svg class="slider-arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </button>
-        </div>
-      </section>
+        </form>
+      </div>
+    </section>
 
-      <!-- Secção Principal do Catálogo -->
-      <section class="section-standard">
-        <!-- Barra de Ferramentas / Pesquisa & Ordenação -->
-        <div class="catalog-toolbar">
-          <form id="searchForm" class="catalog-search-box">
-            <input 
-              type="text" 
-              id="catalogSearch" 
-              class="catalog-search-input" 
-              placeholder="Pesquisar por produto, especificação ou fábrica (ex: solar, andaimes)..." 
-            />
-            <button type="submit" class="catalog-search-btn">
-              <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <span>Pesquisar</span>
-            </button>
-          </form>
+    <!-- Rodapé Original -->
+    <footer id="contacto">
+      <div>
+        <strong class="footer-brand-title">TRADEX GLOBAL TRADING</strong>
+        <p class="footer-address">
+          Luanda - Angola | China Hub: Yuexiu District, Guangzhou
+        </p>
+      </div>
+      <div class="footer-meta-right">
+        <span>Your Gateway to Global Commerce.</span>
+        <p class="footer-copyright">&copy; 2026 TradeX Global Trading. Todos os direitos reservados.</p>
+      </div>
+    </footer>
+  </main>
 
-          <div class="catalog-sort-box">
-            <label for="catalogSort" class="catalog-sort-label">Ordenar por:</label>
-            <select id="catalogSort" class="catalog-sort-select">
-              <option value="featured">Destaques Comerciais</option>
-              <option value="price-asc">Menor Preço (AOA)</option>
-              <option value="price-desc">Maior Preço (AOA)</option>
-            </select>
-          </div>
-        </div>
+  <!-- Botão Flutuante do WhatsApp -->
+  <a href="https://wa.me/244952670034" class="whatsapp-float-btn" aria-label="WhatsApp" target="_blank"
+    rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
 
-        <!-- Filtros por Categoria -->
-        <div class="category-filters" id="categoryFilters">
-          <button class="filter-btn active" data-category="all">Todos os produtos</button>
-          <button class="filter-btn" data-category="solar">Energia Solar</button>
-          <button class="filter-btn" data-category="industrial">Construção & Equipamento</button>
-          <button class="filter-btn" data-category="electronics">Eletrónicos & Iluminação</button>
-          <button class="filter-btn" data-category="machinery">Maquinaria & Geradores</button>
-          <button class="filter-btn" data-category="construction">Materiais de Construção</button>
-        </div>
+  <script type="module" src="js/nav.js"></script>
 
-        <!-- Contador de Resultados -->
-        <div class="catalog-results-info" id="resultsCount">
-          A carregar produtos...
-        </div>
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/catalogo.js"></script>
+</body>
 
-        <!-- Grelha de Produtos -->
-        <div class="product-grid" id="catalogGrid">
-          <!-- Injetado dinamicamente via catalogo.js -->
-        </div>
-      </section>
-
-      <!-- Sourcing Direto para Itens Não Listados -->
-      <section id="sourcing" class="section-standard section-alt-bg">
-        <div class="section-head">
-          <p class="eyebrow eyebrow-dark">NÃO ENCONTROU O QUE PROCURA?</p>
-          <h2>Sourcing personalizado de qualquer produto na China</h2>
-          <p>Se tem um produto específico em vista no 1688, Alibaba, Taobao ou catálogo de feiras (Canton Fair), tratamos da negociação direta de fábrica, controlo de qualidade e remessa para Angola.</p>
-        </div>
-
-        <div class="quote-box">
-          <form id="sourcingForm" class="quote-form">
-            <div class="quote-field">
-              <label for="clientName">Nome Completo / Empresa</label>
-              <input type="text" id="clientName" placeholder="Ex: Importações Silva Lda" required />
-            </div>
-            <div class="quote-field">
-              <label for="clientContact">Telefone ou WhatsApp (Angola)</label>
-              <input type="tel" id="clientContact" placeholder="+244 9..." required />
-            </div>
-            <div class="quote-field">
-              <label for="productDesc">Descrição Detalhada ou Link de Fábrica</label>
-              <textarea id="productDesc" rows="3" placeholder="Cole aqui o link do fornecedor chinês, quantidade desejada ou requisitos técnicos..."></textarea>
-            </div>
-            <button type="submit" class="btn-dark btn-self-start">
-              Solicitar Cotação em Kwanza
-            </button>
-            <div id="sourcingSuccessMsg" class="sourcing-feedback-msg">
-              Solicitação registada com sucesso! A nossa equipa entrará em contacto com a cotação detalhada.
-            </div>
-          </form>
-        </div>
-      </section>
-
-      <!-- Rodapé Original -->
-      <footer id="contacto">
-        <div>
-          <strong class="footer-brand-title">TRADEX GLOBAL TRADING</strong>
-          <p class="footer-address">
-            Luanda - Angola | China Hub: Yuexiu District, Guangzhou
-          </p>
-        </div>
-        <div class="footer-meta-right">
-          <span>Your Gateway to Global Commerce.</span>
-          <p class="footer-copyright">&copy; 2026 TradeX Global Trading. Todos os direitos reservados.</p>
-        </div>
-      </footer>
-    </main>
-
-    <script type="module" src="js/nav.js"></script>
-
-    <script type="module" src="js/auth.js"></script>
-    <script type="module" src="js/catalogo.js"></script>
-  </body>
 </html>

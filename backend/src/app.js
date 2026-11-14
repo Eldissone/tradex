@@ -35,6 +35,8 @@ function isOriginAllowed(origin) {
   if (/^https:\/\/tradexglobal[a-zA-Z0-9-]*\.vercel\.app$/.test(clean)) return true;
   if (/^https:\/\/([a-zA-Z0-9-]+\.)?tradex\.ao$/.test(clean)) return true;
   if (/^https:\/\/([a-zA-Z0-9-]+\.)?tradeximportacoes\.com$/.test(clean)) return true;
+  // Permite qualquer porta de desenvolvimento local (localhost e 127.0.0.1)
+  if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(clean)) return true;
   return false;
 }
 

@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
 :root {
   font-family: Montserrat, system-ui, sans-serif;
@@ -8687,7 +8688,7 @@ footer {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
-  padding: 2.5rem 4rem !important;
+  padding: 2.5rem 4rem 1.75rem !important;
   border-top: 1px solid #1e293b !important;
   background: #0b0f19 !important;
   color: #94a3b8 !important;
@@ -8695,11 +8696,112 @@ footer {
   gap: 1.5rem !important;
 }
 
+.footer-site .footer-meta-right,
+.footer-meta-right {
+  width: 100% !important;
+  flex-basis: 100% !important;
+  order: 99 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding-top: 1.25rem !important;
+  margin-top: 0.75rem !important;
+  flex-wrap: wrap !important;
+  gap: 0.75rem !important;
+}
+
+.footer-meta-right span {
+  font-size: 0.78rem !important;
+  color: #94a3b8 !important;
+  opacity: 0.9;
+}
+
+.footer-meta-right .footer-copyright {
+  border-top: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 0.75rem !important;
+  color: #64748b !important;
+}
+
 @media (max-width: 768px) {
   .footer-site {
-    padding: 2rem 1.5rem !important;
+    padding: 2rem 1.5rem 1.5rem !important;
     flex-direction: column !important;
     align-items: flex-start !important;
+  }
+
+  .footer-site .footer-meta-right,
+  .footer-meta-right {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* ==========================================================================
+   Botão Flutuante do WhatsApp
+   ========================================================================== */
+.whatsapp-float-btn {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 60px;
+  height: 60px;
+  background-color: #25D366;
+  color: #ffffff !important;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.45);
+  z-index: 950;
+  text-decoration: none !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  cursor: pointer;
+  animation: whatsappPulse 2.8s infinite;
+}
+
+.whatsapp-float-btn:hover {
+  transform: scale(1.1);
+  background-color: #20ba59;
+  box-shadow: 0 6px 24px rgba(37, 211, 102, 0.65);
+  color: #ffffff !important;
+  animation: none;
+}
+
+.whatsapp-float-btn:active {
+  transform: scale(0.95);
+}
+
+.whatsapp-float-btn i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+@keyframes whatsappPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(37, 211, 102, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+  }
+}
+
+@media (max-width: 768px) {
+  .whatsapp-float-btn {
+    bottom: 20px;
+    right: 20px;
+    width: 52px;
+    height: 52px;
+    font-size: 28px;
   }
 }
 
@@ -9896,6 +9998,54 @@ body.doc-viewer-open {
   background: #0f172a !important;
   border-color: #0f172a !important;
   color: #ffffff !important;
+}
+
+
+.footer-social-modern {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.footer-social-modern a {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.footer-social-modern a:hover,
+.footer-social-modern a:focus-visible {
+  background: var(--cyan);
+  outline: none;
+}
+
+.footer-copyright {
+  padding-block: 1.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+  font-size: 0.82rem;
+  opacity: 0.7;
+}
+
+.footer-social ul {
+  display: flex;
+  list-style: none;
+  gap: 0.75rem;
+}
+
+.footer-social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--paper);
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.footer-social a:hover {
+  background: var(--navy);
+  transform: translateY(-3px);
 }
 
 .icon-btn.icon-btn--primary:hover {

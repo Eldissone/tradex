@@ -1,552 +1,616 @@
 <!doctype html>
 <html lang="pt-AO">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="TradeX Global Trading - comércio internacional entre a China e Angola." />
-    <title>TradeX Global Trading | China — Angola</title>
-    <link rel="stylesheet" href="css/styles.css" />
-  </head>
-  <body>
-    <!-- Gaveta do Pedido (Cart Drawer) -->
-    <div id="cartOverlay" class="cart-drawer-overlay"></div>
-    <aside id="cartDrawer" class="cart-drawer" aria-label="Resumo do Pedido">
-      <div class="cart-drawer-head">
-        <h3>Pedido de Importação</h3>
-        <button id="closeCartBtn" class="btn-close-cart" aria-label="Fechar">✕</button>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="TradeX Global Trading - comércio internacional entre a China e Angola." />
+  <title>TradeX Global Trading | China — Angola</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <!-- Gaveta do Pedido (Cart Drawer) -->
+  <div id="cartOverlay" class="cart-drawer-overlay"></div>
+  <aside id="cartDrawer" class="cart-drawer" aria-label="Resumo do Pedido">
+    <div class="cart-drawer-head">
+      <h3>Pedido de Importação</h3>
+      <button id="closeCartBtn" class="btn-close-cart" aria-label="Fechar">✕</button>
+    </div>
+    <ul id="cartItemsList" class="cart-items-list">
+      <li class="cart-empty-msg">
+        O seu pedido está vazio. Selecione itens do catálogo abaixo.
+      </li>
+    </ul>
+    <div class="cart-footer">
+      <div class="cart-total-line">
+        <span>Total Estimado:</span>
+        <span id="cartTotalAoa">0 Kz</span>
       </div>
-      <ul id="cartItemsList" class="cart-items-list">
-        <li class="cart-empty-msg">
-          O seu pedido está vazio. Selecione itens do catálogo abaixo.
-        </li>
-      </ul>
-      <div class="cart-footer">
-        <div class="cart-total-line">
-          <span>Total Estimado:</span>
-          <span id="cartTotalAoa">0 Kz</span>
-        </div>
-        <button id="btnSubmitCart" class="btn-dark btn-full">
-          Finalizar Cotação em Kwanza
+      <button id="btnSubmitCart" class="btn-dark btn-full">
+        Finalizar Cotação em Kwanza
+      </button>
+    </div>
+  </aside>
+
+  <!-- Header Fixo / Barra de Navegação -->
+  <header id="mainHeader" class="main-header">
+    <nav class="nav" aria-label="Navegação principal">
+      <div class="brand-wrap">
+        <a class="brand" href="/#inicio">TRADEX<span>GLOBAL</span></a>
+      </div>
+      <div class="nav-links" data-shared-nav></div>
+      <div class="nav-actions">
+        <a href="catalogo" class="nav-icon-btn" id="headerSearchBtn" aria-label="Pesquisar Produtos" title="Pesquisar">
+          <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </a>
+        <button id="openCartBtn" class="nav-icon-btn nav-cart-icon-btn" type="button" aria-label="Abrir Pedido"
+          title="Carrinho de Compras">
+          <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span id="cartCount" class="nav-cart-badge">0</span>
         </button>
+        <a href="rastreio" class="nav-icon-btn" id="headerUserBtn" aria-label="Área do Cliente e Rastreio"
+          title="Acompanhar Encomenda / Perfil">
+          <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </a>
       </div>
-    </aside>
+    </nav>
+  </header>
 
-    <!-- Header Fixo / Barra de Navegação -->
-    <header id="mainHeader" class="main-header">
-      <nav class="nav" aria-label="Navegação principal">
-        <div class="brand-wrap">
-          <a class="brand" href="/#inicio">TRADEX<span>GLOBAL</span></a>
-        </div>
-        <div class="nav-links" data-shared-nav></div>
-        <div class="nav-actions">
-          <a href="catalogo" class="nav-icon-btn" id="headerSearchBtn" aria-label="Pesquisar Produtos" title="Pesquisar">
-            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          </a>
-          <button id="openCartBtn" class="nav-icon-btn nav-cart-icon-btn" type="button" aria-label="Abrir Pedido" title="Carrinho de Compras">
-            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="9" cy="21" r="1"></circle>
-              <circle cx="20" cy="21" r="1"></circle>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
-            <span id="cartCount" class="nav-cart-badge">0</span>
-          </button>
-          <a href="rastreio" class="nav-icon-btn" id="headerUserBtn" aria-label="Área do Cliente e Rastreio" title="Acompanhar Encomenda / Perfil">
-            <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-          </a>
-        </div>
-      </nav>
-    </header>
+  <main>
 
-    <main>
-
-      <!-- Hero Section Original -->
-      <section id="inicio" class="hero">
-        <div class="hero-container">
-          <div class="hero-content">
-            <h1>O seu acesso ao comércio global.</h1>
-            <p class="lead">Uma plataforma para descobrir produtos, gerir importações e acompanhar entregas com total transparência e preços em Kwanza.</p>
-            <div class="actions">
-              <a href="catalogo" class="btn-primary">
-                <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <path d="M16 10a4 4 0 0 1-8 0"></path>
-                </svg>
-                <span>Explorar catálogo</span>
-              </a>
-              <a href="/#simulador" class="btn-primary btn-outline-white">
-                <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="4" y="2" width="16" height="20" rx="2"></rect>
-                  <line x1="8" y1="6" x2="16" y2="6"></line>
-                  <line x1="16" y1="14" x2="16" y2="18"></line>
-                  <path d="M16 10h.01"></path>
-                  <path d="M12 10h.01"></path>
-                  <path d="M8 10h.01"></path>
-                  <path d="M12 14h.01"></path>
-                  <path d="M8 14h.01"></path>
-                  <path d="M12 18h.01"></path>
-                  <path d="M8 18h.01"></path>
-                </svg>
-                <span>Simular</span>
-              </a>
-              <a href="/#como-funciona" class="btn-primary btn-outline-white">
-                <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                </svg>
-                <span>Como funciona</span>
-              </a>
-            </div>
-          </div>
-          <div class="hero-media">
-            <img src="hero-shopper.png" alt="Empreendedora a comprar no comércio global TradeX com smartphone" class="hero-person-img" />
-          </div>
-        </div>
-      </section>
-
-      <!-- Capacidades / Serviços Original -->
-      <section id="servicos" class="capabilities" aria-label="Serviços TradeX">
-        <article>
-          <h2>Comércio global</h2>
-          <p>Acesso direto a fábricas e mercados de Yiwu e Guangzhou com preços convertidos e pagos em Kwanza angolano.</p>
-        </article>
-        <article>
-          <h2>Logística visível</h2>
-          <p>Acompanhe cada etapa da sua remessa, desde a compra na China até à entrega em Angola.</p>
-        </article>
-        <article>
-          <h2>Gestão integrada</h2>
-          <p>Compras com fornecedores validados, frete marítimo/aéreo e entrega porta a porta num só lugar.</p>
-        </article>
-      </section>
-
-      <!-- Carrossel de Produtos em Destaque -->
-      <section id="catalogo" class="section-standard">
-        <div class="carousel-section-head">
-          <div class="section-head">
-            <p class="eyebrow eyebrow-dark" id="featuredCatalogEyebrow">CATÁLOGO EM DESTAQUE</p>
-            <h2 id="featuredCatalogTitle">Produtos com fornecedor validado na China</h2>
-            <p id="featuredCatalogSubtitle">Equipamentos industriais, soluções de energia solar e bens de consumo com cotação imediata em Kwanza (AOA).</p>
-          </div>
-          <div class="carousel-controls">
-            <button id="carouselPrevBtn" class="carousel-btn" aria-label="Produto anterior">←</button>
-            <button id="carouselNextBtn" class="carousel-btn" aria-label="Próximo produto">→</button>
-          </div>
-        </div>
-
-        <div class="category-filters" id="categoryFilters">
-          <button class="filter-btn active" data-category="all">Todos os produtos</button>
-          <button class="filter-btn" data-category="solar">Energia Solar & Geradores</button>
-          <button class="filter-btn" data-category="industrial">Equipamento & Construção</button>
-          <button class="filter-btn" data-category="electronics">Eletrónicos & Iluminação</button>
-        </div>
-
-        <div class="carousel-wrapper">
-          <div class="carousel-track" id="productCarouselTrack">
-            <!-- Injetado dinamicamente via app.js -->
-          </div>
-        </div>
-
-        <div class="carousel-dots" id="carouselDots">
-          <!-- Indicadores dinâmicos via app.js -->
-        </div>
-
-        <div class="carousel-footer-action">
-          <a href="catalogo" class="btn-dark">Ver Todo o Catálogo Completo &rarr;</a>
-        </div>
-      </section>
-
-      <!-- Secção Importação e Encomendas (Showcase Logística) -->
-      <section id="importacao-encomendas" class="orders-showcase-section">
-        <div class="orders-showcase-container">
-          <div class="orders-showcase-info">
-            <h2 class="orders-showcase-title">IMPORTAÇÃO E ENCOMENDAS</h2>
-            <p class="orders-showcase-lead">Receba o mundo na sua porta de forma simples e segura.</p>
-            <div class="orders-showcase-actions">
-              <a href="#simulador" class="btn-dark btn-pill">Iniciar Envio</a>
-              <a href="#como-funciona" class="btn-video-action">
-                <span class="btn-play-icon">▶</span> Assistir Vídeo
-              </a>
-            </div>
-          </div>
-
-          <div class="orders-showcase-visual">
-            <div class="world-map-backdrop"></div>
-            
-            <div class="float-badge badge-customs">
-              <svg class="badge-svg-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              <span>Fornecedores</span>
-            </div>
-            
-            <div class="float-badge badge-insured-top">
-              <svg class="badge-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-              <span>Segurado</span>
-            </div>
-
-            <div class="float-badge badge-insured-left">
-              <svg class="badge-svg-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              <span>Produtos</span>
-            </div>
-
-            <div class="float-asset asset-ship">
-              <div class="mini-ship-graphic">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"></path><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"></path><path d="M12 10v4"></path><path d="M12 2v3"></path></svg>
-              </div>
-            </div>
-
-            <div class="float-asset asset-plane">
-              <div class="mini-plane-graphic">
-                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"></path></svg>
-              </div>
-            </div>
-
-            <div class="orders-card card-backdrop">
-              <div class="card-status-pill pill-warning">Aguardando pagamento</div>
-              <div class="card-package-box">
-                <div class="package-3d-box">
-                  <div class="box-tape"></div>
-                  <div class="box-label-tag">FRAGILE</div>
-                </div>
-              </div>
-              <div class="card-package-title">Pronto para envio</div>
-              <div class="card-package-code">#AO-9842</div>
-              <div class="card-barcode">
-                <div class="barcode-lines"></div>
-                <span class="barcode-number">TDX02026CDF01</span>
-              </div>
-            </div>
-
-            <div class="orders-card card-foreground">
-              <div class="card-package-box main-box">
-                <div class="package-3d-box">
-                  <div class="box-tape"></div>
-                  <div class="box-label-tag">FRAGILE</div>
-                  <div class="box-mini-barcode"></div>
-                </div>
-              </div>
-              <div class="card-header-flex">
-                <div>
-                  <h4 class="card-main-title">Encomenda Internacional</h4>
-                  <span class="card-main-code">#BR-9842</span>
-                </div>
-                <span class="card-status-pill pill-success">A caminho</span>
-              </div>
-              <div class="card-route-tracker">
-                <div class="route-point">
-                  <span class="point-city">China</span>
-                </div>
-                <div class="route-line-wrap">
-                  <div class="route-dashed-line"></div>
-                  <div class="route-transport-icon">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"></path></svg>
-                  </div>
-                </div>
-                <div class="route-point">
-                  <span class="point-city">Angola</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="float-asset asset-smartphone">
-              <div class="phone-frame">
-                <div class="phone-screen">
-                  <div class="phone-map-bg">
-                    <div class="map-route-line"></div>
-                    <div class="map-pin"></div>
-                  </div>
-                  <div class="phone-info-box">
-                    <div class="phone-info-bar"></div>
-                    <div class="phone-info-btn"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-       <!-- Processo Original -->
-      <section id="como-funciona" class="process">
-        <h2>Da escolha à entrega, tudo acompanhado.</h2>
-        <ol>
-          <li>
-            <strong>1. Escolha ou solicite os produtos</strong>
-            <p class="process-step-desc">Selecione os artigos do catálogo ou envie ligações de fábricas chinesas para cotação.</p>
-          </li>
-          <li>
-            <strong>2. Pague em AOA com fatura pró-forma</strong>
-            <p class="process-step-desc">Liquidação por transferência bancária em Kwanzas através de parceiros autorizados.</p>
-          </li>
-          <li>
-            <strong>3. Acompanhe a sua encomenda</strong>
-            <p class="process-step-desc">Notificações a cada marco: envio da China, chegada a Angola e entrega ou levantamento.</p>
-          </li>
-        </ol>
-      </section>
-
-
-      <!-- Simulador de Importação China ➔ Angola -->
-      <section id="simulador" class="section-standard">
-        <div class="section-head">
-          <p class="eyebrow eyebrow-dark">SIMULADOR LOGÍSTICO</p>
-          <h2>Calcule o custo do seu produto em Angola</h2>
-          <p>Escolha um produto do catálogo e veja o total com frete, seguro e entrega.</p>
-        </div>
-
-        <div class="calculator-box">
-          <form id="calcForm">
-            <div class="calc-form-group">
-              <label for="calcProduct">Produto</label>
-              <select id="calcProduct" class="calc-select"></select>
-            </div>
-
-            <div class="calc-row">
-              <div class="calc-form-group">
-                <label for="calcQuantity">Quantidade</label>
-                <input type="number" id="calcQuantity" class="calc-input" value="1" step="1" min="1" />
-              </div>
-              <div class="calc-form-group">
-                <label for="transportMode">Modalidade de Envio</label>
-                <select id="transportMode" class="calc-select"></select>
-              </div>
-            </div>
-
-            <div class="calc-form-group">
-              <label for="calcDelivery">Entrega em Angola</label>
-              <select id="calcDelivery" class="calc-select"></select>
-            </div>
-
-            <p class="calc-note" id="calcProductNote"></p>
-          </form>
-
-          <div class="calc-result-panel">
-            <div>
-              <span class="calc-result-title">Estimativa da Encomenda</span>
-              <ul class="calc-breakdown">
-                <li><span>Valor dos produtos</span> <strong id="valMercadoriaAoa">—</strong></li>
-                <li><span>Frete internacional</span> <strong id="valFreteAoa">—</strong></li>
-                <li><span>Seguro de carga</span> <strong id="valSeguroAoa">—</strong></li>
-                <li><span>Entrega em Angola</span> <strong id="valDespachoAoa">—</strong></li>
-                <li><span>Prazo estimado</span> <strong id="valPrazo">—</strong></li>
-              </ul>
-            </div>
-            <div class="calc-total">
-              <span class="calc-total-label">Total previsto</span>
-              <div class="calc-total-value" id="valTotalAoa">—</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-     
-      <!-- Rastreio de Cargas em Tempo Real -->
-      <section id="rastreio" class="section-standard">
-        <div class="section-head">
-          <p class="eyebrow eyebrow-dark">LOGÍSTICA & RASTREIO</p>
-          <h2>Acompanhe a sua remessa em tempo real</h2>
-          <p>Insira o número da encomenda ou código de conhecimento de embarque para verificar a posição atual.</p>
-        </div>
-
-        <div class="tracking-wrapper">
-          <form id="trackingForm" class="tracking-bar">
-            <input 
-              type="text" 
-              id="trackingCodeInput" 
-              placeholder="Ex: TDX-AO-2026-001 ou insira o seu código" 
-              value="TDX-AO-2026-001"
-              required 
-            />
-            <button type="submit">Consultar Carga</button>
-          </form>
-
-          <div class="tracking-portal-cta">
-            <a href="rastreio" class="btn-dark">
-              <span>Aceder ao Portal de Rastreio Completo &rarr;</span>
+    <!-- Hero Section Original -->
+    <section id="inicio" class="hero">
+      <div class="hero-container">
+        <div class="hero-content">
+          <h1>O seu acesso ao comércio global.</h1>
+          <p class="lead">Uma plataforma para descobrir produtos, gerir importações e acompanhar entregas com total
+            transparência e preços em Kwanza.</p>
+          <div class="actions">
+            <a href="catalogo" class="btn-primary">
+              <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+              <span>Explorar catálogo</span>
+            </a>
+            <a href="/#simulador" class="btn-primary btn-outline-white">
+              <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+                <line x1="8" y1="6" x2="16" y2="6"></line>
+                <line x1="16" y1="14" x2="16" y2="18"></line>
+                <path d="M16 10h.01"></path>
+                <path d="M12 10h.01"></path>
+                <path d="M8 10h.01"></path>
+                <path d="M12 14h.01"></path>
+                <path d="M8 14h.01"></path>
+                <path d="M12 18h.01"></path>
+                <path d="M8 18h.01"></path>
+              </svg>
+              <span>Simular</span>
+            </a>
+            <a href="/#como-funciona" class="btn-primary btn-outline-white">
+              <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+              </svg>
+              <span>Como funciona</span>
             </a>
           </div>
         </div>
-      </section>
-
-      
-        <!-- Secção de Perguntas Frequentes (FAQ) - Layout Moderno Dividido -->
-      <section id="faq" class="faq-section" aria-label="Perguntas Frequentes">
-        <div class="faq-container">
-          <!-- Coluna Esquerda: Título + Accordion -->
-          <div class="faq-main-col">
-            <div class="faq-header-block">
-              <span class="faq-eyebrow">FAQ</span>
-              <h2 class="faq-title">Perguntas Frequentes</h2>
-            </div>
-
-            <div class="faq-accordion" id="faqAccordionContainer">
-              <!-- Injetado dinamicamente via app.js a partir do CMS -->
-            </div>
-          </div>
-
-          <!-- Coluna Direita: Ilustração Geométrica 3D Isometric Layers -->
-          <div class="faq-graphic-col" aria-hidden="true">
-            <div class="faq-isometric-illustration">
-              <svg class="faq-isometric-svg" viewBox="0 0 440 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Plano Wireframe Inferior -->
-                <polygon points="110,310 230,250 350,310 230,370" class="faq-iso-plane-bottom" />
-                
-                <!-- Eixo Vertical Central e Ponto de Ancoragem Verde -->
-                <line x1="230" y1="340" x2="230" y2="160" class="faq-iso-axis-line" />
-                <circle cx="230" cy="340" r="7" class="faq-iso-node-pulse" />
-                <circle cx="230" cy="340" r="3.5" class="faq-iso-node-core" />
-
-                <!-- Plano Intermédio Flutuante (Translúcido) -->
-                <polygon points="120,230 240,170 360,230 240,290" class="faq-iso-plane-middle" />
-
-                <!-- Pilha de Camadas Superiores (Stack 3D) -->
-                <!-- Camada 1 -->
-                <polygon points="200,180 280,140 360,180 280,220" class="faq-iso-stack-layer l1" />
-                <polygon points="200,180 280,220 280,225 200,185" class="faq-iso-stack-edge" />
-                <polygon points="280,220 360,180 360,185 280,225" class="faq-iso-stack-edge dark" />
-
-                <!-- Camada 2 -->
-                <polygon points="200,165 280,125 360,165 280,205" class="faq-iso-stack-layer l2" />
-                <polygon points="200,165 280,205 280,210 200,170" class="faq-iso-stack-edge" />
-                <polygon points="280,205 360,165 360,170 280,210" class="faq-iso-stack-edge dark" />
-
-                <!-- Camada 3 -->
-                <polygon points="200,150 280,110 360,150 280,190" class="faq-iso-stack-layer l3" />
-                <polygon points="200,150 280,190 280,195 200,155" class="faq-iso-stack-edge" />
-                <polygon points="280,190 360,150 360,155 280,195" class="faq-iso-stack-edge dark" />
-
-                <!-- Camada 4 -->
-                <polygon points="200,135 280,95 360,135 280,175" class="faq-iso-stack-layer l4" />
-                <polygon points="200,135 280,175 280,180 200,140" class="faq-iso-stack-edge" />
-                <polygon points="280,175 360,135 360,140 280,180" class="faq-iso-stack-edge dark" />
-
-                <!-- Camada 5 -->
-                <polygon points="200,120 280,80 360,120 280,160" class="faq-iso-stack-layer l5" />
-                <polygon points="200,120 280,160 280,165 200,125" class="faq-iso-stack-edge" />
-                <polygon points="280,160 360,120 360,125 280,165" class="faq-iso-stack-edge dark" />
-
-                <!-- Camada 6 (Topo) -->
-                <polygon points="200,105 280,65 360,105 280,145" class="faq-iso-stack-layer l6 top" />
-                <polygon points="200,105 280,145 280,150 200,110" class="faq-iso-stack-edge" />
-                <polygon points="280,145 360,105 360,110 280,150" class="faq-iso-stack-edge dark" />
-              </svg>
-            </div>
-          </div>
+        <div class="hero-media">
+          <img src="hero-shopper.png" alt="Empreendedora a comprar no comércio global TradeX com smartphone"
+            class="hero-person-img" />
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Sourcing Personalizado / Pedido de Cotação Direta -->
-      <section id="sourcing" class="section-standard cta-section">
+    <!-- Capacidades / Serviços Original -->
+    <section id="servicos" class="capabilities" aria-label="Serviços TradeX">
+      <article>
+        <h2>Comércio global</h2>
+        <p>Acesso direto a fábricas e mercados de Yiwu e Guangzhou com preços convertidos e pagos em Kwanza angolano.
+        </p>
+      </article>
+      <article>
+        <h2>Logística visível</h2>
+        <p>Acompanhe cada etapa da sua remessa, desde a compra na China até à entrega em Angola.</p>
+      </article>
+      <article>
+        <h2>Gestão integrada</h2>
+        <p>Compras com fornecedores validados, frete marítimo/aéreo e entrega porta a porta num só lugar.</p>
+      </article>
+    </section>
+
+    <!-- Carrossel de Produtos em Destaque -->
+    <section id="catalogo" class="section-standard">
+      <div class="carousel-section-head">
         <div class="section-head">
-          <p class="eyebrow eyebrow-dark">SOURCING DIRETO</p>
-          <h2>Tem um produto específico em vista?</h2>
-          <p>Indique-nos o que pretende importar. Localizamos o fabricante na China, negociamos o preço de fábrica e tratamos da logística até Angola.</p>
+          <p class="eyebrow eyebrow-dark" id="featuredCatalogEyebrow">CATÁLOGO EM DESTAQUE</p>
+          <h2 id="featuredCatalogTitle">Produtos com fornecedor validado na China</h2>
+          <p id="featuredCatalogSubtitle">Equipamentos industriais, soluções de energia solar e bens de consumo com
+            cotação imediata em Kwanza (AOA).</p>
         </div>
-
-        <div class="quote-box">
-          <form id="sourcingForm" class="quote-form">
-            <div class="quote-field">
-              <label for="clientName">Nome / Empresa</label>
-              <input type="text" id="clientName" placeholder="Ex: Importações Silva Lda" required />
-            </div>
-            <div class="quote-field">
-              <label for="clientContact">Telefone ou WhatsApp (Angola)</label>
-              <input type="tel" id="clientContact" placeholder="+244 9..." required />
-            </div>
-            <div class="quote-field">
-              <label for="productDesc">Descrição do Produto ou Link (1688 / Alibaba / Taobao)</label>
-              <textarea id="productDesc" rows="3" placeholder="Indique especificações, quantidades estimadas ou cole aqui o link do produto..."></textarea>
-            </div>
-            <button type="submit" class="btn-dark btn-self-start">
-              Enviar Solicitação de Cotação
-            </button>
-            <div id="sourcingSuccessMsg" class="sourcing-feedback-msg">
-              Solicitação registada com sucesso! A equipa comercial da TradeX entrará em contacto com a cotação detalhada em Kwanzas.
-            </div>
-          </form>
+        <div class="carousel-controls">
+          <button id="carouselPrevBtn" class="carousel-btn" aria-label="Produto anterior">←</button>
+          <button id="carouselNextBtn" class="carousel-btn" aria-label="Próximo produto">→</button>
         </div>
-      </section>
+      </div>
 
+      <div class="category-filters" id="categoryFilters">
+        <button class="filter-btn active" data-category="all">Todos os produtos</button>
+        <button class="filter-btn" data-category="solar">Energia Solar & Geradores</button>
+        <button class="filter-btn" data-category="industrial">Equipamento & Construção</button>
+        <button class="filter-btn" data-category="electronics">Eletrónicos & Iluminação</button>
+      </div>
 
-      <!-- Secção de Contactos & Canais Oficiais -->
-      <section id="contacto" class="section-standard contact-section">
-        <div class="section-head">
-          <p class="eyebrow eyebrow-dark">HUB OPERACIONAL & CONTACTOS</p>
-          <h2>Fale diretamente com os nossos especialistas em Luanda e Guangzhou</h2>
-          <p>Apoio comercial, cotações e acompanhamento de importações corporativas.</p>
+      <div class="carousel-wrapper">
+        <div class="carousel-track" id="productCarouselTrack">
+          <!-- Injetado dinamicamente via app.js -->
         </div>
+      </div>
 
-        <div class="contact-cards-grid">
-          <div class="contact-card">
-            <div class="contact-card-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-            </div>
-            <strong class="contact-card-title">Hub Luanda (Sede Angola)</strong>
-            <p class="contact-card-text">Edifício Kilamba, Av. 4 de Fevereiro, Marginal de Luanda</p>
-            <span class="contact-card-meta">Segunda a Sexta: 08:00 – 17:30</span>
-          </div>
+      <div class="carousel-dots" id="carouselDots">
+        <!-- Indicadores dinâmicos via app.js -->
+      </div>
 
-          <div class="contact-card">
-            <div class="contact-card-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-              </svg>
-            </div>
-            <strong class="contact-card-title">Armazém e Hub Guangzhou</strong>
-            <p class="contact-card-text">Yuexiu Logistics Zone, Baiyun District, Guangzhou, China</p>
-            <span class="contact-card-meta">Horário China: GMT+8 | Inspeção & Consolidação</span>
-          </div>
+      <div class="carousel-footer-action">
+        <a href="catalogo" class="btn-dark">Ver Todo o Catálogo Completo &rarr;</a>
+      </div>
+    </section>
 
-          <div class="contact-card">
-            <div class="contact-card-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-              </svg>
-            </div>
-            <strong class="contact-card-title">Linha Direta & WhatsApp</strong>
-            <p class="contact-card-text">+244 923 000 000 / +244 912 345 678</p>
-            <span class="contact-card-meta">comercial@tradex.ao | Atendimento Imediato</span>
+    <!-- Secção Importação e Encomendas (Showcase Logística) -->
+    <section id="importacao-encomendas" class="orders-showcase-section">
+      <div class="orders-showcase-container">
+        <div class="orders-showcase-info">
+          <h2 class="orders-showcase-title">IMPORTAÇÃO E ENCOMENDAS</h2>
+          <p class="orders-showcase-lead">Receba o mundo na sua porta de forma simples e segura.</p>
+          <div class="orders-showcase-actions">
+            <a href="#simulador" class="btn-dark btn-pill">Iniciar Envio</a>
+            <a href="#como-funciona" class="btn-video-action">
+              <span class="btn-play-icon">▶</span> Assistir Vídeo
+            </a>
           </div>
         </div>
-      </section>
 
-    
+        <div class="orders-showcase-visual">
+          <div class="world-map-backdrop"></div>
 
-      <!-- Rodapé Oficial -->
-      <footer class="footer-site">
-        <div>
-          <strong class="footer-brand-title">TRADEX GLOBAL TRADING</strong>
-          <p class="footer-address">
-            Luanda - Angola | China Hub: Yuexiu District, Guangzhou
-          </p>
+          <div class="float-badge badge-customs">
+            <svg class="badge-svg-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Fornecedores</span>
+          </div>
+
+          <div class="float-badge badge-insured-top">
+            <svg class="badge-svg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <span>Segurado</span>
+          </div>
+
+          <div class="float-badge badge-insured-left">
+            <svg class="badge-svg-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Produtos</span>
+          </div>
+
+          <div class="float-asset asset-ship">
+            <div class="mini-ship-graphic">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1">
+                </path>
+                <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"></path>
+                <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"></path>
+                <path d="M12 10v4"></path>
+                <path d="M12 2v3"></path>
+              </svg>
+            </div>
+          </div>
+
+          <div class="float-asset asset-plane">
+            <div class="mini-plane-graphic">
+              <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z">
+                </path>
+              </svg>
+            </div>
+          </div>
+
+          <div class="orders-card card-backdrop">
+            <div class="card-status-pill pill-warning">Aguardando pagamento</div>
+            <div class="card-package-box">
+              <div class="package-3d-box">
+                <div class="box-tape"></div>
+                <div class="box-label-tag">FRAGILE</div>
+              </div>
+            </div>
+            <div class="card-package-title">Pronto para envio</div>
+            <div class="card-package-code">#AO-9842</div>
+            <div class="card-barcode">
+              <div class="barcode-lines"></div>
+              <span class="barcode-number">TDX02026CDF01</span>
+            </div>
+          </div>
+
+          <div class="orders-card card-foreground">
+            <div class="card-package-box main-box">
+              <div class="package-3d-box">
+                <div class="box-tape"></div>
+                <div class="box-label-tag">FRAGILE</div>
+                <div class="box-mini-barcode"></div>
+              </div>
+            </div>
+            <div class="card-header-flex">
+              <div>
+                <h4 class="card-main-title">Encomenda Internacional</h4>
+                <span class="card-main-code">#BR-9842</span>
+              </div>
+              <span class="card-status-pill pill-success">A caminho</span>
+            </div>
+            <div class="card-route-tracker">
+              <div class="route-point">
+                <span class="point-city">China</span>
+              </div>
+              <div class="route-line-wrap">
+                <div class="route-dashed-line"></div>
+                <div class="route-transport-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                      d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z">
+                    </path>
+                  </svg>
+                </div>
+              </div>
+              <div class="route-point">
+                <span class="point-city">Angola</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="float-asset asset-smartphone">
+            <div class="phone-frame">
+              <div class="phone-screen">
+                <div class="phone-map-bg">
+                  <div class="map-route-line"></div>
+                  <div class="map-pin"></div>
+                </div>
+                <div class="phone-info-box">
+                  <div class="phone-info-bar"></div>
+                  <div class="phone-info-btn"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <nav class="footer-links" aria-label="Ligações institucionais">
-          <a href="#servicos">Serviços</a>
-          <a href="#importacao-encomendas">Importação</a>
-          <a href="#como-funciona">Como funciona</a>
-          <a href="#faq">FAQ</a>
-          <a href="#contacto">Contacto</a>
-        </nav>
-        <div class="footer-meta-right">
-          <span>Your Gateway to Global Commerce.</span>
-          <p class="footer-copyright">&copy; 2026 TradeX Global Trading. Todos os direitos reservados.</p>
+      </div>
+    </section>
+
+    <!-- Processo Original -->
+    <section id="como-funciona" class="process">
+      <h2>Da escolha à entrega, tudo acompanhado.</h2>
+      <ol>
+        <li>
+          <strong>1. Escolha ou solicite os produtos</strong>
+          <p class="process-step-desc">Selecione os artigos do catálogo ou envie ligações de fábricas chinesas para
+            cotação.</p>
+        </li>
+        <li>
+          <strong>2. Pague em AOA com fatura pró-forma</strong>
+          <p class="process-step-desc">Liquidação por transferência bancária em Kwanzas através de parceiros
+            autorizados.</p>
+        </li>
+        <li>
+          <strong>3. Acompanhe a sua encomenda</strong>
+          <p class="process-step-desc">Notificações a cada marco: envio da China, chegada a Angola e entrega ou
+            levantamento.</p>
+        </li>
+      </ol>
+    </section>
+
+
+    <!-- Simulador de Importação China ➔ Angola -->
+    <section id="simulador" class="section-standard">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-dark">SIMULADOR LOGÍSTICO</p>
+        <h2>Calcule o custo do seu produto em Angola</h2>
+        <p>Escolha um produto do catálogo e veja o total com frete, seguro e entrega.</p>
+      </div>
+
+      <div class="calculator-box">
+        <form id="calcForm">
+          <div class="calc-form-group">
+            <label for="calcProduct">Produto</label>
+            <select id="calcProduct" class="calc-select"></select>
+          </div>
+
+          <div class="calc-row">
+            <div class="calc-form-group">
+              <label for="calcQuantity">Quantidade</label>
+              <input type="number" id="calcQuantity" class="calc-input" value="1" step="1" min="1" />
+            </div>
+            <div class="calc-form-group">
+              <label for="transportMode">Modalidade de Envio</label>
+              <select id="transportMode" class="calc-select"></select>
+            </div>
+          </div>
+
+          <div class="calc-form-group">
+            <label for="calcDelivery">Entrega em Angola</label>
+            <select id="calcDelivery" class="calc-select"></select>
+          </div>
+
+          <p class="calc-note" id="calcProductNote"></p>
+        </form>
+
+        <div class="calc-result-panel">
+          <div>
+            <span class="calc-result-title">Estimativa da Encomenda</span>
+            <ul class="calc-breakdown">
+              <li><span>Valor dos produtos</span> <strong id="valMercadoriaAoa">—</strong></li>
+              <li><span>Frete internacional</span> <strong id="valFreteAoa">—</strong></li>
+              <li><span>Seguro de carga</span> <strong id="valSeguroAoa">—</strong></li>
+              <li><span>Entrega em Angola</span> <strong id="valDespachoAoa">—</strong></li>
+              <li><span>Prazo estimado</span> <strong id="valPrazo">—</strong></li>
+            </ul>
+          </div>
+          <div class="calc-total">
+            <span class="calc-total-label">Total previsto</span>
+            <div class="calc-total-value" id="valTotalAoa">—</div>
+          </div>
         </div>
-      </footer>
-    </main>
+      </div>
+    </section>
 
-    <script type="module" src="js/nav.js"></script>
 
-    <script type="module" src="js/auth.js"></script>
-    <script type="module" src="js/app.js"></script>
-  </body>
+    <!-- Rastreio de Cargas em Tempo Real -->
+    <section id="rastreio" class="section-standard">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-dark">LOGÍSTICA & RASTREIO</p>
+        <h2>Acompanhe a sua remessa em tempo real</h2>
+        <p>Insira o número da encomenda ou código de conhecimento de embarque para verificar a posição atual.</p>
+      </div>
+
+      <div class="tracking-wrapper">
+        <form id="trackingForm" class="tracking-bar">
+          <input type="text" id="trackingCodeInput" placeholder="Ex: TDX-AO-2026-001 ou insira o seu código"
+            value="TDX-AO-2026-001" required />
+          <button type="submit">Consultar Carga</button>
+        </form>
+
+        <div class="tracking-portal-cta">
+          <a href="rastreio" class="btn-dark">
+            <span>Aceder ao Portal de Rastreio Completo &rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Secção de Perguntas Frequentes (FAQ) - Layout Moderno Dividido -->
+    <section id="faq" class="faq-section" aria-label="Perguntas Frequentes">
+      <div class="faq-container">
+        <!-- Coluna Esquerda: Título + Accordion -->
+        <div class="faq-main-col">
+          <div class="faq-header-block">
+            <span class="faq-eyebrow">FAQ</span>
+            <h2 class="faq-title">Perguntas Frequentes</h2>
+          </div>
+
+          <div class="faq-accordion" id="faqAccordionContainer">
+            <!-- Injetado dinamicamente via app.js a partir do CMS -->
+          </div>
+        </div>
+
+        <!-- Coluna Direita: Ilustração Geométrica 3D Isometric Layers -->
+        <div class="faq-graphic-col" aria-hidden="true">
+          <div class="faq-isometric-illustration">
+            <svg class="faq-isometric-svg" viewBox="0 0 440 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Plano Wireframe Inferior -->
+              <polygon points="110,310 230,250 350,310 230,370" class="faq-iso-plane-bottom" />
+
+              <!-- Eixo Vertical Central e Ponto de Ancoragem Verde -->
+              <line x1="230" y1="340" x2="230" y2="160" class="faq-iso-axis-line" />
+              <circle cx="230" cy="340" r="7" class="faq-iso-node-pulse" />
+              <circle cx="230" cy="340" r="3.5" class="faq-iso-node-core" />
+
+              <!-- Plano Intermédio Flutuante (Translúcido) -->
+              <polygon points="120,230 240,170 360,230 240,290" class="faq-iso-plane-middle" />
+
+              <!-- Pilha de Camadas Superiores (Stack 3D) -->
+              <!-- Camada 1 -->
+              <polygon points="200,180 280,140 360,180 280,220" class="faq-iso-stack-layer l1" />
+              <polygon points="200,180 280,220 280,225 200,185" class="faq-iso-stack-edge" />
+              <polygon points="280,220 360,180 360,185 280,225" class="faq-iso-stack-edge dark" />
+
+              <!-- Camada 2 -->
+              <polygon points="200,165 280,125 360,165 280,205" class="faq-iso-stack-layer l2" />
+              <polygon points="200,165 280,205 280,210 200,170" class="faq-iso-stack-edge" />
+              <polygon points="280,205 360,165 360,170 280,210" class="faq-iso-stack-edge dark" />
+
+              <!-- Camada 3 -->
+              <polygon points="200,150 280,110 360,150 280,190" class="faq-iso-stack-layer l3" />
+              <polygon points="200,150 280,190 280,195 200,155" class="faq-iso-stack-edge" />
+              <polygon points="280,190 360,150 360,155 280,195" class="faq-iso-stack-edge dark" />
+
+              <!-- Camada 4 -->
+              <polygon points="200,135 280,95 360,135 280,175" class="faq-iso-stack-layer l4" />
+              <polygon points="200,135 280,175 280,180 200,140" class="faq-iso-stack-edge" />
+              <polygon points="280,175 360,135 360,140 280,180" class="faq-iso-stack-edge dark" />
+
+              <!-- Camada 5 -->
+              <polygon points="200,120 280,80 360,120 280,160" class="faq-iso-stack-layer l5" />
+              <polygon points="200,120 280,160 280,165 200,125" class="faq-iso-stack-edge" />
+              <polygon points="280,160 360,120 360,125 280,165" class="faq-iso-stack-edge dark" />
+
+              <!-- Camada 6 (Topo) -->
+              <polygon points="200,105 280,65 360,105 280,145" class="faq-iso-stack-layer l6 top" />
+              <polygon points="200,105 280,145 280,150 200,110" class="faq-iso-stack-edge" />
+              <polygon points="280,145 360,105 360,110 280,150" class="faq-iso-stack-edge dark" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sourcing Personalizado / Pedido de Cotação Direta -->
+    <section id="sourcing" class="section-standard cta-section">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-dark">SOURCING DIRETO</p>
+        <h2>Tem um produto específico em vista?</h2>
+        <p>Indique-nos o que pretende importar. Localizamos o fabricante na China, negociamos o preço de fábrica e
+          tratamos da logística até Angola.</p>
+      </div>
+
+      <div class="quote-box">
+        <form id="sourcingForm" class="quote-form">
+          <div class="quote-field">
+            <label for="clientName">Nome / Empresa</label>
+            <input type="text" id="clientName" placeholder="Ex: Importações Silva Lda" required />
+          </div>
+          <div class="quote-field">
+            <label for="clientContact">Telefone ou WhatsApp (Angola)</label>
+            <input type="tel" id="clientContact" placeholder="+244 9..." required />
+          </div>
+          <div class="quote-field">
+            <label for="productDesc">Descrição do Produto ou Link (1688 / Alibaba / Taobao)</label>
+            <textarea id="productDesc" rows="3"
+              placeholder="Indique especificações, quantidades estimadas ou cole aqui o link do produto..."></textarea>
+          </div>
+          <button type="submit" class="btn-dark btn-self-start">
+            Enviar Solicitação de Cotação
+          </button>
+          <div id="sourcingSuccessMsg" class="sourcing-feedback-msg">
+            Solicitação registada com sucesso! A equipa comercial da TradeX entrará em contacto com a cotação detalhada
+            em Kwanzas.
+          </div>
+        </form>
+      </div>
+    </section>
+
+
+    <!-- Secção de Contactos & Canais Oficiais -->
+    <section id="contacto" class="section-standard contact-section">
+      <div class="section-head">
+        <p class="eyebrow eyebrow-dark">HUB OPERACIONAL & CONTACTOS</p>
+        <h2>Fale diretamente com os nossos especialistas em Luanda e Guangzhou</h2>
+        <p>Apoio comercial, cotações e acompanhamento de importações corporativas.</p>
+      </div>
+
+      <div class="contact-cards-grid">
+        <div class="contact-card">
+          <div class="contact-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <strong class="contact-card-title">Hub Luanda (Sede Angola)</strong>
+          <p class="contact-card-text">Edifício Kilamba, Av. 4 de Fevereiro, Marginal de Luanda</p>
+          <span class="contact-card-meta">Segunda a Sexta: 08:00 – 17:30</span>
+        </div>
+
+        <div class="contact-card">
+          <div class="contact-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+          </div>
+          <strong class="contact-card-title">Armazém e Hub Guangzhou</strong>
+          <p class="contact-card-text">Yuexiu Logistics Zone, Baiyun District, Guangzhou, China</p>
+          <span class="contact-card-meta">Horário China: GMT+8 | Inspeção & Consolidação</span>
+        </div>
+
+        <div class="contact-card">
+          <div class="contact-card-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+              </path>
+            </svg>
+          </div>
+          <strong class="contact-card-title">Linha Direta & WhatsApp</strong>
+          <p class="contact-card-text">+244 952 670 034</p>
+          <span class="contact-card-meta">comercial@tradeximportacoes.com | Atendimento Imediato</span>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- Rodapé Oficial -->
+    <footer class="footer-site">
+      <div>
+        <strong class="footer-brand-title">TRADEX GLOBAL TRADING</strong>
+        <p class="footer-address">
+          Luanda - Angola | China Hub: Yuexiu District, Guangzhou
+        </p>
+      </div>
+      <nav class="footer-links" aria-label="Ligações institucionais">
+        <a href="#servicos">Serviços</a>
+        <a href="#importacao-encomendas">Importação</a>
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+
+      <div>
+        <div class="footer-social footer-social-modern">
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-meta-right">
+        <span>Your Gateway to Global Commerce.</span>
+        <p class="footer-copyright">&copy; 2026 TradeX Global Trading. Todos os direitos reservados.</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Botão Flutuante do WhatsApp -->
+  <a href="https://wa.me/244952670034" class="whatsapp-float-btn" aria-label="WhatsApp" target="_blank"
+    rel="noopener noreferrer"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+
+  <script type="module" src="js/nav.js"></script>
+
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+
 </html>
