@@ -34,6 +34,7 @@ function isOriginAllowed(origin) {
   // Permite qualquer subdomínio da TradeX na Vercel (previews e produção)
   if (/^https:\/\/tradexglobal[a-zA-Z0-9-]*\.vercel\.app$/.test(clean)) return true;
   if (/^https:\/\/([a-zA-Z0-9-]+\.)?tradex\.ao$/.test(clean)) return true;
+  if (/^https:\/\/([a-zA-Z0-9-]+\.)?tradeximportacoes\.com$/.test(clean)) return true;
   return false;
 }
 

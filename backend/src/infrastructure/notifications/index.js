@@ -9,7 +9,7 @@ import { sendEmail } from './email.js';
 
 const WINDOW_MS = 24 * 60 * 60 * 1000;
 const kz = (v) => `${Number(v || 0).toLocaleString('pt-AO')} Kz`;
-const siteUrl = () => (env.PUBLIC_SITE_URL || env.CORS_ORIGIN).replace(/\/$/, '');
+const siteUrl = () => (env.PUBLIC_SITE_URL || env.CORS_ORIGIN.split(',')[0].trim()).replace(/\/$/, '');
 
 async function bankLines() {
   const bank = await getSetting('bank');

@@ -185,7 +185,8 @@ authRouter.post('/recover-password', recoveryLimiter, async (req, res) => {
     await prisma.passwordResetToken.create({
       data: { userId: user.id, tokenHash, expiresAt: new Date(Date.now() + RESET_TOKEN_TTL_MS) }
     });
-    const link = `${(env.PUBLIC_SITE_URL || env.CORS_ORIGIN).replace(/\/$/, '')}/redefinir-password?token=${token}`;
+    const siteBase = (env.PUBLIC_SITE_URL || env.CORS_ORIGIN.split(',')[0].trim()).replace(/\/$/, '');
+    const link = `${siteBase}/redefinir-password?token=${token}`;
     await sendPasswordResetEmail(email, link);
     // Sem SMTP configurado (desenvolvimento), o link aparece no log do servidor
     if (!emailConfigured() && process.env.NODE_ENV !== 'production') {
