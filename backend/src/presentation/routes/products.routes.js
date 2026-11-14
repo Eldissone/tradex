@@ -64,23 +64,145 @@ productsRouter.get('/', optionalAuth, async (req, res) => {
   }
 });
 
-// Categorias
+// Categorias (listar, criar, atualizar e remover)
+const categoryInputSchema = z.object({
+  name: z.string().trim().min(2, 'O nome da categoria deve ter pelo menos 2 caracteres.').max(80),
+  slug: z.string().trim().max(80).optional().nullable()
+});
+
+const categoryUpdateSchema = z.object({
+  name: z.string().trim().min(2, 'O nome da categoria deve ter pelo menos 2 caracteres.').max(80).optional(),
+  slug: z.string().trim().max(80).optional().nullable()
+});
+
 productsRouter.get('/categories', async (_req, res) => {
   try {
-    const cats = await prisma.category.findMany({ orderBy: { name: 'asc' } });
-    return res.json({ ok: true, data: cats.map(c => ({ id: c.id, slug: c.slug, name: c.name })) });
+    const cats = await prisma.category.findMany({
+      orderBy: { name: 'asc' },
+      include: {
+        _count: { select: { products: true } }
+      }
+    });
+    return res.json({
+      ok: true,
+      data: cats.map(c => ({
+        id: c.id,
+        slug: c.slug,
+        name: c.name,
+        productCount: c._count?.products ?? 0
+      }))
+    });
   } catch (err) {
     console.warn('[TradeX Categories] Base de dados offline:', err.message);
     return res.json({
       ok: true,
       data: [
-        { id: 'cat-solar', slug: 'solar', name: 'Energia Solar' },
-        { id: 'cat-industrial', slug: 'industrial', name: 'Maquinaria & Construção' },
-        { id: 'cat-electronics', slug: 'electronics', name: 'Eletrónicos & Iluminação' },
-        { id: 'cat-vehicles', slug: 'vehicles', name: 'Veículos & Peças' }
+        { id: 'cat-1', slug: 'electronica-tecnologia', name: 'Electrónica e Tecnologia', productCount: 0 },
+        { id: 'cat-2', slug: 'electrodomesticos', name: 'Electrodomésticos', productCount: 0 },
+        { id: 'cat-3', slug: 'casa-mobiliario-decoracao', name: 'Casa, Mobiliário e Decoração', productCount: 0 },
+        { id: 'cat-4', slug: 'automovel-acessorios', name: 'Automóvel e Acessórios', productCount: 0 },
+        { id: 'cat-5', slug: 'construcao-ferramentas', name: 'Construção e Ferramentas', productCount: 0 },
+        { id: 'cat-6', slug: 'desporto-lazer', name: 'Desporto e Lazer', productCount: 0 },
+        { id: 'cat-7', slug: 'escritorio-papelaria', name: 'Escritório e Papelaria', productCount: 0 },
+        { id: 'cat-8', slug: 'equipamentos-industriais', name: 'Equipamentos Industriais', productCount: 1 },
+        { id: 'cat-9', slug: 'negocios', name: 'Negócios', productCount: 0 }
       ]
     });
   }
+});
+
+productsRouter.post('/categories', requireStaff, async (req, res) => {
+  const input = categoryInputSchema.parse(req.body);
+  const baseSlug = slugify(input.slug || input.name);
+  if (!baseSlug) {
+    return res.status(400).json({ ok: false, message: 'Identificador (slug) inválido.' });
+  }
+
+  const existing = await prisma.category.findUnique({ where: { slug: baseSlug } });
+  if (existing) {
+    return res.status(409).json({ ok: false, message: 'Já existe uma categoria com este identificador (slug).' });
+  }
+
+  const cat = await prisma.category.create({
+    data: {
+      name: input.name.trim(),
+      slug: baseSlug
+    }
+  });
+
+  return res.status(201).json({
+    ok: true,
+    data: {
+      id: cat.id,
+      name: cat.name,
+      slug: cat.slug,
+      productCount: 0
+    }
+  });
+});
+
+productsRouter.patch('/categories/:id', requireStaff, async (req, res) => {
+  const { id } = req.params;
+  const input = categoryUpdateSchema.parse(req.body);
+
+  const existing = await prisma.category.findFirst({
+    where: { OR: [{ id }, { slug: id }] }
+  });
+  if (!existing) {
+    return res.status(404).json({ ok: false, message: 'Categoria não encontrada.' });
+  }
+
+  const data = {};
+  if (input.name) data.name = input.name.trim();
+  if (input.slug !== undefined && input.slug !== null) {
+    const newSlug = slugify(input.slug || input.name || existing.name);
+    if (!newSlug) return res.status(400).json({ ok: false, message: 'Slug inválido.' });
+    if (newSlug !== existing.slug) {
+      const conflict = await prisma.category.findUnique({ where: { slug: newSlug } });
+      if (conflict && conflict.id !== existing.id) {
+        return res.status(409).json({ ok: false, message: 'Já existe outra categoria com este slug.' });
+      }
+      data.slug = newSlug;
+    }
+  }
+
+  const updated = await prisma.category.update({
+    where: { id: existing.id },
+    data,
+    include: { _count: { select: { products: true } } }
+  });
+
+  return res.json({
+    ok: true,
+    data: {
+      id: updated.id,
+      name: updated.name,
+      slug: updated.slug,
+      productCount: updated._count?.products ?? 0
+    }
+  });
+});
+
+productsRouter.delete('/categories/:id', requireStaff, async (req, res) => {
+  const { id } = req.params;
+  const existing = await prisma.category.findFirst({
+    where: { OR: [{ id }, { slug: id }] },
+    include: { _count: { select: { products: true } } }
+  });
+  if (!existing) {
+    return res.status(404).json({ ok: false, message: 'Categoria não encontrada.' });
+  }
+
+  const count = existing._count?.products ?? 0;
+  if (count > 0) {
+    return res.status(400).json({
+      ok: false,
+      message: `Não é possível eliminar a categoria "${existing.name}" porque possui ${count} produto(s) associado(s). Altere primeiro a categoria desses produtos.`
+    });
+  }
+
+  await prisma.category.delete({ where: { id: existing.id } });
+  return res.json({ ok: true, message: 'Categoria eliminada com sucesso.', data: { id: existing.id } });
 });
 
 // Detalhe por ID ou slug
@@ -124,11 +246,15 @@ const productSchema = z.object({
 });
 
 const KNOWN_CATEGORIES = {
-  solar: 'Energia Solar',
-  industrial: 'Construção & Equipamento',
-  electronics: 'Eletrónicos & Iluminação',
-  machinery: 'Maquinaria & Geradores',
-  construction: 'Materiais de Construção'
+  'electronica-tecnologia': 'Electrónica e Tecnologia',
+  'electrodomesticos': 'Electrodomésticos',
+  'casa-mobiliario-decoracao': 'Casa, Mobiliário e Decoração',
+  'automovel-acessorios': 'Automóvel e Acessórios',
+  'construcao-ferramentas': 'Construção e Ferramentas',
+  'desporto-lazer': 'Desporto e Lazer',
+  'escritorio-papelaria': 'Escritório e Papelaria',
+  'equipamentos-industriais': 'Equipamentos Industriais',
+  'negocios': 'Negócios'
 };
 
 async function resolveCategoryId(slugOrName) {

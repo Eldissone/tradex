@@ -133,6 +133,9 @@ export const api = {
   products: {
     list: (params) => request(`/products${qs(params)}`),
     categories: () => request('/products/categories'),
+    createCategory: (data) => request('/products/categories', { method: 'POST', body: data }),
+    updateCategory: (id, data) => request(`/products/categories/${encodeURIComponent(id)}`, { method: 'PATCH', body: data }),
+    removeCategory: (id) => request(`/products/categories/${encodeURIComponent(id)}`, { method: 'DELETE' }),
     getById: (id) => request(`/products/${encodeURIComponent(id)}`),
     create: (data) => request('/products', { method: 'POST', body: data }),
     update: (id, data) => request(`/products/${encodeURIComponent(id)}`, { method: 'PUT', body: data }),

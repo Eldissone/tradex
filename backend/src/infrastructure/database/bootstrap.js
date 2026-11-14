@@ -3,11 +3,15 @@ import { env } from '../../config/env.js';
 import { hashPassword } from '../auth/auth.js';
 
 const DEFAULT_CATEGORIES = [
-  { slug: 'solar', name: 'Eletricidade' },
-  { slug: 'industrial', name: 'Industrial' },
-  { slug: 'electronics', name: 'Eletrónicos' },
-  { slug: 'machinery', name: 'Maquinas' },
-  { slug: 'construction', name: 'Materiais' }
+  { slug: 'electronica-tecnologia', name: 'Electrónica e Tecnologia' },
+  { slug: 'electrodomesticos', name: 'Electrodomésticos' },
+  { slug: 'casa-mobiliario-decoracao', name: 'Casa, Mobiliário e Decoração' },
+  { slug: 'automovel-acessorios', name: 'Automóvel e Acessórios' },
+  { slug: 'construcao-ferramentas', name: 'Construção e Ferramentas' },
+  { slug: 'desporto-lazer', name: 'Desporto e Lazer' },
+  { slug: 'escritorio-papelaria', name: 'Escritório e Papelaria' },
+  { slug: 'equipamentos-industriais', name: 'Equipamentos Industriais' },
+  { slug: 'negocios', name: 'Negócios' }
 ];
 
 export async function bootstrapCategories() {

@@ -334,6 +334,10 @@
               <p class="admin-panel-subtitle">Configure produtos industriais, solares e comerciais importados da China.</p>
             </div>
             <div class="admin-head-actions">
+              <button type="button" class="btn-dark" id="btnManageCategories" style="background:#1e293b;border:1px solid #475569;margin-right:0.5rem;display:inline-flex;align-items:center;gap:0.45rem;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                Gerir Categorias
+              </button>
               <button type="button" class="btn-dark" id="btnOpenNewProductModal">+ Novo Produto</button>
             </div>
           </div>
@@ -1014,6 +1018,67 @@
       </div>
     </div>
 
+    
+    <!-- Modal de Gestão de Categorias de Produtos -->
+    <div class="auth-modal-overlay" id="categoryModalOverlay">
+      <div class="auth-modal-card" style="max-width: 720px; width: 100%; max-height: 90vh; overflow-y: auto;" role="dialog" aria-modal="true" aria-labelledby="categoryModalTitle">
+        <div class="auth-modal-header">
+          <div class="auth-modal-title-wrap">
+            <h3 class="auth-modal-title" id="categoryModalTitle">Gestão de Categorias</h3>
+            <p class="auth-modal-subtitle">Adicione novas categorias ou atualize as existentes no catálogo comercial.</p>
+          </div>
+          <button type="button" class="auth-modal-close" id="btnCloseCategoryModal" aria-label="Fechar">&times;</button>
+        </div>
+
+        <div style="padding: 1.25rem;">
+          <!-- Formulário Criar / Editar Categoria -->
+          <form id="formCategoryEdit" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem;">
+            <input type="hidden" id="categoryFormId" />
+            <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 0.85rem 0; color: #0f172a;" id="categoryFormHeading">Nova Categoria</h4>
+            
+            <div class="checkout-form-row">
+              <div class="checkout-form-group" style="flex: 1.6;">
+                <label for="categoryFormName">Nome da Categoria *</label>
+                <input type="text" id="categoryFormName" class="checkout-input" placeholder="Ex: Equipamentos Médicos" required />
+              </div>
+              <div class="checkout-form-group" style="flex: 1.4;">
+                <label for="categoryFormSlug">Identificador (Slug)</label>
+                <input type="text" id="categoryFormSlug" class="checkout-input" placeholder="automático a partir do nome" />
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; align-items: center; margin-top: 0.75rem; flex-wrap: wrap;">
+              <button type="submit" class="btn-dark" id="btnSaveCategory" style="padding: 0.6rem 1.4rem;">Guardar Categoria</button>
+              <button type="button" class="btn-dark" id="btnCancelCategoryEdit" style="display: none; background: #64748b; padding: 0.6rem 1rem;">Cancelar Edição</button>
+              <span id="categoryFormFeedback" style="font-size: 0.85rem; font-weight: 500;"></span>
+            </div>
+          </form>
+
+          <!-- Tabela de Categorias Existentes -->
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
+              <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: #0f172a;">Categorias Registadas</h4>
+              <span id="categoryCountBadge" style="font-size: 0.8rem; color: #64748b; font-weight: 600;"></span>
+            </div>
+            <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+              <table class="admin-table" style="margin: 0;">
+                <thead>
+                  <tr>
+                    <th style="min-width: 200px;">Nome da Categoria</th>
+                    <th style="min-width: 160px;">Slug</th>
+                    <th style="text-align: center; width: 90px;">Produtos</th>
+                    <th style="text-align: right; width: 110px; white-space: nowrap;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="categoryTableBody">
+                  <tr><td colspan="4" class="table-empty-message">A carregar categorias...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- Modal de Cadastro e Edição Completa de Produto -->
     <div class="auth-modal-overlay" id="productModalOverlay">
       <div class="auth-modal-card product-modal-large">

@@ -156,30 +156,40 @@ function setupCartDrawer() {
   });
 }
 
-function setupFiltersAndSearch() {
-  const filterBtns = document.querySelectorAll('.filter-btn');
+async function setupFiltersAndSearch() {
+  const container = document.getElementById('categoryFilters');
+  if (container) {
+    try {
+      const res = await api.products.categories();
+      const cats = res.ok && Array.isArray(res.data?.data || res.data) ? (res.data?.data || res.data) : null;
+      if (cats && cats.length > 0) {
+        container.innerHTML = `
+          <button class="filter-btn ${currentCategory === 'all' ? 'active' : ''}" data-category="all">Todos os produtos</button>
+          ${cats.map(c => `
+            <button class="filter-btn ${currentCategory === c.slug ? 'active' : ''}" data-category="${esc(c.slug)}">${esc(c.name)}</button>
+          `).join('')}
+        `;
+      }
+    } catch {}
+  }
 
   // Suporte a parâmetro de categoria na URL (ex: catalogo.html?cat=solar)
   const urlParams = new URLSearchParams(window.location.search);
   const catParam = urlParams.get('cat') || urlParams.get('categoria');
   if (catParam) {
     currentCategory = catParam;
-    filterBtns.forEach(b => {
-      if (b.getAttribute('data-category') === catParam) {
-        b.classList.add('active');
-      } else {
-        b.classList.remove('active');
-      }
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-category') === catParam);
     });
   }
 
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentCategory = btn.getAttribute('data-category');
-      renderCatalog();
-    });
+  container?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCategory = btn.getAttribute('data-category') || 'all';
+    renderCatalog();
   });
 
   const searchInput = document.getElementById('catalogSearch');

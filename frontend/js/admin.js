@@ -39,6 +39,7 @@ function initAdminDashboard() {
   initConversations();
   initProductRequests();
   setupOrderStatusModal();
+  setupCategoryModal();
   setupProductModal();
   renderAnalyticsModule();
   renderOrdersModule();
@@ -80,6 +81,7 @@ async function loadAdminData() {
     renderProductsModule();
     renderCmsModule();
   }
+  await loadAdminCategories();
   refreshAdminExtras();
   refreshConversations();
   refreshProductRequests();
@@ -587,6 +589,167 @@ document.getElementById('adminProductsTableBody')?.addEventListener('click', asy
   renderCmsModule();
 });
 
+
+// Gestão de Categorias de Produtos no Backoffice
+let categoriesCache = [];
+
+async function loadAdminCategories() {
+  const res = await api.products.categories();
+  if (res.ok && Array.isArray(res.data?.data || res.data)) {
+    categoriesCache = res.data?.data || res.data;
+  }
+
+  // Atualiza tabela do modal de categorias
+  const tbody = document.getElementById('categoryTableBody');
+  if (tbody) {
+    if (categoriesCache.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" class="table-empty-message">Nenhuma categoria registada.</td></tr>';
+    } else {
+      tbody.innerHTML = categoriesCache.map(cat => `
+        <tr data-cat-id="${escapeHtml(cat.id)}">
+          <td><strong>${escapeHtml(cat.name)}</strong></td>
+          <td><code>${escapeHtml(cat.slug)}</code></td>
+          <td><span style="display:inline-block;padding:2px 8px;border-radius:12px;background:#e2e8f0;color:#0f172a;font-size:0.75rem;font-weight:600;">${cat.productCount ?? 0}</span></td>
+          <td style="text-align: right;">
+            <div class="row-actions" style="justify-content: flex-end; gap: 0.35rem;">
+              ${iconBtn({ icon: 'edit', title: 'Editar categoria', cls: 'btn-edit-category', attrs: `data-cat-id="${escapeHtml(cat.id)}"` })}
+              ${iconBtn({ icon: 'trash', title: 'Eliminar categoria', variant: 'danger', cls: 'btn-delete-category', attrs: `data-cat-id="${escapeHtml(cat.id)}" data-cat-name="${escapeHtml(cat.name)}" data-cat-count="${cat.productCount ?? 0}"` })}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  const countBadge = document.getElementById('categoryCountBadge');
+  if (countBadge) countBadge.textContent = `${categoriesCache.length} categoria(s)`;
+
+  // Atualiza select de categorias no modal de produto
+  const sel = document.getElementById('prodFormCategory');
+  if (sel && categoriesCache.length > 0) {
+    const currentVal = sel.value;
+    sel.innerHTML = categoriesCache.map(c => `
+      <option value="${escapeHtml(c.slug)}">${escapeHtml(c.name)}</option>
+    `).join('');
+    if (currentVal && categoriesCache.some(c => c.slug === currentVal)) {
+      sel.value = currentVal;
+    }
+  }
+}
+
+function setupCategoryModal() {
+  const modal = document.getElementById('categoryModalOverlay');
+  const btnOpen = document.getElementById('btnManageCategories');
+  const btnClose = document.getElementById('btnCloseCategoryModal');
+  const form = document.getElementById('formCategoryEdit');
+  const btnCancel = document.getElementById('btnCancelCategoryEdit');
+
+  function resetCategoryForm() {
+    const inpId = document.getElementById('categoryFormId');
+    const inpName = document.getElementById('categoryFormName');
+    const inpSlug = document.getElementById('categoryFormSlug');
+    const heading = document.getElementById('categoryFormHeading');
+    const btnSave = document.getElementById('btnSaveCategory');
+    const fb = document.getElementById('categoryFormFeedback');
+
+    if (inpId) inpId.value = '';
+    if (inpName) inpName.value = '';
+    if (inpSlug) inpSlug.value = '';
+    if (heading) heading.textContent = 'Nova Categoria';
+    if (btnSave) btnSave.textContent = 'Guardar Categoria';
+    if (btnCancel) btnCancel.style.display = 'none';
+    if (fb) fb.textContent = '';
+  }
+
+  btnOpen?.addEventListener('click', () => {
+    resetCategoryForm();
+    loadAdminCategories();
+    modal?.classList.add('visible');
+  });
+
+  btnClose?.addEventListener('click', () => {
+    modal?.classList.remove('visible');
+    resetCategoryForm();
+  });
+
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('visible');
+      resetCategoryForm();
+    }
+  });
+
+  btnCancel?.addEventListener('click', resetCategoryForm);
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('categoryFormId')?.value;
+    const name = document.getElementById('categoryFormName')?.value.trim();
+    const slug = document.getElementById('categoryFormSlug')?.value.trim();
+    const btn = document.getElementById('btnSaveCategory');
+    const fb = document.getElementById('categoryFormFeedback');
+
+    if (!name) return;
+    if (btn) btn.disabled = true;
+    if (fb) { fb.textContent = 'A guardar...'; fb.style.color = '#64748b'; }
+
+    const res = id
+      ? await api.products.updateCategory(id, { name, slug: slug || undefined })
+      : await api.products.createCategory({ name, slug: slug || undefined });
+
+    if (btn) btn.disabled = false;
+
+    if (!res.ok) {
+      if (fb) { fb.textContent = res.message || 'Erro ao guardar categoria.'; fb.style.color = '#ef4444'; }
+      return;
+    }
+
+    if (fb) { fb.textContent = '✓ Guardado com sucesso!'; fb.style.color = '#10b981'; }
+    resetCategoryForm();
+    await loadAdminCategories();
+    renderProductsModule();
+    setTimeout(() => { if (fb) fb.textContent = ''; }, 3000);
+  });
+
+  document.getElementById('categoryTableBody')?.addEventListener('click', async (e) => {
+    const editBtn = e.target.closest('.btn-edit-category');
+    if (editBtn) {
+      const catId = editBtn.dataset.catId;
+      const cat = categoriesCache.find(c => c.id === catId);
+      if (!cat) return;
+      document.getElementById('categoryFormId').value = cat.id;
+      document.getElementById('categoryFormName').value = cat.name;
+      document.getElementById('categoryFormSlug').value = cat.slug;
+      document.getElementById('categoryFormHeading').textContent = `Editar Categoria: ${cat.name}`;
+      document.getElementById('btnSaveCategory').textContent = 'Atualizar Categoria';
+      document.getElementById('btnCancelCategoryEdit').style.display = 'inline-block';
+      document.getElementById('categoryFormName').focus();
+      return;
+    }
+
+    const delBtn = e.target.closest('.btn-delete-category');
+    if (delBtn) {
+      const catId = delBtn.dataset.catId;
+      const catName = delBtn.dataset.catName;
+      const count = Number(delBtn.dataset.catCount) || 0;
+      if (count > 0) {
+        alert(`A categoria "${catName}" tem ${count} produto(s) associado(s). Altere primeiro a categoria desses produtos no catálogo antes de a eliminar.`);
+        return;
+      }
+      if (!confirm(`Deseja eliminar a categoria "${catName}"?`)) return;
+      delBtn.disabled = true;
+      const res = await api.products.removeCategory(catId);
+      delBtn.disabled = false;
+      if (!res.ok) {
+        alert(res.message || 'Não foi possível eliminar a categoria.');
+        return;
+      }
+      await loadAdminCategories();
+      renderProductsModule();
+    }
+  });
+}
+
 // Modal de Criação e Edição Completa de Produtos com Galeria Dinâmica Local
 function setupProductModal() {
   const modal = document.getElementById('productModalOverlay');
@@ -950,7 +1113,7 @@ function setupProductModal() {
     const updatedData = {
       title: inpTitle?.value.trim() || 'Equipamento TradeX',
       category: cat,
-      categoryLabel: categoryLabelsMap[cat] || cat.toUpperCase(),
+      categoryLabel: categoryLabel,
       priceAoa: Number(inpPrice?.value) || 0,
       unit: inpUnit?.value.trim() || 'unidade',
       moq: inpMoq?.value.trim() || '1 Unidade',
