@@ -74,6 +74,9 @@ app.use('/uploads', (_req, res, next) => {
 }, express.static(PUBLIC_UPLOADS_ROOT, { index: false, dotfiles: 'deny', maxAge: '7d', immutable: true }));
 app.use(auditTrail);
 app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+app.get('/', (_req, res) => {
+  res.json({ ok: true, name: 'TradeX Global API', status: 'online', health: '/api/v1/health' });
+});
 app.use('/api/v1', apiRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);

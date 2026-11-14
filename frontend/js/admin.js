@@ -7,6 +7,7 @@ import { openDocViewer } from './doc-viewer.js';
 import { iconBtn, icon } from './icons.js';
 import { cmsStore, loadCms } from './cms.js';
 import { initAdminExtras, refreshAdminExtras, supplierStore } from './admin-extra.js';
+import { openOrderDetail } from './admin-order-detail.js';
 import { initProductRequests, refreshProductRequests } from './admin-product-requests.js';
 import { initConversations, refreshConversations, refreshNotificationLogs, fillNotificationOrders } from './admin-conversations.js';
 
@@ -300,6 +301,10 @@ function bindOrdersModule() {
     });
   });
 
+  tbody?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.matches('tr[data-order-number]')) e.target.click();
+  });
+
   tbody?.addEventListener('click', async (e) => {
     const del = e.target.closest('.btn-delete-order');
     if (del) {
@@ -317,10 +322,23 @@ São apagados também o pagamento, o comprovativo, os documentos e o histórico 
       return;
     }
     const btn = e.target.closest('.btn-open-status-modal');
-    if (!btn) return;
-    const order = authStore.getOrderById(btn.getAttribute('data-order-number'));
-    if (order) openStatusModal(order);
+    if (btn) {
+      const order = authStore.getOrderById(btn.getAttribute('data-order-number'));
+      if (order) openStatusModal(order);
+      return;
+    }
+    // Clique na linha → detalhe completo da encomenda
+    const rowEl = e.target.closest('tr[data-order-number]');
+    if (!rowEl) return;
+    const order = authStore.getOrderById(rowEl.getAttribute('data-order-number'));
+    if (order) openOrderDetail(order, { statusLabel: orderStatusLabel(order), changeStatus: openStatusModal });
   });
+}
+
+function orderStatusLabel(order) {
+  return order.status === 'AWAITING_PAYMENT' && order.payment?.status === 'REVIEW_PENDING'
+    ? 'Comprovativo por Validar'
+    : (ORDER_STATUS_LABELS[order.status] || order.status);
 }
 
 function renderOrdersModule() {
@@ -359,12 +377,10 @@ function renderOrdersModule() {
     else if (order.status === 'AWAITING_PAYMENT' || order.status === 'CANCELLED') statusBadge = 'status-badge-pending';
     else if (order.status === 'PAYMENT_CONFIRMED') statusBadge = 'status-badge-paid';
 
-    const statusLabel = order.status === 'AWAITING_PAYMENT' && order.payment?.status === 'REVIEW_PENDING'
-      ? 'Comprovativo por Validar'
-      : (ORDER_STATUS_LABELS[order.status] || order.status);
+    const statusLabel = orderStatusLabel(order);
 
     return `
-      <tr>
+      <tr class="order-row-clickable" data-order-number="${escapeHtml(order.number)}" tabindex="0" title="Ver detalhes da encomenda">
         <td>
           <strong class="pay-tx-code">${order.number}</strong>
           ${order.isGuest ? '<span class="table-sub-detail">Convidado</span>' : ''}
