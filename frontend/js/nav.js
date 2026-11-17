@@ -33,6 +33,33 @@ export const NAV_CATEGORIES = [
 const svg = (paths, size = 18) =>
   `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
 
+const escHtml = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function categoryItems(cats) {
+  return cats.map(c => `
+    <li role="none">
+      <a role="menuitem" href="catalogo?categoria=${encodeURIComponent(c.slug)}" class="nav-dd-item">
+        ${escHtml(c.name)}
+      </a>
+    </li>`).join('');
+}
+
+// As categorias reais vêm da API (as mesmas do catálogo/backoffice);
+// a lista estática acima serve só de fallback enquanto carrega ou se a API falhar.
+let categoriesPromise = null;
+function loadCategories() {
+  if (!categoriesPromise) {
+    categoriesPromise = import('./api.js')
+      .then(({ api }) => api.products.categories())
+      .then((res) => {
+        const cats = res.ok ? (res.data?.data || res.data) : null;
+        return Array.isArray(cats) && cats.length ? cats.filter(c => c.slug && c.name) : null;
+      })
+      .catch(() => null);
+  }
+  return categoriesPromise;
+}
+
 function currentPage() {
   const file = window.location.pathname.split('/').pop() || 'index.html';
   return file.replace('.html', '') || 'index';
@@ -43,12 +70,7 @@ function renderNav(container) {
   const productsActive = page === 'catalogo' || page === 'produto';
   const trackingActive = page === 'rastreio';
 
-  const items = NAV_CATEGORIES.map(c => `
-    <li role="none">
-      <a role="menuitem" href="catalogo?categoria=${c.slug}" class="nav-dd-item">
-        ${c.label}
-      </a>
-    </li>`).join('');
+  const items = categoryItems(NAV_CATEGORIES.map(c => ({ slug: c.slug, name: c.label })));
 
   container.innerHTML = `
     <div class="nav-dd">
@@ -73,6 +95,11 @@ function renderNav(container) {
     </div>
     <a href="rastreio"${trackingActive ? ' class="nav-link-active"' : ''}>Rastreio</a>
   `;
+
+  loadCategories().then((cats) => {
+    const list = container.querySelector('.nav-dd-list');
+    if (cats && list) list.innerHTML = categoryItems(cats);
+  });
 
   const dd = container.querySelector('.nav-dd');
   const toggle = dd.querySelector('.nav-dd-toggle');
