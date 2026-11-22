@@ -1129,7 +1129,6 @@ function setupProductModal() {
     const updatedData = {
       title: inpTitle?.value.trim() || 'Equipamento TradeX',
       category: cat,
-      categoryLabel: categoryLabel,
       priceAoa: Number(inpPrice?.value) || 0,
       unit: inpUnit?.value.trim() || 'unidade',
       moq: inpMoq?.value.trim() || '1 Unidade',
@@ -1147,7 +1146,7 @@ function setupProductModal() {
       }
     };
 
-    const { categoryLabel, ...payload } = updatedData;
+    const payload = { ...updatedData };
     payload.logistics = { ...payload.logistics, transitTimeAir: '5 a 15 dias' };
     payload.supplierId = document.getElementById('prodFormSupplier')?.value || null;
     payload.immediateAvailable = document.getElementById('prodFormImmediate').checked;
