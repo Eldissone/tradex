@@ -1,6 +1,6 @@
 import { esc } from './esc.js';
 // TradeX Global Trading - Checkout & Gestão de Encomendas
-import { cartStore } from './cart.js';
+import { cartStore, getMoq } from './cart.js';
 import { authStore, openAuthModal } from './auth.js';
 import { api } from './api.js';
 import { renderProofUploader } from './proof-upload.js';
@@ -127,7 +127,7 @@ function renderCheckoutOrderSummary() {
           <span class="checkout-item-category">${item.category ? item.category.toUpperCase() : 'TRADE-X'}</span>
           <span class="checkout-item-unit-price">${cartStore.formatAoa(item.priceAoa)} un.</span>
           <div class="cart-qty" role="group" aria-label="Unidades encomendadas">
-            <button type="button" class="cart-qty-btn" data-co-minus="${items.indexOf(item)}" aria-label="Diminuir unidades" ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
+            <button type="button" class="cart-qty-btn" data-co-minus="${items.indexOf(item)}" aria-label="Diminuir unidades" ${item.quantity <= getMoq(item) ? 'disabled' : ''}>−</button>
             <input type="number" class="cart-qty-input" data-co-input="${items.indexOf(item)}" value="${item.quantity}" min="1" max="99" aria-label="Unidades" />
             <button type="button" class="cart-qty-btn" data-co-plus="${items.indexOf(item)}" aria-label="Aumentar unidades" ${item.quantity >= 99 ? 'disabled' : ''}>+</button>
           </div>

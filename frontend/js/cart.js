@@ -7,6 +7,12 @@ function emitChange(source) {
   window.dispatchEvent(new CustomEvent('tradex:cart-changed', { detail: { source } }));
 }
 
+// Quantidade mínima de encomenda (MOQ): lê o primeiro número do texto ("10", "1 Palete (30 painéis)")
+export function getMoq(product) {
+  const n = parseInt(String(product?.moq ?? '').match(/\d+/)?.[0], 10);
+  return n > 0 ? n : 1;
+}
+
 export const cartStore = {
   getItems() {
     try {
@@ -27,7 +33,7 @@ export const cartStore = {
 
   addItem(product, quantity = 1) {
     const items = this.getItems();
-    const qty = Math.max(1, Number(quantity) || 1);
+    const qty = Math.max(getMoq(product), Number(quantity) || 1);
     const existing = items.find(i => i.id === product.id);
     if (existing) {
       existing.quantity += qty;
@@ -44,7 +50,7 @@ export const cartStore = {
     if (!items[index]) return items;
     const qty = Math.floor(Number(quantity) || 0);
     if (qty < 1) items.splice(index, 1);
-    else items[index].quantity = Math.min(99, qty);
+    else items[index].quantity = Math.min(Math.max(99, getMoq(items[index])), Math.max(qty, getMoq(items[index])));
     this.saveItems(items);
     return items;
   },
@@ -91,8 +97,8 @@ export function renderCartList(listEl, items, onChange) {
         <h5>${escText(item.title)}</h5>
         <p>${cartStore.formatAoa(item.priceAoa)} / un.</p>
         <div class="cart-qty" role="group" aria-label="Quantidade de ${escText(item.title)}">
-          <button type="button" class="cart-qty-btn" data-qty-minus="${index}" aria-label="Diminuir quantidade" ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
-          <input type="number" class="cart-qty-input" data-qty-input="${index}" value="${item.quantity}" min="1" max="99" aria-label="Quantidade" />
+          <button type="button" class="cart-qty-btn" data-qty-minus="${index}" aria-label="Diminuir quantidade" ${item.quantity <= getMoq(item) ? 'disabled' : ''}>−</button>
+          <input type="number" class="cart-qty-input" data-qty-input="${index}" value="${item.quantity}" min="${getMoq(item)}" max="99" aria-label="Quantidade" />
           <button type="button" class="cart-qty-btn" data-qty-plus="${index}" aria-label="Aumentar quantidade" ${item.quantity >= 99 ? 'disabled' : ''}>+</button>
         </div>
       </div>

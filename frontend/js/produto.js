@@ -1,6 +1,6 @@
 import { esc } from './esc.js';
 import { PRODUCTS_DATA, loadProducts } from './product-store.js';
-import { cartStore, renderCartList } from './cart.js';
+import { cartStore, renderCartList, getMoq } from './cart.js';
 import { api } from './api.js';
 
 let currentProduct = null;
@@ -67,6 +67,13 @@ function renderProductDetails(product) {
   if (originBadge) originBadge.textContent = product.origin;
   if (titleEl) titleEl.textContent = product.title;
   if (priceEl) priceEl.textContent = cartStore.formatAoa(product.priceAoa);
+  const qtyInput = document.getElementById('productQtyInput');
+  if (qtyInput) {
+    const moq = getMoq(product);
+    qtyInput.min = moq;
+    currentQuantity = Math.max(currentQuantity, moq);
+    qtyInput.value = currentQuantity;
+  }
   if (unitInfoEl) unitInfoEl.textContent = `Preço por ${product.unit} (MOQ: ${product.moq})`;
   if (descEl) descEl.textContent = product.description;
 
@@ -204,7 +211,7 @@ function setupQuantitySelector() {
 
   minusBtn?.addEventListener('click', () => {
     let val = parseInt(input.value, 10) || 1;
-    if (val > 1) {
+    if (val > getMoq(currentProduct)) {
       val -= 1;
       input.value = val;
       currentQuantity = val;
@@ -222,8 +229,8 @@ function setupQuantitySelector() {
 
   input.addEventListener('change', () => {
     let val = parseInt(input.value, 10) || 1;
-    if (val < 1) val = 1;
-    if (val > 99) val = 99;
+    val = Math.max(val, getMoq(currentProduct));
+    if (val > 99) val = Math.max(99, getMoq(currentProduct));
     input.value = val;
     currentQuantity = val;
   });
