@@ -9,14 +9,16 @@ export const SHIPPING_MODES = {
     longLabel: 'Marítimo Consolidado',
     minDays: 30,
     maxDays: 60,
-    freightRate: 0.08
+    freightUnit: 'm3',
+    freightRateAoa: 360
   },
   air_exp: {
     label: 'Aéreo',
     longLabel: 'Aéreo Expresso',
     minDays: 5,
     maxDays: 15,
-    freightRate: 0.18
+    freightUnit: 'kg',
+    freightRateAoa: 35000
   }
 };
 
@@ -31,6 +33,14 @@ export const DELIVERY_METHODS = {
 
 export function getShippingMode(mode) {
   return SHIPPING_MODES[mode] || SHIPPING_MODES.sea_lcl;
+}
+
+// Frete fixo: aéreo = Kz por kg; marítimo = Kz por m³. items: { weightKg, volumeM3, quantity }
+export function computeFreight(mode, items) {
+  const m = getShippingMode(mode);
+  const key = m.freightUnit === 'kg' ? 'weightKg' : 'volumeM3';
+  const measure = items.reduce((a, i) => a + (Number(i[key]) || 0) * (Number(i.quantity) || 0), 0);
+  return Math.round(measure * (m.freightRateAoa || 0));
 }
 
 export function formatTransitDays(mode) {

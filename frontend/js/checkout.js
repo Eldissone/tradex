@@ -4,7 +4,7 @@ import { cartStore } from './cart.js';
 import { authStore, openAuthModal } from './auth.js';
 import { api } from './api.js';
 import { renderProofUploader } from './proof-upload.js';
-import { getShippingMode, formatTransitDays, getDeliveryFee, CARGO_INSURANCE_RATE, SHIPPING_MODES, DELIVERY_METHODS, loadShippingConfig } from './shipping-config.js';
+import { getShippingMode, computeFreight, formatTransitDays, getDeliveryFee, CARGO_INSURANCE_RATE, SHIPPING_MODES, DELIVERY_METHODS, loadShippingConfig } from './shipping-config.js';
 
 let checkoutState = {
   deliveryMethod: 'pickup', // pickup | delivery_luanda | delivery_interprovincial
@@ -26,10 +26,9 @@ function calculateBreakdown(items) {
   
   // Frete Internacional baseado na modalidade
   // Produtos de aquisição imediata sem taxa de envio não pagam frete nem seguro
-  const freightable = items.filter(i => !isNoFreight(i))
-    .reduce((acc, i) => acc + (i.priceAoa * i.quantity), 0);
-  const freightRate = getShippingMode(checkoutState.shippingMode).freightRate;
-  const internationalFreight = Math.round(freightable * freightRate);
+  const freightItems = items.filter(i => !isNoFreight(i));
+  const freightable = freightItems.reduce((acc, i) => acc + (i.priceAoa * i.quantity), 0);
+  const internationalFreight = computeFreight(checkoutState.shippingMode, freightItems);
 
   // Seguro de carga
   const customsInsurance = Math.round((freightable + internationalFreight) * CARGO_INSURANCE_RATE);

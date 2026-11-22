@@ -242,6 +242,8 @@ const productSchema = z.object({
   featured: z.boolean().optional(),
   immediateAvailable: z.boolean().optional(),
   chargeShipping: z.boolean().optional(),
+  weightKg: z.coerce.number().min(0).optional(),
+  volumeM3: z.coerce.number().min(0).optional(),
   supplierId: z.string().optional().nullable()
 });
 

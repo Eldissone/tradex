@@ -1041,6 +1041,8 @@ function setupProductModal() {
       if (inpDesc) inpDesc.value = prod.description || '';
       const supSel = document.getElementById('prodFormSupplier');
       if (supSel) supSel.value = prod.supplierId || '';
+      document.getElementById('prodFormWeight').value = prod.weightKg || '';
+      document.getElementById('prodFormVolume').value = prod.volumeM3 || '';
       document.getElementById('prodFormImmediate').checked = !!prod.immediateAvailable;
       document.getElementById('prodFormChargeShipping').checked = prod.chargeShipping !== false;
       syncShippingToggle();
@@ -1149,6 +1151,8 @@ function setupProductModal() {
     const payload = { ...updatedData };
     payload.logistics = { ...payload.logistics, transitTimeAir: '5 a 15 dias' };
     payload.supplierId = document.getElementById('prodFormSupplier')?.value || null;
+    payload.weightKg = Number(document.getElementById('prodFormWeight')?.value) || 0;
+    payload.volumeM3 = Number(document.getElementById('prodFormVolume')?.value) || 0;
     payload.immediateAvailable = document.getElementById('prodFormImmediate').checked;
     payload.chargeShipping = payload.immediateAvailable ? document.getElementById('prodFormChargeShipping').checked : true;
 

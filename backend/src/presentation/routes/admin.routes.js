@@ -251,7 +251,8 @@ const shippingSettingsSchema = z.object({
     longLabel: z.string(),
     minDays: z.number().int().positive(),
     maxDays: z.number().int().positive(),
-    freightRate: z.number().min(0).max(5)
+    freightUnit: z.enum(['kg', 'm3']),
+    freightRateAoa: z.number().min(0)
   })),
   cargoInsuranceRate: z.number().min(0).max(1),
   deliveryMethods: z.record(z.string(), z.object({ label: z.string(), feeAoa: z.number().min(0) }))

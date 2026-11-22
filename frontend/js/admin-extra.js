@@ -573,7 +573,7 @@ async function renderSettings() {
     shippingSettings = ship.data.data;
     document.querySelectorAll('#formShippingSettings [data-mode]').forEach(input => {
       const v = shippingSettings.modes[input.dataset.mode]?.[input.dataset.field];
-      input.value = input.dataset.field === 'freightRate' ? Math.round(v * 1000) / 10 : v;
+      input.value = v ?? 0;
     });
     document.querySelectorAll('#formShippingSettings [data-delivery]').forEach(input => {
       input.value = shippingSettings.deliveryMethods[input.dataset.delivery]?.feeAoa ?? 0;
@@ -600,7 +600,7 @@ function bindSettings() {
     const next = structuredClone(shippingSettings);
     document.querySelectorAll('#formShippingSettings [data-mode]').forEach(input => {
       const raw = Number(input.value);
-      next.modes[input.dataset.mode][input.dataset.field] = input.dataset.field === 'freightRate' ? raw / 100 : Math.round(raw);
+      next.modes[input.dataset.mode][input.dataset.field] = input.dataset.field === 'freightRateAoa' ? Math.max(0, raw || 0) : Math.round(raw);
     });
     document.querySelectorAll('#formShippingSettings [data-delivery]').forEach(input => {
       next.deliveryMethods[input.dataset.delivery].feeAoa = Math.round(Number(input.value) || 0);

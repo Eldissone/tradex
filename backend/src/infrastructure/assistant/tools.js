@@ -169,7 +169,7 @@ const handlers = {
     const [shipping, bank] = await Promise.all([getSetting('shipping'), getSetting('bank')]);
     return json({
       modes: Object.entries(shipping.modes).map(([key, m]) => ({
-        key, name: m.longLabel, days: `${m.minDays} a ${m.maxDays} dias`, freight_percent: Math.round(m.freightRate * 1000) / 10
+        key, name: m.longLabel, days: `${m.minDays} a ${m.maxDays} dias`, freight: m.freightUnit === 'kg' ? `${kz(m.freightRateAoa)} por kg` : `${kz(m.freightRateAoa)} por m³`
       })),
       cargo_insurance_percent: Math.round(shipping.cargoInsuranceRate * 1000) / 10,
       delivery: Object.entries(shipping.deliveryMethods).map(([key, d]) => ({ key, name: d.label, fee: d.feeAoa ? kz(d.feeAoa) : 'Gratuito' })),

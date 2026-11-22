@@ -1,5 +1,5 @@
 import { prisma } from './database/prisma.js';
-import { SHIPPING_MODES, CARGO_INSURANCE_RATE, DELIVERY_METHODS } from '../config/shipping.js';
+import { SHIPPING_MODES, CARGO_INSURANCE_RATE, DELIVERY_METHODS, computeFreight } from '../config/shipping.js';
 
 export const DEFAULT_SHIPPING_SETTINGS = {
   modes: SHIPPING_MODES,
@@ -31,7 +31,17 @@ export async function getSetting(key) {
     const row = await prisma.setting.findUnique({ where: { key } });
     if (!row) return fallback;
     // Mantém chaves por defeito que ainda não existam no registo guardado
-    return fallback && typeof fallback === 'object' ? { ...fallback, ...row.value } : row.value;
+    if (!(fallback && typeof fallback === 'object')) return row.value;
+    const merged = { ...fallback, ...row.value };
+    if (key === 'shipping') {
+      // Definições antigas (frete em %) herdam as tarifas fixas por defeito
+      merged.modes = Object.fromEntries(Object.entries(fallback.modes).map(([k, d]) => {
+        const stored = row.value.modes?.[k] || {};
+        const { freightRate, ...rest } = stored;
+        return [k, { ...d, ...rest }];
+      }));
+    }
+    return merged;
   } catch (err) {
     console.warn(`[TradeX Settings] Não foi possível carregar configuração '${key}' da base de dados:`, err.message);
     return fallback;
@@ -50,10 +60,10 @@ export async function setSetting(key, value) {
 // Cálculo autoritativo dos custos de uma encomenda (nunca confiar nos valores do cliente)
 // freightableSubtotal: parte do subtotal que paga frete e seguro (produtos de aquisição imediata
 // marcados como "sem taxa de envio" ficam de fora). Por defeito, todo o subtotal.
-export async function computeOrderCosts({ subtotal, freightableSubtotal = subtotal, shippingMode, deliveryMethod }) {
+export async function computeOrderCosts({ subtotal, freightableSubtotal = subtotal, freightLines = [], shippingMode, deliveryMethod }) {
   const s = await getSetting('shipping');
   const mode = s.modes[shippingMode] || s.modes.sea_lcl;
-  const freight = Math.round(freightableSubtotal * mode.freightRate);
+  const freight = computeFreight(mode, freightLines);
   const insurance = Math.round((freightableSubtotal + freight) * s.cargoInsuranceRate);
   const deliveryFee = s.deliveryMethods[deliveryMethod]?.feeAoa ?? 0;
   return {

@@ -3,7 +3,7 @@ import { api } from './api.js';
 import { cartStore, renderCartList } from './cart.js';
 import { PRODUCTS_DATA, loadProducts } from './product-store.js';
 import { cmsStore, loadCms } from './cms.js';
-import { SHIPPING_MODES, DELIVERY_METHODS, CARGO_INSURANCE_RATE, getShippingMode, getDeliveryFee, formatTransitDays, loadShippingConfig } from './shipping-config.js';
+import { SHIPPING_MODES, DELIVERY_METHODS, CARGO_INSURANCE_RATE, getShippingMode, computeFreight, getDeliveryFee, formatTransitDays, loadShippingConfig } from './shipping-config.js';
 
 const PRODUCTS = PRODUCTS_DATA;
 
@@ -292,8 +292,7 @@ function setupCalculator() {
     const subtotal = Number(product.priceAoa) * qty;
     // Produtos de aquisição imediata sem taxa de envio não pagam frete nem seguro
     const noFreight = product.immediateAvailable && product.chargeShipping === false;
-    const mode = getShippingMode(modeSelect.value);
-    const freight = noFreight ? 0 : Math.round(subtotal * mode.freightRate);
+    const freight = noFreight ? 0 : computeFreight(modeSelect.value, [{ ...product, quantity: qty }]);
     const insurance = noFreight ? 0 : Math.round((subtotal + freight) * CARGO_INSURANCE_RATE);
     const delivery = getDeliveryFee(deliverySelect.value);
 

@@ -72,6 +72,8 @@ export function serializeProduct(p) {
     featured: p.featured,
     immediateAvailable: p.immediateAvailable,
     chargeShipping: p.chargeShipping,
+    weightKg: num(p.weightKg),
+    volumeM3: num(p.volumeM3),
     supplierId: p.supplierId
   };
 }
