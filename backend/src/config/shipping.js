@@ -9,6 +9,9 @@ export const SHIPPING_MODES = {
 
 export const CARGO_INSURANCE_RATE = 0.04;
 
+// Mínimo (Kz) de produtos + frete para encomendas de importação (produtos em stock ficam isentos)
+export const MIN_ORDER_AOA = 500000;
+
 export const DELIVERY_METHODS = {
   pickup: { label: 'Levantamento no Terminal TradeX (Kilamba, Luanda)', feeAoa: 0 },
   delivery_luanda: { label: 'Entrega ao domicílio em Luanda', feeAoa: 15000 },

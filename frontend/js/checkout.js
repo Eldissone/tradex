@@ -4,7 +4,7 @@ import { cartStore, getMoq } from './cart.js';
 import { authStore, openAuthModal } from './auth.js';
 import { api } from './api.js';
 import { renderProofUploader } from './proof-upload.js';
-import { getShippingMode, computeFreight, formatTransitDays, getDeliveryFee, CARGO_INSURANCE_RATE, SHIPPING_MODES, DELIVERY_METHODS, loadShippingConfig } from './shipping-config.js';
+import { getShippingMode, computeFreight, formatTransitDays, getDeliveryFee, CARGO_INSURANCE_RATE, MIN_ORDER_AOA, SHIPPING_MODES, DELIVERY_METHODS, loadShippingConfig } from './shipping-config.js';
 
 let checkoutState = {
   deliveryMethod: 'pickup', // pickup | delivery_luanda | delivery_interprovincial
@@ -42,7 +42,12 @@ function calculateBreakdown(items) {
   checkoutState.internationalFreightAoa = internationalFreight;
   checkoutState.customsInsuranceAoa = customsInsurance;
 
+  // Mínimo de importação: produtos + frete (produtos em stock ficam isentos)
+  const importBase = freightable + internationalFreight;
+  const missingForMinimum = freightable > 0 ? Math.max(0, MIN_ORDER_AOA - importBase) : 0;
+
   return {
+    missingForMinimum,
     subtotal,
     internationalFreight,
     customsInsurance,
@@ -154,6 +159,14 @@ function renderCheckoutOrderSummary() {
     elDelivery.textContent = breakdown.deliveryCost === 0 ? 'Gratuito (Terminal)' : cartStore.formatAoa(breakdown.deliveryCost);
   }
   if (elGrandTotal) elGrandTotal.textContent = cartStore.formatAoa(breakdown.grandTotal);
+
+  const warn = document.getElementById('checkoutMinWarning');
+  if (warn) {
+    warn.hidden = breakdown.missingForMinimum <= 0;
+    warn.textContent = `O valor mínimo de importação (produtos + frete) é ${cartStore.formatAoa(MIN_ORDER_AOA)}. Adicione mais produtos (faltam ${cartStore.formatAoa(breakdown.missingForMinimum)}).`;
+  }
+  const confirmBtn = document.getElementById('btnConfirmOrder');
+  if (confirmBtn) confirmBtn.disabled = breakdown.missingForMinimum > 0;
 }
 
 // Configuração da Identificação do Cliente
@@ -345,6 +358,11 @@ function setupCheckoutSubmission() {
     const items = cartStore.getItems();
     if (items.length === 0) {
       alert('O seu pedido está vazio.');
+      return;
+    }
+    const bd = calculateBreakdown(items);
+    if (bd.missingForMinimum > 0) {
+      alert(`O valor mínimo de importação (produtos + frete) é ${cartStore.formatAoa(MIN_ORDER_AOA)}. Adicione mais produtos ao pedido.`);
       return;
     }
 

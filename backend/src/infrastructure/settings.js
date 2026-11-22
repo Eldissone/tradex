@@ -1,9 +1,10 @@
 import { prisma } from './database/prisma.js';
-import { SHIPPING_MODES, CARGO_INSURANCE_RATE, DELIVERY_METHODS, computeFreight } from '../config/shipping.js';
+import { SHIPPING_MODES, CARGO_INSURANCE_RATE, DELIVERY_METHODS, MIN_ORDER_AOA, computeFreight } from '../config/shipping.js';
 
 export const DEFAULT_SHIPPING_SETTINGS = {
   modes: SHIPPING_MODES,
   cargoInsuranceRate: CARGO_INSURANCE_RATE,
+  minOrderAoa: MIN_ORDER_AOA,
   deliveryMethods: DELIVERY_METHODS
 };
 
@@ -67,6 +68,8 @@ export async function computeOrderCosts({ subtotal, freightableSubtotal = subtot
   const insurance = Math.round((freightableSubtotal + freight) * s.cargoInsuranceRate);
   const deliveryFee = s.deliveryMethods[deliveryMethod]?.feeAoa ?? 0;
   return {
+    minOrderAoa: s.minOrderAoa,
+    importBase: freightableSubtotal + freight,
     freight,
     insurance,
     deliveryFee,

@@ -51,6 +51,11 @@ export async function createOrder(input, { customer = null, channel = 'WEB', con
   const freightableSubtotal = lines.filter(l => !l.noFreight).reduce((acc, l) => acc + l.unitPriceAoa * l.quantity, 0);
   const costs = await computeOrderCosts({ subtotal, freightableSubtotal, freightLines: lines.filter(l => !l.noFreight), shippingMode: input.shippingMode, deliveryMethod: input.deliveryMethod });
 
+  // Importação: produtos + frete têm de atingir o mínimo (produtos em stock ficam isentos)
+  if (freightableSubtotal > 0 && costs.importBase < costs.minOrderAoa) {
+    throw new OrderError(`O valor mínimo de importação (produtos + frete) é ${costs.minOrderAoa.toLocaleString('pt-AO')} Kz. Adicione mais produtos ao pedido.`);
+  }
+
   // Morada: guardada do cliente (com sessão) ou enviada no pedido
   let address = input.address || null;
   if (input.addressId && customer) {

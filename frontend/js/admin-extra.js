@@ -578,6 +578,8 @@ async function renderSettings() {
     document.querySelectorAll('#formShippingSettings [data-delivery]').forEach(input => {
       input.value = shippingSettings.deliveryMethods[input.dataset.delivery]?.feeAoa ?? 0;
     });
+    const minEl = document.getElementById('settingsMinOrder');
+    if (minEl) minEl.value = shippingSettings.minOrderAoa ?? 500000;
     const ins = document.getElementById('settingsInsuranceRate');
     if (ins) ins.value = Math.round(shippingSettings.cargoInsuranceRate * 1000) / 10;
   }
@@ -605,6 +607,7 @@ function bindSettings() {
     document.querySelectorAll('#formShippingSettings [data-delivery]').forEach(input => {
       next.deliveryMethods[input.dataset.delivery].feeAoa = Math.round(Number(input.value) || 0);
     });
+    next.minOrderAoa = Math.max(0, Math.round(Number(document.getElementById('settingsMinOrder').value) || 0));
     next.cargoInsuranceRate = (Number(document.getElementById('settingsInsuranceRate').value) || 0) / 100;
 
     for (const [key, m] of Object.entries(next.modes)) {

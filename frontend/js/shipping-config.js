@@ -25,6 +25,9 @@ export const SHIPPING_MODES = {
 // Seguro de carga sobre (subtotal + frete)
 export let CARGO_INSURANCE_RATE = 0.04;
 
+// Mínimo de produtos + frete para encomendas de importação
+export let MIN_ORDER_AOA = 500000;
+
 export const DELIVERY_METHODS = {
   pickup: { label: 'Levantamento no Terminal TradeX (Kilamba, Luanda)', feeAoa: 0 },
   delivery_luanda: { label: 'Entrega ao domicílio em Luanda', feeAoa: 15000 },
@@ -60,6 +63,7 @@ export function loadShippingConfig() {
     if (cfg) {
       Object.assign(SHIPPING_MODES, cfg.modes || {});
       Object.assign(DELIVERY_METHODS, cfg.deliveryMethods || {});
+      if (typeof cfg.minOrderAoa === 'number') MIN_ORDER_AOA = cfg.minOrderAoa;
       if (typeof cfg.cargoInsuranceRate === 'number') CARGO_INSURANCE_RATE = cfg.cargoInsuranceRate;
       window.dispatchEvent(new CustomEvent('tradex:shipping-config-changed'));
     }

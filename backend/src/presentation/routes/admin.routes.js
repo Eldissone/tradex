@@ -255,6 +255,7 @@ const shippingSettingsSchema = z.object({
     freightRateAoa: z.number().min(0)
   })),
   cargoInsuranceRate: z.number().min(0).max(1),
+  minOrderAoa: z.number().min(0).optional(),
   deliveryMethods: z.record(z.string(), z.object({ label: z.string(), feeAoa: z.number().min(0) }))
 });
 
